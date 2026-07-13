@@ -26,7 +26,7 @@ async function createSuperAdmin() {
   let userId;
 
   if (authError) {
-    if (authError.message.includes('already exists') || authError.code === 'user_already_exists') {
+    if (authError.message.includes('already exists') || authError.code === 'user_already_exists' || authError.code === 'email_exists') {
         console.log('User already exists in auth.');
         
         // Let's get the user ID using normal query (workaround if admin API doesn't return list easily)

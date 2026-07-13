@@ -5,7 +5,7 @@ import { createClient } from '@/lib/supabase/client';
 import { 
   User, Copy, Download, Upload, FileText, 
   CreditCard, ShieldCheck, Shield, Briefcase, 
-  Info, LogOut, ChevronRight, X
+  Info, LogOut, ChevronRight, X, ShieldAlert
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,14 +17,20 @@ interface UserDrawerProps {
 export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
   const [email, setEmail] = useState('');
   const [uid, setUid] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (user) {
         setEmail(user.email || '');
         setUid(user.id.split('-')[0].toUpperCase());
+        
+        const { data } = await supabase.from('users').select('role').eq('id', user.id).single();
+        if (data?.role === 'superadmin') {
+          setIsAdmin(true);
+        }
       }
     });
   }, [supabase]);
@@ -40,6 +46,7 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
   };
 
   const menuItems = [
+    ...(isAdmin ? [{ icon: ShieldAlert, label: 'Admin Panel', action: () => router.push('/admin') }] : []),
     { icon: Download, label: 'Deposit', action: () => router.push('/assets') },
     { icon: Upload, label: 'Withdraw', action: () => router.push('/assets') },
     { icon: FileText, label: 'Transaction History', action: () => router.push('/assets') },
