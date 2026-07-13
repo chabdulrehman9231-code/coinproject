@@ -14,7 +14,9 @@ interface TickerStats {
   low: string;
 }
 
-export default function TradePage() {
+import { Suspense } from "react";
+
+function TradeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawSymbol = searchParams.get('symbol');
@@ -203,5 +205,13 @@ export default function TradePage() {
         currentSymbol={symbol} 
       />
     </div>
+  );
+}
+
+export default function TradePage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-[#00C29A]">Loading...</div>}>
+      <TradeContent />
+    </Suspense>
   );
 }

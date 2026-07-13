@@ -12,7 +12,9 @@ interface TickerStats {
   isPositive: boolean;
 }
 
-export default function OptionPage() {
+import { Suspense } from "react";
+
+function OptionContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawSymbol = searchParams.get('symbol');
@@ -329,5 +331,13 @@ export default function OptionPage() {
         baseRoute="/option"
       />
     </div>
+  );
+}
+
+export default function OptionPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-[#0066FF]">Loading...</div>}>
+      <OptionContent />
+    </Suspense>
   );
 }
