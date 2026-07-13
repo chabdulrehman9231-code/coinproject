@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  --background: #181a20;
+  --foreground: #eaecef;
+  
+  --panel-bg: #1e2329;
+  --panel-border: #2b3139;
+  
+  --binance-yellow: #fcd535;
+  --binance-yellow-hover: #f0c722;
+  
+  --trade-green: #0ecb81;
+  --trade-red: #f6465d;
+  
+  --text-muted: #848e9c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel-bg);
+  --color-border: var(--panel-border);
+  
+  --color-primary: var(--binance-yellow);
+  --color-primary-hover: var(--binance-yellow-hover);
+  
+  --color-buy: var(--trade-green);
+  --color-sell: var(--trade-red);
+  
+  --color-muted: var(--text-muted);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: inherit;
+}
+
+/* Fix for Chrome autofill white background in dark mode */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: #fff !important;
+}
+
+/* Hide scrollbars globally */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
