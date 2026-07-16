@@ -1,15 +1,16 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, MessageSquare, Clock, Mail, Bold, Italic, Image as ImageIcon, Send } from 'lucide-react';
+import Header from '@/components/Header';
 
 export default function ChatSupport() {
   const router = useRouter();
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white font-sans">
-      
-      {/* Header */}
-      <header className="flex items-center px-4 py-4 border-b border-[#1a1a1a]">
+      <Header />
+      {/* Mobile Header */}
+      <header className="flex md:hidden items-center px-4 py-4 border-b border-[#1a1a1a]">
         <button onClick={() => router.back()} className="mr-3">
           <ChevronLeft className="w-6 h-6 text-gray-400 hover:text-white" />
         </button>

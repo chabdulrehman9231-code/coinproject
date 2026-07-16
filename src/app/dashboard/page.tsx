@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import BottomNav from '@/components/BottomNav';
+import Header from '@/components/Header';
 import { Bell, Clock, Zap, FileText, Share2, MessageSquare, Search, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import UserDrawer from '@/components/UserDrawer';
@@ -119,9 +120,9 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white font-sans">
-      
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 relative">
+      <Header />
+      {/* Mobile Header */}
+      <header className="flex md:hidden items-center justify-between px-4 py-3 relative">
         <div className="flex items-center gap-3">
           <div 
             onClick={() => setIsDrawerOpen(true)}

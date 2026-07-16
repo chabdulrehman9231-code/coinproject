@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronLeft, Menu, ChevronDown } from "lucide-react";
 import TradingChart from "@/components/TradingChart";
 import MarketSelector from "@/components/MarketSelector";
+import Header from "@/components/Header";
 import { createClient } from "@/lib/supabase/client";
 
 interface TickerStats {
@@ -100,8 +101,9 @@ function OptionContent() {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#0a0a0a] text-white">
+      <Header />
       {/* Header */}
-      <header className="flex h-14 items-center justify-between px-4">
+      <header className="flex md:hidden h-14 items-center justify-between px-4">
         <button onClick={() => router.push('/dashboard')} className="text-gray-400 p-1 hover:text-white transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </button>

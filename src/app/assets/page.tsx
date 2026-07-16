@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Download, Upload, Maximize2 } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
+import Header from '@/components/Header';
 import { createClient } from '@/lib/supabase/client';
 
 export default function AssetsPage() {
@@ -34,9 +35,9 @@ export default function AssetsPage() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white font-sans">
-      
-      {/* Header */}
-      <header className="flex items-center justify-center px-4 py-4 shrink-0">
+      <Header />
+      {/* Mobile Header */}
+      <header className="flex md:hidden items-center justify-center px-4 py-4 shrink-0">
         <h1 className="text-xl font-bold">Assets</h1>
       </header>
 

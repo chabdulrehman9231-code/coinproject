@@ -5,6 +5,7 @@ import { ChevronLeft, Menu } from "lucide-react";
 import TradingChart from "@/components/TradingChart";
 import OrderForm from "@/components/OrderForm";
 import MarketSelector from "@/components/MarketSelector";
+import Header from "@/components/Header";
 
 interface TickerStats {
   price: string;
@@ -89,8 +90,9 @@ function TradeContent() {
 
   return (
     <div className="flex h-[100dvh] flex-col overflow-hidden bg-[#0a0a0a] text-white">
+      <Header />
       {/* Mobile Header */}
-      <header className="flex h-14 items-center justify-between px-4 border-b border-[#1a1a1a]">
+      <header className="flex md:hidden h-14 items-center justify-between px-4 border-b border-[#1a1a1a]">
         <button onClick={() => router.push('/dashboard')} className="text-gray-400 p-1 hover:text-white transition-colors">
           <ChevronLeft className="w-6 h-6" />
         </button>

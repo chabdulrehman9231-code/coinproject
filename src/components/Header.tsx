@@ -1,91 +1,66 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { LayoutGrid, Search, LogOut } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
-import type { User } from '@supabase/supabase-js';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Search, Bell, User } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import Link from 'next/link';
+import UserDrawer from './UserDrawer';
 
 export default function Header() {
-  const [user, setUser] = useState<User | null>(null);
-  const [balance, setBalance] = useState<string>('0.00');
-  const supabase = createClient();
   const router = useRouter();
+  const pathname = usePathname();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-      if (!user) router.push('/'); // Redirect to login if not authenticated
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-      if (!session?.user) router.push('/');
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase.auth, router]);
-
-  useEffect(() => {
-    if (user) {
-      // Fetch wallet balance
-      const fetchBalance = async () => {
-        const { data } = await supabase
-          .from('wallets')
-          .select('balance')
-          .eq('user_id', user.id)
-          .eq('asset', 'USDT')
-          .single();
-          
-        if (data) setBalance(Number(data.balance).toFixed(2));
-      };
-      fetchBalance();
-    }
-  }, [user, supabase]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
-  };
+  const navItems = [
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Trade', path: '/trade' },
+    { name: 'Option', path: '/option' },
+    { name: 'Assets', path: '/assets' },
+  ];
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-background px-4">
-      <div className="flex items-center gap-6">
-        <div className="flex items-center gap-2 text-primary">
-          <LayoutGrid className="h-6 w-6" />
-          <span className="text-xl font-bold tracking-tight text-primary">BINANCE<span className="font-light text-foreground"> CLONE</span></span>
-        </div>
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <a href="#" className="text-foreground hover:text-primary">Markets</a>
-          <a href="#" className="text-foreground hover:text-primary">Trade</a>
-          <a href="#" className="text-foreground hover:text-primary">Futures</a>
-        </nav>
-      </div>
-      
-      <div className="flex items-center gap-4">
-        <div className="hidden items-center gap-2 rounded-md bg-panel px-3 py-1.5 md:flex">
-          <Search className="h-4 w-4 text-muted" />
-          <span className="text-sm text-muted">Search coin...</span>
+    <>
+      <header className="hidden md:flex h-16 items-center justify-between border-b border-[#1a1a1a] bg-[#0a0a0a] px-6 sticky top-0 z-40">
+        <div className="flex items-center gap-8">
+          <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/dashboard')}>
+            <svg width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M24 8L8 36H40L24 8Z" fill="#0066FF" opacity="0.8"/>
+              <path d="M24 16L14 36H34L24 16Z" fill="#00C29A" opacity="0.9"/>
+            </svg>
+            <span className="text-xl font-extrabold tracking-tight text-white">Coinbase<span className="font-light text-[#0066FF]"> Trrades</span></span>
+          </div>
+          <nav className="flex items-center gap-6 text-sm font-medium">
+            {navItems.map((item) => {
+               const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
+               return (
+                <Link key={item.name} href={item.path} className={`transition-colors font-bold ${isActive ? 'text-[#0066FF]' : 'text-gray-400 hover:text-white'}`}>
+                  {item.name}
+                </Link>
+               );
+            })}
+          </nav>
         </div>
         
-        <div className="flex items-center gap-3">
-          {user ? (
-            <div className="flex items-center gap-4">
-              <div className="hidden flex-col items-end md:flex">
-                <span className="text-xs text-muted">Demo Balance</span>
-                <span className="text-sm font-bold text-foreground">{balance} USDT</span>
-              </div>
-              <button onClick={handleLogout} className="text-muted hover:text-sell" title="Log Out">
-                <LogOut className="h-5 w-5" />
-              </button>
-            </div>
-          ) : (
-            <>
-              <a href="/" className="text-sm font-medium text-foreground hover:text-primary">Log In</a>
-              <a href="/" className="rounded bg-primary px-4 py-1.5 text-sm font-medium text-black hover:bg-primary-hover">Sign Up</a>
-            </>
-          )}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 rounded-md bg-[#161616] border border-[#222] px-3 py-1.5">
+            <Search className="h-4 w-4 text-gray-500" />
+            <input type="text" placeholder="Search coin..." className="bg-transparent text-sm text-white focus:outline-none w-48" />
+          </div>
+          
+          <div className="relative cursor-pointer hover:text-white text-gray-400">
+            <Bell className="h-5 w-5" />
+            <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-red-500 border border-[#0a0a0a]" />
+          </div>
+
+          <div 
+            onClick={() => setIsDrawerOpen(true)}
+            className="w-8 h-8 ml-2 rounded-full border border-[#0066FF] flex items-center justify-center cursor-pointer hover:bg-[#0066FF]/10 transition-colors"
+          >
+            <User className="w-5 h-5 text-[#0066FF]" />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+
+      <UserDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
+    </>
   );
 }
