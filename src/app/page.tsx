@@ -92,13 +92,11 @@ export default function LandingPage() {
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           className="flex-1 flex justify-center lg:justify-end w-full"
         >
-          <motion.div 
-            animate={{ y: [-8, 8, -8] }}
-            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-            className="relative bg-[#0052FF] p-[14px] rounded-[3rem] w-[340px] shadow-[0_30px_60px_rgba(0,82,255,0.4)] border-4 border-[#0052FF]/50"
+          <div 
+            className="relative bg-[#0052FF] p-[14px] rounded-[3rem] w-[380px] shadow-[0_30px_60px_rgba(0,82,255,0.4)] border-4 border-[#0052FF]/50"
           >
             {/* Phone Screen */}
-            <div className="bg-white text-black h-[680px] w-full rounded-[2.2rem] overflow-hidden flex flex-col relative shadow-inner">
+            <div className="bg-white text-black h-[720px] w-full rounded-[2.2rem] overflow-hidden flex flex-col relative shadow-inner">
               
               {/* Dynamic Island */}
               <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-50 flex items-center justify-end px-2 shadow-sm">
@@ -171,17 +169,17 @@ export default function LandingPage() {
                   {/* Current Price Dot */}
                   <motion.circle 
                     initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
-                    cx="95" cy="45" r="4" fill="#0052FF" 
+                    cx="100" cy="50" r="4.5" fill="#0052FF" 
                   />
                   <motion.circle 
                     initial={{ scale: 0, opacity: 0 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ delay: 2.3, repeat: Infinity, duration: 2 }}
-                    cx="95" cy="45" r="4" fill="#0052FF" 
+                    cx="100" cy="50" r="4.5" fill="#0052FF" 
                   />
                 </svg>
                 {/* Dotted Line */}
                 <motion.div 
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
-                  className="absolute right-[5%] top-[45%] bottom-0 border-r-2 border-dashed border-[#0052FF]/30" 
+                  className="absolute right-0 top-[50%] bottom-0 border-r-2 border-dashed border-[#0052FF]/30" 
                 />
               </div>
 
@@ -201,41 +199,65 @@ export default function LandingPage() {
               {/* Asset List */}
               <motion.div 
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
-                className="flex flex-col mt-2"
+                className="flex flex-col mt-2 flex-1 overflow-y-auto"
               >
-                <div className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 cursor-pointer transition-colors">
+                <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 shadow-sm">
-                       <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-700">
-                         <path d="M4 12a8 8 0 1116 0 8 8 0 01-16 0zM12 8v8M9 12h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                       </svg>
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-100 overflow-hidden">
+                       <img src="https://assets.coincap.io/assets/icons/btc@2x.png" alt="BTC" className="w-6 h-6 object-cover" />
                     </div>
-                    <span className="font-extrabold text-[15px]">Crypto</span>
+                    <div>
+                      <span className="block font-extrabold text-[15px] leading-tight">BTC/USDT</span>
+                      <span className="block text-xs font-medium text-gray-500">Bitcoin</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-[15px]">£12,370.00</span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center gap-2 text-right">
+                    <div>
+                      <span className="block font-bold text-[15px] leading-tight">£52,431.20</span>
+                      <span className="block text-xs font-bold text-green-500">+2.45%</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 cursor-pointer transition-colors">
+                <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 shadow-sm">
-                       <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-700">
-                         <path d="M12 4v16M8 8l4-4 4 4M8 16l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                       </svg>
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-100 overflow-hidden">
+                       <img src="https://assets.coincap.io/assets/icons/eth@2x.png" alt="ETH" className="w-6 h-6 object-cover" />
                     </div>
-                    <span className="font-extrabold text-[15px]">Cash</span>
+                    <div>
+                      <span className="block font-extrabold text-[15px] leading-tight">ETH/USDT</span>
+                      <span className="block text-xs font-medium text-gray-500">Ethereum</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-[15px]">£18,165.80</span>
-                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                  <div className="flex items-center gap-2 text-right">
+                    <div>
+                      <span className="block font-bold text-[15px] leading-tight">£2,840.50</span>
+                      <span className="block text-xs font-bold text-green-500">+1.20%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center border border-gray-100 overflow-hidden">
+                       <img src="https://assets.coincap.io/assets/icons/doge@2x.png" alt="DOGE" className="w-6 h-6 object-cover" />
+                    </div>
+                    <div>
+                      <span className="block font-extrabold text-[15px] leading-tight">DOGE/USDT</span>
+                      <span className="block text-xs font-medium text-gray-500">Dogecoin</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-right">
+                    <div>
+                      <span className="block font-bold text-[15px] leading-tight">£0.1254</span>
+                      <span className="block text-xs font-bold text-red-500">-0.84%</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
 
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       </main>
 
