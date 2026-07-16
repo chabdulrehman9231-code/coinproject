@@ -51,10 +51,7 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Risk Warning Banner */}
-      <div className="w-full bg-[#111] border-b border-[#222] py-2.5 px-4 text-center text-xs text-gray-400">
-        Don't invest unless you're prepared to lose all the money you invest. This is a high-risk investment and you should not expect to be protected if something goes wrong. <a href="#" className="underline hover:text-white">Take 2 mins to learn more</a>
-      </div>
+
 
       {/* Hero Section */}
       <main className="max-w-[1200px] mx-auto px-6 py-12 md:py-24 flex flex-col lg:flex-row items-center justify-between gap-12">
@@ -165,19 +162,22 @@ export default function LandingPage() {
                     d="M0,80 C 5,80 5,75 10,75 C 15,75 15,80 20,80 C 25,80 25,65 30,65 C 35,65 35,70 40,70 C 45,70 45,60 50,60 C 55,60 55,65 60,65 C 65,65 65,55 70,55 C 75,55 75,50 80,50 C 85,50 85,65 90,65 C 92.5,65 92.5,45 95,45 C 96.5,45 96.5,50 98,50" 
                     fill="none" stroke="#0052FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                   />
-                  
-                  {/* Current Price Dot Shadow/Glow */}
-                  <motion.circle 
-                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ delay: 2.3, repeat: Infinity, duration: 2 }}
-                    cx="98" cy="50" r="4.5" fill="#0052FF" 
-                  />
-                  
-                  {/* Current Price Dot Core */}
-                  <motion.circle 
-                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
-                    cx="98" cy="50" r="4.5" fill="white" stroke="#0052FF" strokeWidth="2.5" 
-                  />
                 </svg>
+
+                {/* Current Price Dot Glow */}
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ delay: 2.3, repeat: Infinity, duration: 2 }}
+                  className="absolute w-3 h-3 bg-[#0052FF] rounded-full"
+                  style={{ left: '98%', top: '50%', transform: 'translate(-50%, -50%)' }}
+                />
+                
+                {/* Current Price Dot Core */}
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
+                  className="absolute w-2.5 h-2.5 bg-[#0052FF] rounded-full shadow-[0_0_0_2px_white]"
+                  style={{ left: '98%', top: '50%', transform: 'translate(-50%, -50%)' }}
+                />
+
                 {/* Dotted Line */}
                 <motion.div 
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
