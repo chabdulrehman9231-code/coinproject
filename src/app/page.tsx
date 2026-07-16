@@ -155,31 +155,33 @@ export default function LandingPage() {
                   {/* Fill Area */}
                   <motion.path 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}
-                    d="M0,100 L0,80 L10,75 L20,80 L30,65 L40,70 L50,60 L60,65 L70,55 L80,50 L90,65 L95,45 L100,50 L100,100 Z" 
+                    d="M0,100 L0,80 C 5,80 5,75 10,75 C 15,75 15,80 20,80 C 25,80 25,65 30,65 C 35,65 35,70 40,70 C 45,70 45,60 50,60 C 55,60 55,65 60,65 C 65,65 65,55 70,55 C 75,55 75,50 80,50 C 85,50 85,65 90,65 C 92.5,65 92.5,45 95,45 C 96.5,45 96.5,50 98,50 L98,100 Z" 
                     fill="url(#gradient)"
                   />
                   
                   {/* Chart Line */}
                   <motion.path 
                     initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.5, ease: "easeInOut" }}
-                    d="M0,80 L10,75 L20,80 L30,65 L40,70 L50,60 L60,65 L70,55 L80,50 L90,65 L95,45 L100,50" 
+                    d="M0,80 C 5,80 5,75 10,75 C 15,75 15,80 20,80 C 25,80 25,65 30,65 C 35,65 35,70 40,70 C 45,70 45,60 50,60 C 55,60 55,65 60,65 C 65,65 65,55 70,55 C 75,55 75,50 80,50 C 85,50 85,65 90,65 C 92.5,65 92.5,45 95,45 C 96.5,45 96.5,50 98,50" 
                     fill="none" stroke="#0052FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                   />
                   
-                  {/* Current Price Dot */}
-                  <motion.circle 
-                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
-                    cx="100" cy="50" r="4.5" fill="#0052FF" 
-                  />
+                  {/* Current Price Dot Shadow/Glow */}
                   <motion.circle 
                     initial={{ scale: 0, opacity: 0 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ delay: 2.3, repeat: Infinity, duration: 2 }}
-                    cx="100" cy="50" r="4.5" fill="#0052FF" 
+                    cx="98" cy="50" r="4.5" fill="#0052FF" 
+                  />
+                  
+                  {/* Current Price Dot Core */}
+                  <motion.circle 
+                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
+                    cx="98" cy="50" r="4.5" fill="white" stroke="#0052FF" strokeWidth="2.5" 
                   />
                 </svg>
                 {/* Dotted Line */}
                 <motion.div 
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
-                  className="absolute right-0 top-[50%] bottom-0 border-r-2 border-dashed border-[#0052FF]/30" 
+                  className="absolute right-[2%] top-[50%] bottom-0 border-r-2 border-dashed border-[#0052FF]/30" 
                 />
               </div>
 
