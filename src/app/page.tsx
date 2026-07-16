@@ -1,6 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { Search, Globe, ChevronRight, Menu, Bell } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -59,7 +60,12 @@ export default function LandingPage() {
       <main className="max-w-[1200px] mx-auto px-6 py-12 md:py-24 flex flex-col lg:flex-row items-center justify-between gap-12">
         
         {/* Left Column - Text */}
-        <div className="flex-1 max-w-xl text-center lg:text-left">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex-1 max-w-xl text-center lg:text-left"
+        >
           <h1 className="text-5xl md:text-[64px] leading-[1.1] font-bold mb-6">
             The most trusted<br/>crypto trading app
           </h1>
@@ -69,124 +75,168 @@ export default function LandingPage() {
           <p className="text-[15px] text-gray-400 mb-8 font-medium">
             Deposit GBP into your account for free to get started today
           </p>
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => router.push('/login')}
             className="bg-[#0052FF] hover:bg-[#0045d8] text-white px-8 py-4 rounded-full font-bold text-[17px] w-full sm:w-auto transition-colors"
           >
             Sign up
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Right Column - Phone Mockup */}
-        <div className="flex-1 flex justify-center lg:justify-end w-full">
-          <div className="relative bg-[#0052FF] p-6 rounded-[2.5rem] w-[340px] shadow-2xl">
+        <motion.div 
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="flex-1 flex justify-center lg:justify-end w-full"
+        >
+          <motion.div 
+            animate={{ y: [-8, 8, -8] }}
+            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+            className="relative bg-[#0052FF] p-[14px] rounded-[3rem] w-[340px] shadow-[0_30px_60px_rgba(0,82,255,0.4)] border-4 border-[#0052FF]/50"
+          >
             {/* Phone Screen */}
-            <div className="bg-white text-black h-[680px] w-full rounded-[2rem] overflow-hidden flex flex-col relative shadow-inner">
+            <div className="bg-white text-black h-[680px] w-full rounded-[2.2rem] overflow-hidden flex flex-col relative shadow-inner">
               
+              {/* Dynamic Island */}
+              <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-7 bg-black rounded-full z-50 flex items-center justify-end px-2 shadow-sm">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#111] border border-gray-800" />
+              </div>
+
               {/* Status Bar */}
-              <div className="flex justify-between items-center px-6 pt-4 pb-2 text-[13px] font-semibold">
-                <span>9:41</span>
+              <div className="flex justify-between items-center px-6 pt-5 pb-2 text-[13px] font-semibold relative z-40">
+                <span className="pl-2">9:41</span>
                 <div className="flex gap-1.5 items-center">
                   <div className="w-4 h-3 bg-black mask-cellular rounded-sm" />
                   <div className="w-4 h-3 bg-black mask-wifi rounded-sm" />
-                  <div className="w-6 h-3 border border-black rounded-[4px] p-[1px] relative">
+                  <div className="w-[22px] h-[11px] border border-black rounded-[4px] p-[1px] relative flex">
                     <div className="bg-black h-full w-[80%] rounded-[2px]" />
                   </div>
                 </div>
               </div>
 
               {/* App Header */}
-              <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                className="flex justify-between items-center px-4 py-3 border-b border-gray-100 mt-2"
+              >
                 <Menu className="w-6 h-6 text-gray-700" />
-                <div className="flex-1 mx-4 bg-gray-100 rounded-full flex items-center px-3 py-1.5 text-gray-500">
+                <div className="flex-1 mx-4 bg-gray-100/80 rounded-full flex items-center px-3 py-1.5 text-gray-500">
                   <Search className="w-4 h-4 mr-2" />
-                  <span className="text-sm">Search</span>
+                  <span className="text-sm font-medium">Search</span>
                 </div>
                 <Bell className="w-5 h-5 text-gray-700" />
-              </div>
+              </motion.div>
 
               {/* Balance */}
-              <div className="px-5 py-6">
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
+                className="px-5 py-6"
+              >
                 <div className="flex justify-between items-center mb-1">
-                  <h2 className="text-3xl font-bold">£29,253.14</h2>
+                  <h2 className="text-3xl font-extrabold tracking-tight">£29,253.14</h2>
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                     <ChevronRight className="w-5 h-5 text-gray-600 -rotate-90" />
                   </div>
                 </div>
-                <p className="text-gray-500 text-sm">Thu, Jun 5, 2025</p>
-              </div>
+                <p className="text-gray-500 text-sm font-medium">Thu, Jun 5, 2025</p>
+              </motion.div>
 
               {/* Chart Mockup */}
               <div className="relative h-48 w-full mt-4">
-                {/* Simulated Chart Line */}
                 <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
                   <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#0052FF" stopOpacity="0.2" />
+                      <stop offset="0%" stopColor="#0052FF" stopOpacity="0.25" />
                       <stop offset="100%" stopColor="#0052FF" stopOpacity="0" />
                     </linearGradient>
                   </defs>
-                  <path 
-                    d="M0,80 L10,75 L20,80 L30,65 L40,70 L50,60 L60,65 L70,55 L80,50 L90,65 L95,45 L100,50" 
-                    fill="none" stroke="#0052FF" strokeWidth="1.5"
-                  />
-                  <path 
+                  
+                  {/* Fill Area */}
+                  <motion.path 
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1 }}
                     d="M0,100 L0,80 L10,75 L20,80 L30,65 L40,70 L50,60 L60,65 L70,55 L80,50 L90,65 L95,45 L100,50 L100,100 Z" 
                     fill="url(#gradient)"
                   />
+                  
+                  {/* Chart Line */}
+                  <motion.path 
+                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.5, ease: "easeInOut" }}
+                    d="M0,80 L10,75 L20,80 L30,65 L40,70 L50,60 L60,65 L70,55 L80,50 L90,65 L95,45 L100,50" 
+                    fill="none" stroke="#0052FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  />
+                  
                   {/* Current Price Dot */}
-                  <circle cx="95" cy="45" r="3" fill="#0052FF" />
+                  <motion.circle 
+                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
+                    cx="95" cy="45" r="4" fill="#0052FF" 
+                  />
+                  <motion.circle 
+                    initial={{ scale: 0, opacity: 0 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ delay: 2.3, repeat: Infinity, duration: 2 }}
+                    cx="95" cy="45" r="4" fill="#0052FF" 
+                  />
                 </svg>
                 {/* Dotted Line */}
-                <div className="absolute right-[5%] top-[45%] bottom-0 border-r border-dashed border-[#0052FF]" />
+                <motion.div 
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
+                  className="absolute right-[5%] top-[45%] bottom-0 border-r-2 border-dashed border-[#0052FF]/30" 
+                />
               </div>
 
               {/* Time Tabs */}
-              <div className="flex justify-between px-6 py-4 text-xs font-semibold text-gray-400 border-b border-gray-100">
-                <span>1H</span>
-                <span>1D</span>
-                <span className="text-[#0052FF] bg-blue-50 px-2 py-1 rounded-full">1W</span>
-                <span>1M</span>
-                <span>1Y</span>
-                <span>ALL</span>
-              </div>
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
+                className="flex justify-between px-6 py-4 text-xs font-bold text-gray-400 border-b border-gray-100 mt-2"
+              >
+                <span className="hover:text-gray-800 cursor-pointer transition-colors">1H</span>
+                <span className="hover:text-gray-800 cursor-pointer transition-colors">1D</span>
+                <span className="text-[#0052FF] bg-[#0052FF]/10 px-3 py-1 rounded-full">1W</span>
+                <span className="hover:text-gray-800 cursor-pointer transition-colors">1M</span>
+                <span className="hover:text-gray-800 cursor-pointer transition-colors">1Y</span>
+                <span className="hover:text-gray-800 cursor-pointer transition-colors">ALL</span>
+              </motion.div>
 
               {/* Asset List */}
-              <div className="flex flex-col mt-2">
-                <div className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 cursor-pointer">
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.4 }}
+                className="flex flex-col mt-2"
+              >
+                <div className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 cursor-pointer transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50">
+                    <div className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 shadow-sm">
                        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-700">
                          <path d="M4 12a8 8 0 1116 0 8 8 0 01-16 0zM12 8v8M9 12h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                        </svg>
                     </div>
-                    <span className="font-bold">Crypto</span>
+                    <span className="font-extrabold text-[15px]">Crypto</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">£12,370.00</span>
+                    <span className="font-bold text-[15px]">£12,370.00</span>
                     <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 cursor-pointer">
+                <div className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 cursor-pointer transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50">
+                    <div className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center bg-gray-50 shadow-sm">
                        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-gray-700">
                          <path d="M12 4v16M8 8l4-4 4 4M8 16l4 4 4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
                        </svg>
                     </div>
-                    <span className="font-bold">Cash</span>
+                    <span className="font-extrabold text-[15px]">Cash</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">£18,165.80</span>
+                    <span className="font-bold text-[15px]">£18,165.80</span>
                     <ChevronRight className="w-4 h-4 text-gray-400" />
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </main>
 
       <footer className="text-center py-8 text-xs text-gray-500">
