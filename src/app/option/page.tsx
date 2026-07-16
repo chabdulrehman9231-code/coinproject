@@ -112,13 +112,13 @@ function OptionContent() {
         <div className="flex bg-[#1a1a1a] rounded-full p-1">
           <button 
             onClick={() => setTradeMode('option')}
-            className={`px-5 py-1.5 rounded-full text-sm font-bold shadow-sm transition-colors ${tradeMode === 'option' ? 'bg-[#0066FF] text-white' : 'text-gray-400 hover:text-white'}`}
+            className={`px-5 py-1.5 rounded-full text-sm font-bold shadow-sm transition-colors ${tradeMode === 'option' ? 'bg-[#0052FF] text-white' : 'text-gray-400 hover:text-white'}`}
           >
             Option
           </button>
           <button 
             onClick={() => setTradeMode('futures')}
-            className={`px-5 py-1.5 rounded-full text-sm font-bold shadow-sm transition-colors ${tradeMode === 'futures' ? 'bg-[#0066FF] text-white' : 'text-gray-400 hover:text-white'}`}
+            className={`px-5 py-1.5 rounded-full text-sm font-bold shadow-sm transition-colors ${tradeMode === 'futures' ? 'bg-[#0052FF] text-white' : 'text-gray-400 hover:text-white'}`}
           >
             Futures
           </button>
@@ -181,7 +181,7 @@ function OptionContent() {
                 <button 
                   key={time}
                   onClick={() => setActiveTimeframe(val)}
-                  className={`${activeTimeframe === val ? 'text-[#0066FF]' : 'hover:text-gray-300'}`}
+                  className={`${activeTimeframe === val ? 'text-[#0052FF]' : 'hover:text-gray-300'}`}
                 >
                   {time}
                 </button>
@@ -317,7 +317,7 @@ function OptionContent() {
               </button>
 
               <div className="flex gap-4 mt-4 text-[13px] border-b border-[#1a1a1a]">
-                <button className="text-[#0066FF] border-b-2 border-[#0066FF] pb-2 font-medium">Positions</button>
+                <button className="text-[#0052FF] border-b-2 border-[#0052FF] pb-2 font-medium">Positions</button>
                 <button className="text-gray-500 hover:text-gray-300 pb-2 font-medium">History</button>
               </div>
             </div>
@@ -338,7 +338,7 @@ function OptionContent() {
 
 export default function OptionPage() {
   return (
-    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-[#0066FF]">Loading...</div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center bg-[#0a0a0a] text-[#0052FF]">Loading...</div>}>
       <OptionContent />
     </Suspense>
   );

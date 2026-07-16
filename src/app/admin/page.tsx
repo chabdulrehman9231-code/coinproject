@@ -72,25 +72,25 @@ export default function AdminDashboard() {
       {/* Sidebar Navigation (Desktop First approach, but responsive) */}
       <div className="w-64 bg-[#111] border-r border-[#222] hidden md:flex flex-col">
         <div className="p-6 border-b border-[#222]">
-          <h1 className="text-xl font-extrabold text-[#0066FF]">Super Admin</h1>
+          <h1 className="text-xl font-extrabold text-[#0052FF]">Super Admin</h1>
           <p className="text-xs text-gray-500 mt-1">Coinbase Trrades</p>
         </div>
         <nav className="flex-1 py-4">
           <button 
             onClick={() => setActiveTab('overview')}
-            className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'overview' ? 'bg-[#0066FF]/10 text-[#0066FF] border-r-2 border-[#0066FF]' : 'text-gray-400 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'overview' ? 'bg-[#0052FF]/10 text-[#0052FF] border-r-2 border-[#0052FF]' : 'text-gray-400 hover:text-white'}`}
           >
             <Activity className="w-5 h-5" /> Overview
           </button>
           <button 
             onClick={() => setActiveTab('users')}
-            className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'users' ? 'bg-[#0066FF]/10 text-[#0066FF] border-r-2 border-[#0066FF]' : 'text-gray-400 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'users' ? 'bg-[#0052FF]/10 text-[#0052FF] border-r-2 border-[#0052FF]' : 'text-gray-400 hover:text-white'}`}
           >
             <Users className="w-5 h-5" /> User Management
           </button>
           <button 
             onClick={() => setActiveTab('funds')}
-            className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'funds' ? 'bg-[#0066FF]/10 text-[#0066FF] border-r-2 border-[#0066FF]' : 'text-gray-400 hover:text-white'}`}
+            className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'funds' ? 'bg-[#0052FF]/10 text-[#0052FF] border-r-2 border-[#0052FF]' : 'text-gray-400 hover:text-white'}`}
           >
             <DollarSign className="w-5 h-5" /> Funds Manager
           </button>
@@ -106,15 +106,15 @@ export default function AdminDashboard() {
       <div className="flex-1 overflow-y-auto">
         {/* Mobile Header */}
         <div className="md:hidden p-4 border-b border-[#222] flex items-center justify-between bg-[#111]">
-          <h1 className="text-lg font-bold text-[#0066FF]">Admin Panel</h1>
+          <h1 className="text-lg font-bold text-[#0052FF]">Admin Panel</h1>
           <button onClick={handleLogout} className="text-red-500"><LogOut className="w-5 h-5" /></button>
         </div>
 
         {/* Mobile Tabs */}
         <div className="md:hidden flex border-b border-[#222] bg-[#111] overflow-x-auto scrollbar-hide text-sm">
-          <button onClick={() => setActiveTab('overview')} className={`px-4 py-3 whitespace-nowrap ${activeTab === 'overview' ? 'text-[#0066FF] border-b-2 border-[#0066FF]' : 'text-gray-400'}`}>Overview</button>
-          <button onClick={() => setActiveTab('users')} className={`px-4 py-3 whitespace-nowrap ${activeTab === 'users' ? 'text-[#0066FF] border-b-2 border-[#0066FF]' : 'text-gray-400'}`}>Users</button>
-          <button onClick={() => setActiveTab('funds')} className={`px-4 py-3 whitespace-nowrap ${activeTab === 'funds' ? 'text-[#0066FF] border-b-2 border-[#0066FF]' : 'text-gray-400'}`}>Funds</button>
+          <button onClick={() => setActiveTab('overview')} className={`px-4 py-3 whitespace-nowrap ${activeTab === 'overview' ? 'text-[#0052FF] border-b-2 border-[#0052FF]' : 'text-gray-400'}`}>Overview</button>
+          <button onClick={() => setActiveTab('users')} className={`px-4 py-3 whitespace-nowrap ${activeTab === 'users' ? 'text-[#0052FF] border-b-2 border-[#0052FF]' : 'text-gray-400'}`}>Users</button>
+          <button onClick={() => setActiveTab('funds')} className={`px-4 py-3 whitespace-nowrap ${activeTab === 'funds' ? 'text-[#0052FF] border-b-2 border-[#0052FF]' : 'text-gray-400'}`}>Funds</button>
         </div>
 
         <div className="p-4 md:p-8">
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-[#161616] p-6 rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3 text-gray-400 mb-2">
-                    <Users className="w-5 h-5 text-[#0066FF]" /> Total Users
+                    <Users className="w-5 h-5 text-[#0052FF]" /> Total Users
                   </div>
                   <div className="text-3xl font-bold">{users.length}</div>
                 </div>
@@ -170,7 +170,7 @@ export default function AdminDashboard() {
                         <tr key={u.id} className="hover:bg-[#1a1a1a] transition-colors">
                           <td className="p-4 text-gray-200">{u.email}</td>
                           <td className="p-4">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${u.role === 'superadmin' ? 'bg-[#0066FF]/20 text-[#0066FF]' : 'bg-gray-800 text-gray-300'}`}>
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${u.role === 'superadmin' ? 'bg-[#0052FF]/20 text-[#0052FF]' : 'bg-gray-800 text-gray-300'}`}>
                               {u.role}
                             </span>
                           </td>
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
                             <button className="p-2 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors" title="Lock Account">
                               <Lock className="w-4 h-4" />
                             </button>
-                            <button className="px-3 py-1.5 rounded bg-[#0066FF]/10 hover:bg-[#0066FF]/20 text-[#0066FF] text-xs font-bold transition-colors">
+                            <button className="px-3 py-1.5 rounded bg-[#0052FF]/10 hover:bg-[#0052FF]/20 text-[#0052FF] text-xs font-bold transition-colors">
                               Edit Balance
                             </button>
                           </td>

@@ -126,17 +126,14 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3">
           <div 
             onClick={() => setIsDrawerOpen(true)}
-            className="w-8 h-8 rounded-full border border-[#0066FF] flex items-center justify-center cursor-pointer hover:bg-[#0066FF]/10 transition-colors"
+            className="w-8 h-8 rounded-full border border-[#0052FF] flex items-center justify-center cursor-pointer hover:bg-[#0052FF]/10 transition-colors"
           >
-            <User className="w-5 h-5 text-[#0066FF]" />
+            <User className="w-5 h-5 text-[#0052FF]" />
           </div>
         </div>
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-           <svg 
-            width="28" height="28" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"
-           >
-              <path d="M24 8L8 36H40L24 8Z" fill="#0066FF" opacity="0.8"/>
-              <path d="M24 16L14 36H34L24 16Z" fill="#00C29A" opacity="0.9"/>
+           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm0-10.667c2.946 0 5.333-2.387 5.333-5.333S18.946 10.667 16 10.667 10.667 13.054 10.667 16s2.387 5.333 5.333 5.333z" fill="#0052FF"/>
            </svg>
         </div>
         <div className="relative">
@@ -150,7 +147,7 @@ export default function DashboardPage() {
         
         <div className="px-4 mt-2">
         <div className="relative">
-          <div className="w-full h-[140px] rounded-[20px] bg-gradient-to-br from-[#0066FF] to-[#3385ff] p-6 relative overflow-hidden flex flex-col justify-center shadow-lg shadow-[#0066FF]/20">
+          <div className="w-full h-[140px] rounded-[20px] bg-gradient-to-br from-[#0052FF] to-[#3385ff] p-6 relative overflow-hidden flex flex-col justify-center shadow-lg shadow-[#0052FF]/20">
             <h2 className="text-3xl font-extrabold text-white z-10 leading-tight tracking-wide drop-shadow-sm">
               Coinbase<br />Trrades
             </h2>
@@ -158,21 +155,21 @@ export default function DashboardPage() {
             
             {/* Abstract background shapes */}
             <div className="absolute right-[-40px] top-[-40px] w-48 h-48 bg-white/10 rounded-full blur-2xl" />
-            <div className="absolute left-[-20px] bottom-[-20px] w-32 h-32 bg-[#0066FF]/40 rounded-full blur-xl" />
+            <div className="absolute left-[-20px] bottom-[-20px] w-32 h-32 bg-[#0052FF]/40 rounded-full blur-xl" />
             
             {/* Premium Logo on the right */}
             <div className="absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 bg-white/10 rounded-2xl rotate-12 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
                <svg 
                 width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"
                >
-                  <path d="M24 8L8 36H40L24 8Z" fill="#0066FF" opacity="1"/>
-                  <path d="M24 16L14 36H34L24 16Z" fill="#0066FF" opacity="1"/>
+                  <path d="M24 8L8 36H40L24 8Z" fill="#0052FF" opacity="1"/>
+                  <path d="M24 16L14 36H34L24 16Z" fill="#0052FF" opacity="1"/>
                </svg>
             </div>
           </div>
           
           <div className="flex justify-center gap-1.5 mt-3">
-            <div className="w-5 h-1.5 rounded-full bg-[#0066FF] transition-all" />
+            <div className="w-5 h-1.5 rounded-full bg-[#0052FF] transition-all" />
             <div className="w-1.5 h-1.5 rounded-full bg-gray-600 transition-all" />
             <div className="w-1.5 h-1.5 rounded-full bg-gray-600 transition-all" />
           </div>
@@ -192,10 +189,10 @@ export default function DashboardPage() {
                   <span className="text-[10px] text-gray-400 font-medium mb-1">
                     {data.baseAsset}/USDT
                   </span>
-                  <span className={`text-lg font-bold ${data.isPositive ? 'text-[#0066FF]' : 'text-red-500'}`}>
+                  <span className={`text-lg font-bold ${data.isPositive ? 'text-[#0052FF]' : 'text-red-500'}`}>
                     {data.price}
                   </span>
-                  <span className={`text-xs font-medium ${data.isPositive ? 'text-[#0066FF]' : 'text-red-500'} mt-0.5`}>
+                  <span className={`text-xs font-medium ${data.isPositive ? 'text-[#0052FF]' : 'text-red-500'} mt-0.5`}>
                     {data.isPositive && data.price !== '...' ? '+' : ''}{data.change}%
                   </span>
                 </div>
@@ -221,7 +218,7 @@ export default function DashboardPage() {
                 onClick={() => action.path ? router.push(action.path) : null}
               >
                 <div className="w-12 h-12 rounded-full bg-[#161616] flex items-center justify-center">
-                  <Icon className="h-5 w-5 text-[#0066FF]" />
+                  <Icon className="h-5 w-5 text-[#0052FF]" />
                 </div>
                 {action.badge && (
                   <div className="absolute top-0 right-1 w-3 h-3 bg-red-500 rounded-full border border-[#0a0a0a]" />
@@ -237,7 +234,7 @@ export default function DashboardPage() {
         <div className="px-4 sticky top-0 bg-[#0a0a0a] z-10">
           <div className="flex items-center justify-center py-3 relative">
             <div className="absolute w-full h-[1px] bg-[#1a1a1a] top-1/2 -translate-y-1/2" />
-            <h3 className="text-sm font-bold text-[#0066FF] bg-[#0a0a0a] px-3 relative z-10">Markets</h3>
+            <h3 className="text-sm font-bold text-[#0052FF] bg-[#0a0a0a] px-3 relative z-10">Markets</h3>
           </div>
           
           <div className="relative mb-4">
@@ -247,7 +244,7 @@ export default function DashboardPage() {
                 placeholder="Search coin (e.g. BTC)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#161616] border border-white/5 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#0066FF] transition-colors"
+                className="w-full bg-[#161616] border border-white/5 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#0052FF] transition-colors"
               />
           </div>
 

@@ -117,7 +117,7 @@ export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRou
             placeholder="Search coin (e.g. BTC)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#161616] border border-[#1a1a1a] rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#0066FF] transition-colors"
+            className="w-full bg-[#161616] border border-[#1a1a1a] rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#0052FF] transition-colors"
           />
         </div>
       </div>

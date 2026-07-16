@@ -47,19 +47,19 @@ export default function AssetsPage() {
         {/* Tabs */}
         <div className="flex px-4 border-b border-[#1a1a1a] text-sm font-medium">
           <button 
-            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'currency' ? 'text-white border-b-2 border-[#0066FF]' : 'text-gray-500'}`}
+            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'currency' ? 'text-white border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
             onClick={() => setActiveTab('currency')}
           >
             Currency Account
           </button>
           <button 
-            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'contract' ? 'text-white border-b-2 border-[#0066FF]' : 'text-gray-500'}`}
+            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'contract' ? 'text-white border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
             onClick={() => setActiveTab('contract')}
           >
             Contract Account
           </button>
           <button 
-            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'options' ? 'text-white border-b-2 border-[#0066FF]' : 'text-gray-500'}`}
+            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'options' ? 'text-white border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
             onClick={() => setActiveTab('options')}
           >
             Options Account
@@ -71,34 +71,34 @@ export default function AssetsPage() {
           <div className="text-gray-400 text-sm mb-1">Total Assets(USDT)</div>
           <div className="text-4xl font-extrabold tracking-tight">{balance}</div>
           <div className="text-gray-500 text-sm mt-1">≈{balance} USD</div>
-          <div className="text-[#0066FF] text-sm font-bold mt-4 tracking-wider">UID: {uid}</div>
+          <div className="text-[#0052FF] text-sm font-bold mt-4 tracking-wider">UID: {uid}</div>
         </div>
 
         {/* Asset Valuations Card */}
         <div className="mx-4 bg-[#161616] rounded-2xl p-5 shadow-lg border border-white/5">
           <div className="flex justify-between items-center mb-1">
             <div className="text-gray-400 text-[13px]">Asset valuations (USDT)</div>
-            <div className="bg-[#0066FF] text-white text-xs font-bold px-3 py-1.5 rounded-lg">Currency</div>
+            <div className="bg-[#0052FF] text-white text-xs font-bold px-3 py-1.5 rounded-lg">Currency</div>
           </div>
-          <div className="text-[#0066FF] text-3xl font-extrabold">{balance}</div>
+          <div className="text-[#0052FF] text-3xl font-extrabold">{balance}</div>
           <div className="text-gray-500 text-[13px] mt-1">Available</div>
 
           <div className="grid grid-cols-3 gap-4 mt-6 border-t border-[#222] pt-6">
             <button className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0066FF]/30">
-                <Download className="w-5 h-5 text-[#0066FF]" />
+              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0052FF]/30">
+                <Download className="w-5 h-5 text-[#0052FF]" />
               </div>
               <span className="text-xs font-bold">Deposit</span>
             </button>
             <button className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0066FF]/30">
-                <Upload className="w-5 h-5 text-[#0066FF]" />
+              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0052FF]/30">
+                <Upload className="w-5 h-5 text-[#0052FF]" />
               </div>
               <span className="text-xs font-bold">Withdraw</span>
             </button>
             <button className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0066FF]/30">
-                <Maximize2 className="w-5 h-5 text-[#0066FF]" />
+              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0052FF]/30">
+                <Maximize2 className="w-5 h-5 text-[#0052FF]" />
               </div>
               <span className="text-xs font-bold">Transfer</span>
             </button>

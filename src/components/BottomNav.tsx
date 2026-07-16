@@ -22,11 +22,11 @@ export default function BottomNav() {
           <Link 
             key={item.name} 
             href={item.path}
-            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive ? 'text-[#0066FF]' : 'text-gray-500 hover:text-gray-300'}`}
+            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive ? 'text-[#0052FF]' : 'text-gray-500 hover:text-gray-300'}`}
           >
             <Icon className="h-6 w-6 mb-1" />
             <span className="text-[11px] font-medium">{item.name}</span>
-            {isActive && <div className="absolute bottom-1 w-1 h-1 rounded-full bg-[#0066FF]" />}
+            {isActive && <div className="absolute bottom-1 w-1 h-1 rounded-full bg-[#0052FF]" />}
           </Link>
         );
       })}

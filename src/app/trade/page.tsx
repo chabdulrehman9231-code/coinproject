@@ -156,7 +156,7 @@ function TradeContent() {
             <button 
               key={time}
               onClick={() => setActiveTimeframe(time)}
-              className={`${activeTimeframe === time ? 'text-[#0066FF]' : 'hover:text-gray-300'}`}
+              className={`${activeTimeframe === time ? 'text-[#0052FF]' : 'hover:text-gray-300'}`}
             >
               {time}
             </button>
@@ -172,7 +172,7 @@ function TradeContent() {
         <div className="flex px-4 shrink-0 border-b border-[#1a1a1a]">
           <div className="flex-1 flex justify-center">
             <button 
-              className={`py-3 text-[15px] font-medium px-4 ${activeTab === 'trade' ? 'text-[#0066FF] border-b-2 border-[#0066FF]' : 'text-gray-500'}`}
+              className={`py-3 text-[15px] font-medium px-4 ${activeTab === 'trade' ? 'text-[#0052FF] border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
               onClick={() => setActiveTab('trade')}
             >
               Trade
