@@ -2,6 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { Search, Globe, ChevronRight, Menu, Bell } from 'lucide-react';
 import { motion } from 'framer-motion';
+import LiveCryptoCard from '@/components/LiveCryptoCard';
 
 export default function LandingPage() {
   const router = useRouter();
@@ -259,6 +260,11 @@ export default function LandingPage() {
           </div>
         </motion.div>
       </main>
+
+      {/* Live Crypto Card Section */}
+      <section className="max-w-[1200px] mx-auto px-6 pb-12 md:pb-24">
+        <LiveCryptoCard />
+      </section>
 
       <footer className="text-center py-8 text-xs text-gray-500">
         Based on results of <a href="#" className="underline hover:text-gray-300">2025 International YouGov Brand Research &gt;</a>
