@@ -54,7 +54,6 @@ export default function LiveCryptoCard() {
 
         if (Array.isArray(dataArray)) {
           setTickers(prev => {
-            if (Object.keys(prev).length === 0) return prev;
             const next = { ...prev };
             let updated = false;
             
