@@ -64,21 +64,18 @@ export default function LandingPage() {
           className="flex-1 max-w-xl text-center lg:text-left"
         >
           <h1 className="text-5xl md:text-[64px] leading-[1.1] font-bold mb-6">
-            The most trusted<br/>crypto trading app
+            Trade Crypto<br/><span className="text-[#0052FF]">Beyond Limits</span>
           </h1>
-          <p className="text-[17px] md:text-[20px] text-gray-300 mb-6 leading-relaxed">
-            Coinbase is the most trusted platform in the UK for buying, selling and trading crypto.
-          </p>
-          <p className="text-[15px] text-gray-400 mb-8 font-medium">
-            Deposit GBP into your account for free to get started today
+          <p className="text-[17px] md:text-[20px] text-gray-300 mb-8 leading-relaxed">
+            Professional spot & contract trading, secure multi-network wallets, real-time charts, and 24/7 VIP support — all in one premium platform.
           </p>
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => router.push('/login')}
-            className="bg-[#0052FF] hover:bg-[#0045d8] text-white px-8 py-4 rounded-full font-bold text-[17px] w-full sm:w-auto transition-colors"
+            className="bg-[#0052FF] hover:bg-[#0045d8] text-white px-8 py-4 rounded-full font-bold text-[17px] w-full sm:w-auto transition-colors flex items-center justify-center gap-2 mx-auto lg:mx-0"
           >
-            Sign up
+            Start Trading <ChevronRight className="w-5 h-5" />
           </motion.button>
         </motion.div>
 
