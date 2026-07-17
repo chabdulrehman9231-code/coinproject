@@ -893,37 +893,55 @@ export default function AdminDashboard() {
               <h2 className="text-2xl font-bold mb-6">Live Trades Manager</h2>
               <div className="bg-[#111] rounded-2xl border border-[#222] overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
-                    <thead className="bg-[#161616] text-gray-400 border-b border-[#222]">
+                  <table className="w-full text-left text-sm whitespace-nowrap block md:table">
+                    <thead className="hidden md:table-header-group bg-[#161616] text-gray-400 border-b border-[#222]">
                       <tr><th className="p-4">User</th><th className="p-4">Asset</th><th className="p-4">Entry</th><th className="p-4">Amount</th><th className="p-4">Direction</th><th className="p-4">Time</th><th className="p-4 text-right">Resolve</th></tr>
                     </thead>
-                    <tbody className="divide-y divide-[#222]">
+                    <tbody className="divide-y divide-[#222] flex flex-col md:table-row-group">
                       {activeTrades.map(t => {
                         const userName = t.users?.full_name || t.users?.name || t.users?.email?.split('@')[0] || 'Unknown';
                         const userEmail = t.users?.email || '';
                         return (
-                          <tr key={t.id} className="hover:bg-[#1a1a1a]">
-                            <td className="p-4">
-                              <div className="font-bold text-white capitalize">{userName}</div>
-                              <div className="text-xs text-gray-500">{userEmail}</div>
+                          <tr key={t.id} className="flex flex-col md:table-row p-4 md:p-0 hover:bg-[#1a1a1a]">
+                            <td className="py-2 md:p-4 flex justify-between md:table-cell items-center">
+                              <span className="md:hidden text-gray-500 font-semibold">User:</span>
+                              <div className="text-right md:text-left">
+                                <div className="font-bold text-white capitalize">{userName}</div>
+                                <div className="text-xs text-gray-500">{userEmail}</div>
+                              </div>
                             </td>
-                            <td className="p-4 font-bold">{t.symbol}</td>
-                            <td className="p-4">${t.entry_price}</td>
-                            <td className="p-4 font-bold">${t.amount}</td>
-                            <td className="p-4">
+                            <td className="py-2 md:p-4 flex justify-between md:table-cell items-center">
+                              <span className="md:hidden text-gray-500 font-semibold">Asset:</span>
+                              <span className="font-bold">{t.symbol}</span>
+                            </td>
+                            <td className="py-2 md:p-4 flex justify-between md:table-cell items-center">
+                              <span className="md:hidden text-gray-500 font-semibold">Entry:</span>
+                              <span>${t.entry_price}</span>
+                            </td>
+                            <td className="py-2 md:p-4 flex justify-between md:table-cell items-center">
+                              <span className="md:hidden text-gray-500 font-semibold">Amount:</span>
+                              <span className="font-bold">${t.amount}</span>
+                            </td>
+                            <td className="py-2 md:p-4 flex justify-between md:table-cell items-center">
+                              <span className="md:hidden text-gray-500 font-semibold">Direction:</span>
                               <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${t.direction?.toUpperCase() === 'UP' ? 'bg-[#00C29A]/20 text-[#00C29A]' : 'bg-red-500/20 text-red-500'}`}>
                                 {t.direction}
                               </span>
                             </td>
-                            <td className="p-4 text-gray-400">{new Date(t.created_at).toLocaleTimeString()}</td>
-                            <td className="p-4 flex justify-end gap-2">
-                              <button onClick={() => setResolvingTrade({id: t.id, result: 'won', tradeInfo: t})} className="px-4 py-2 bg-[#00C29A]/10 text-[#00C29A] rounded-lg font-bold hover:bg-[#00C29A]/20">Win</button>
-                              <button onClick={() => setResolvingTrade({id: t.id, result: 'lost', tradeInfo: t})} className="px-4 py-2 bg-red-500/10 text-red-500 rounded-lg font-bold hover:bg-red-500/20">Loss</button>
+                            <td className="py-2 md:p-4 flex justify-between md:table-cell items-center text-gray-400">
+                              <span className="md:hidden text-gray-500 font-semibold">Time:</span>
+                              <span>{new Date(t.created_at).toLocaleTimeString()}</span>
+                            </td>
+                            <td className="py-3 md:p-4 flex justify-end gap-2 md:table-cell mt-2 md:mt-0 border-t border-[#222] md:border-none">
+                              <div className="flex justify-end gap-2 w-full md:w-auto">
+                                <button onClick={() => setResolvingTrade({id: t.id, result: 'won', tradeInfo: t})} className="flex-1 md:flex-none px-4 py-2 bg-[#00C29A]/10 text-[#00C29A] rounded-lg font-bold hover:bg-[#00C29A]/20">Win</button>
+                                <button onClick={() => setResolvingTrade({id: t.id, result: 'lost', tradeInfo: t})} className="flex-1 md:flex-none px-4 py-2 bg-red-500/10 text-red-500 rounded-lg font-bold hover:bg-red-500/20">Loss</button>
+                              </div>
                             </td>
                           </tr>
                         );
                       })}
-                      {activeTrades.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-500">No active trades.</td></tr>}
+                      {activeTrades.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-gray-500 block md:table-cell">No active trades.</td></tr>}
                     </tbody>
                   </table>
                 </div>
