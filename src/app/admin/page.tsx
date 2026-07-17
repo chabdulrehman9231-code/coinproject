@@ -46,7 +46,7 @@ export default function AdminDashboard() {
   const [withdrawals, setWithdrawals] = useState<any[]>([]);
   const [selectedProof, setSelectedProof] = useState<any>(null);
   const [activeTrades, setActiveTrades] = useState<any[]>([]);
-  const [resolvingTrade, setResolvingTrade] = useState<{id: string, result: 'win'|'lost', tradeInfo: any}|null>(null);
+  const [resolvingTrade, setResolvingTrade] = useState<{id: string, result: 'won'|'lost', tradeInfo: any}|null>(null);
   
   const [chatUsers, setChatUsers] = useState<any[]>([]);
   const [selectedChatUser, setSelectedChatUser] = useState<any>(null);
@@ -135,15 +135,15 @@ export default function AdminDashboard() {
       const res = await getAdminDashboardData();
       if (res.success) setDashboardData(res.data);
       const wRes = await getAdminWallets();
-      if (wRes.success) setWallets(wRes.data);
+      if (wRes.success) setWallets(wRes.data || []);
       const dRes = await getDepositsAdmin();
-      if (dRes.success) setDeposits(dRes.data);
+      if (dRes.success) setDeposits(dRes.data || []);
       const withRes = await getWithdrawalsAdmin();
-      if (withRes.success) setWithdrawals(withRes.data);
+      if (withRes.success) setWithdrawals(withRes.data || []);
       const tRes = await getActiveOptionTradesAdmin();
-      if (tRes.success) setActiveTrades(tRes.data);
+      if (tRes.success) setActiveTrades(tRes.data || []);
       const cRes = await getChatUsers();
-      if (cRes.success) setChatUsers(cRes.data);
+      if (cRes.success) setChatUsers(cRes.data || []);
     } catch (error) {
       console.error("fetchAllData error:", error);
     }
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
     setSelectedUserDetail(id);
     setIsUserDetailLoading(true);
     const res = await getUserDetailsAdmin(id);
-    if (res.success) {
+    if (res.success && res.data) {
       setUserDetailData(res.data);
       setEditCreditScore(res.data.credit_score ?? 700);
       setEditVipLevel(res.data.vip_level || 'Bronze');
@@ -233,47 +233,47 @@ export default function AdminDashboard() {
     form.reset();
     
     const wRes = await getAdminWallets();
-    if (wRes.success) setWallets(wRes.data);
+    if (wRes.success) setWallets(wRes.data || []);
   };
   const handleDeleteWallet = async (id: string) => {
     await deleteAdminWallet(id);
     const wRes = await getAdminWallets();
-    if (wRes.success) setWallets(wRes.data);
+    if (wRes.success) setWallets(wRes.data || []);
   };
 
   // --- Funds Actions ---
   const handleApproveDeposit = async (id: string) => {
     await approveDeposit(id);
     const dRes = await getDepositsAdmin();
-    if (dRes.success) setDeposits(dRes.data);
+    if (dRes.success) setDeposits(dRes.data || []);
   };
   const handleRejectDeposit = async (id: string) => {
     await rejectDeposit(id);
     const dRes = await getDepositsAdmin();
-    if (dRes.success) setDeposits(dRes.data);
+    if (dRes.success) setDeposits(dRes.data || []);
   };
   const handleReverseDeposit = async (id: string) => {
     await reverseDeposit(id);
     const dRes = await getDepositsAdmin();
-    if (dRes.success) setDeposits(dRes.data);
+    if (dRes.success) setDeposits(dRes.data || []);
   };
 
   const handleApproveWithdrawal = async (id: string) => {
     await approveWithdrawal(id);
     const withRes = await getWithdrawalsAdmin();
-    if (withRes.success) setWithdrawals(withRes.data);
+    if (withRes.success) setWithdrawals(withRes.data || []);
   };
   const handleRejectWithdrawal = async (id: string) => {
     await rejectWithdrawal(id);
     const withRes = await getWithdrawalsAdmin();
-    if (withRes.success) setWithdrawals(withRes.data);
+    if (withRes.success) setWithdrawals(withRes.data || []);
   };
 
   // --- Trades Actions ---
   const handleResolveTrade = async (id: string, result: 'won' | 'lost') => {
     await resolveOptionTradeByAdmin(id, result);
     const tRes = await getActiveOptionTradesAdmin();
-    if (tRes.success) setActiveTrades(tRes.data);
+    if (tRes.success) setActiveTrades(tRes.data || []);
   };
 
   // --- Chat Actions ---
@@ -287,7 +287,7 @@ export default function AdminDashboard() {
     try {
       const res = await getAdminMessages(userId);
       if (res.success) {
-        setChatMessages(res.data);
+        setChatMessages(res.data || []);
         setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       }
     } catch (error) {
