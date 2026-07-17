@@ -50,7 +50,10 @@ export async function sendOtpEmail(email: string, fullName: string) {
                   <tr>
                     <td align="center" style="padding: 40px 0 30px 0; border-bottom: 1px solid #222222;">
                       <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-align: center;">
-                        <div style="display: inline-block; width: 32px; height: 32px; background-color: #0052FF; border-radius: 50%; color: white; text-align: center; line-height: 32px; font-weight: bold; font-family: Arial, sans-serif; font-size: 20px; vertical-align: middle; margin-right: 8px;">C</div>
+                        <div style="display: inline-block; width: 11px; height: 11px; border: 10px solid #0052FF; border-radius: 50%; vertical-align: middle; margin-right: 10px; box-sizing: content-box;"></div>
+                        <span style="color: #0052FF; vertical-align: middle;">CoinBase</span>
+                        <span style="color: #ffffff; vertical-align: middle;"> Trades</span>
+                      </div>
                         <span style="color: #0052FF; vertical-align: middle;">CoinBase</span>
                         <span style="color: #ffffff; vertical-align: middle;"> Trades</span>
                       </div>
