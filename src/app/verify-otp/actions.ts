@@ -49,8 +49,8 @@ export async function sendOtpEmail(email: string, fullName: string) {
                   <!-- Header -->
                   <tr>
                     <td align="center" style="padding: 40px 0 30px 0; border-bottom: 1px solid #222222;">
-                      <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; display: inline-flex; align-items: center; justify-content: center;">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzIgMzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE2IDMyQzcuMTYzIDMyIDAgMjQuODM3IDAgMTZTNy4xNjMgMCAxNiAwczE2IDcuMTYzIDE2IDE2LTcuMTYzIDE2LTE2IDE2em0wLTEwLjY2N2MyLjk0NiAwIDUuMzMzLTIuMzg3IDUuMzMzLTUuMzMzUzE4Ljk0NiAxMC42NjcgMTYgMTAuNjY3IDEwLjY2NyAxMy4wNTQgMTAuNjY3IDE2czIuMzg3IDUuMzMzIDUuMzMzIDUuMzMzeiIgZmlsbD0iIzAwNTJGRiIvPjwvc3ZnPg==" width="32" height="32" alt="CoinBase Trades Logo" style="vertical-align: middle; margin-right: 12px; display: inline-block;" />
+                      <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-align: center;">
+                        <div style="display: inline-block; width: 32px; height: 32px; background-color: #0052FF; border-radius: 50%; color: white; text-align: center; line-height: 32px; font-weight: bold; font-family: Arial, sans-serif; font-size: 20px; vertical-align: middle; margin-right: 8px;">C</div>
                         <span style="color: #0052FF; vertical-align: middle;">CoinBase</span>
                         <span style="color: #ffffff; vertical-align: middle;"> Trades</span>
                       </div>
