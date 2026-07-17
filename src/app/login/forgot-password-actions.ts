@@ -6,32 +6,39 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function sendOtpEmail(email: string, fullName: string) {
+export async function sendResetOtp(email: string) {
   try {
+    // Check if user exists
+    const { data: user, error: userError } = await supabaseAdmin
+      .from('users')
+      .select('id, full_name')
+      .eq('email', email)
+      .single();
+
+    if (userError || !user) {
+      // Don't leak whether the email exists or not for security, just return success generically
+      // or we can throw an error depending on UX preference. Let's throw error for better UX in this demo.
+      throw new Error("User with this email not found.");
+    }
+
     // Generate a 6 digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // The users row is created by a DB trigger on auth.users insert.
-    // Give it a tiny moment to exist.
-    await new Promise(res => setTimeout(res, 1000));
-
     // Store in database
-    const { data: updated, error } = await supabaseAdmin
+    const { error: updateError } = await supabaseAdmin
       .from('users')
-      .update({ otp_code: otp, is_verified: false })
-      .eq('email', email)
-      .select();
+      .update({ otp_code: otp })
+      .eq('email', email);
       
-    if (error) throw error;
-    if (!updated || updated.length === 0) {
-      throw new Error("User record not found in database. Please try again.");
-    }
+    if (updateError) throw updateError;
+
+    const fullName = user.full_name || 'User';
 
     // Send email
     await resend.emails.send({
       from: 'CoinBase Trades <noreply@coinbasetrades.com>',
       to: [email],
-      subject: 'Your Verification Code',
+      subject: 'Reset Your Password',
       html: `
         <!DOCTYPE html>
         <html>
@@ -40,7 +47,7 @@ export async function sendOtpEmail(email: string, fullName: string) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <meta name="color-scheme" content="light dark">
           <meta name="supported-color-schemes" content="light dark">
-          <title>Verify your email</title>
+          <title>Reset Your Password</title>
           <style>
             :root {
               color-scheme: light dark;
@@ -66,10 +73,10 @@ export async function sendOtpEmail(email: string, fullName: string) {
                   <!-- Content -->
                   <tr>
                     <td style="padding: 40px 30px;">
-                      <h2 style="margin: 0 0 15px 0; color: #ffffff; font-size: 24px; font-weight: 600; text-align: center;">Verify Your Email</h2>
+                      <h2 style="margin: 0 0 15px 0; color: #ffffff; font-size: 24px; font-weight: 600; text-align: center;">Reset Your Password</h2>
                       <p style="margin: 0 0 30px 0; color: #a0a0a0; font-size: 16px; line-height: 24px; text-align: center;">
                         Hi <strong style="color: #ffffff;">${fullName}</strong>,<br><br>
-                        We're excited to have you on board. Please use the following 6-digit verification code to activate your account.
+                        We received a request to reset your password. Please use the following 6-digit verification code to proceed.
                       </p>
                       
                       <!-- OTP Box -->
@@ -84,7 +91,7 @@ export async function sendOtpEmail(email: string, fullName: string) {
                       </table>
                       
                       <p style="margin: 30px 0 0 0; color: #888888; font-size: 14px; line-height: 20px; text-align: center;">
-                        If you didn't request this code, you can safely ignore this email.
+                        If you didn't request a password reset, you can safely ignore this email.
                       </p>
                     </td>
                   </tr>
@@ -112,26 +119,60 @@ export async function sendOtpEmail(email: string, fullName: string) {
   }
 }
 
-export async function verifyOtpCode(email: string, otp: string) {
+export async function verifyResetOtp(email: string, otp: string) {
   try {
-    // Get user
-    const { data: user, error: userError } = await supabaseAdmin
+    const { data: user, error } = await supabaseAdmin
+      .from('users')
+      .select('otp_code')
+      .eq('email', email)
+      .single();
+
+    if (error || !user) {
+      throw new Error("Invalid request.");
+    }
+
+    if (user.otp_code !== otp) {
+      throw new Error("Incorrect or expired verification code.");
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function resetPassword(email: string, otp: string, newPassword: string) {
+  try {
+    // Re-verify OTP to ensure security
+    const { data: user, error: fetchError } = await supabaseAdmin
       .from('users')
       .select('id, otp_code')
       .eq('email', email)
       .single();
 
-    if (userError || !user) throw new Error("User not found");
-    if (!user.otp_code) throw new Error("No pending verification found");
-    if (user.otp_code !== otp) throw new Error("Invalid verification code");
+    if (fetchError || !user) {
+      throw new Error("Invalid request.");
+    }
 
-    // Mark as verified and clear OTP
-    const { error: updateError } = await supabaseAdmin
+    if (user.otp_code !== otp) {
+      throw new Error("Verification code has changed or expired.");
+    }
+
+    // Update password via Admin API
+    const { error: updateAuthError } = await supabaseAdmin.auth.admin.updateUserById(
+      user.id,
+      { password: newPassword }
+    );
+
+    if (updateAuthError) {
+      throw new Error("Failed to reset password: " + updateAuthError.message);
+    }
+
+    // Clear the OTP to prevent reuse
+    await supabaseAdmin
       .from('users')
-      .update({ is_verified: true, otp_code: null })
+      .update({ otp_code: null })
       .eq('id', user.id);
-
-    if (updateError) throw updateError;
 
     return { success: true };
   } catch (error: any) {
