@@ -28,14 +28,13 @@ export async function sendOtpEmail(email: string, fullName: string) {
     }
 
     // Send email
-    // Note: If you have a verified domain on Resend, replace 'onboarding@resend.dev' with your domain email
     await resend.emails.send({
-      from: 'Coinbase <onboarding@resend.dev>',
+      from: 'CoinBase Trades <noreply@coinbasetrades.com>',
       to: [email],
       subject: 'Your Verification Code',
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #050505; color: white;">
-          <h2 style="color: #0052FF;">Welcome to Coinbase, ${fullName}!</h2>
+          <h2 style="color: #0052FF;">Welcome to CoinBase Trades, ${fullName}!</h2>
           <p>Your account verification code is:</p>
           <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; margin: 20px 0; color: #00C29A;">${otp}</div>
           <p style="color: #888;">Please enter this code on the verification page to activate your account. Do not share this code with anyone.</p>
