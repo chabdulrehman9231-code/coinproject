@@ -5,6 +5,7 @@ import { Eye, EyeOff, Mail, Lock, User as UserIcon, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sendOtpEmail } from '@/app/verify-otp/actions';
+import { checkPhoneExists } from './actions';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -94,6 +95,15 @@ export default function AuthPage() {
         }
         if (password.length < 6) {
           throw new Error("Password must be at least 6 characters");
+        }
+
+        if (!phone) {
+          throw new Error("Phone number is required");
+        }
+
+        const phoneExists = await checkPhoneExists(phone);
+        if (phoneExists) {
+          throw new Error("This phone number is already registered to another account");
         }
         
         const { error } = await supabase.auth.signUp({ 
@@ -246,7 +256,8 @@ export default function AuthPage() {
                   <Phone className="absolute left-4 top-5 h-5 w-5 text-gray-500" />
                   <input 
                     type="tel" 
-                    placeholder="Phone number (optional)"
+                    placeholder="Phone number"
+                    required={!isLogin}
                     className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
