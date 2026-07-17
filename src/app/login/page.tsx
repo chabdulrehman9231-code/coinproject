@@ -23,6 +23,17 @@ export default function AuthPage() {
   const [resetEmail, setResetEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
   
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -159,6 +170,24 @@ export default function AuthPage() {
       const res = await sendResetOtp(resetEmail);
       if (!res.success) throw new Error(res.error);
       setForgotPasswordMode('otp');
+      setResendTimer(60);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendResetOtp = async () => {
+    if (resendTimer > 0) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await sendResetOtp(resetEmail);
+      if (!res.success) throw new Error(res.error);
+      setSuccessMessage("Verification code resent successfully!");
+      setResendTimer(60);
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -375,6 +404,16 @@ export default function AuthPage() {
             >
               {loading ? 'Verifying...' : 'Verify Code'}
             </button>
+            <div className="text-center mt-2">
+              <button
+                type="button"
+                onClick={handleResendResetOtp}
+                disabled={resendTimer > 0 || loading}
+                className="text-sm font-medium text-gray-400 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {resendTimer > 0 ? `Resend code in ${resendTimer}s` : "Didn't receive the code? Resend"}
+              </button>
+            </div>
           </form>
         )}
 
