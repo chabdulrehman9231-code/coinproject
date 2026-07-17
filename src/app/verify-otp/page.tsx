@@ -1,12 +1,13 @@
 'use client';
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ShieldCheck, Mail, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { verifyOtpCode, sendOtpEmail } from './actions';
 
 function VerifyOtpContent() {
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(Array(6).fill(''));
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resendLoading, setResendLoading] = useState(false);
@@ -23,6 +24,38 @@ function VerifyOtpContent() {
     }
   }, [email, router]);
 
+  const handleOtpChange = (index: number, value: string) => {
+    if (isNaN(Number(value))) return;
+    const newOtp = [...otp];
+    newOtp[index] = value.substring(value.length - 1);
+    setOtp(newOtp);
+
+    if (value && index < 5 && inputRefs.current[index + 1]) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otp[index] && index > 0 && inputRefs.current[index - 1]) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pastedData) return;
+
+    const newOtp = [...otp];
+    for (let i = 0; i < pastedData.length; i++) {
+      newOtp[i] = pastedData[i];
+    }
+    setOtp(newOtp);
+    
+    const focusIndex = Math.min(pastedData.length, 5);
+    inputRefs.current[focusIndex]?.focus();
+  };
+
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
@@ -31,7 +64,7 @@ function VerifyOtpContent() {
     setError(null);
     
     try {
-      const res = await verifyOtpCode(email, otp);
+      const res = await verifyOtpCode(email, otp.join(''));
       if (!res.success) {
         throw new Error(res.error || "Invalid verification code");
       }
@@ -117,22 +150,28 @@ function VerifyOtpContent() {
         </AnimatePresence>
         
         <form onSubmit={handleVerify} className="flex flex-col gap-6">
-          <div className="relative">
-            <Mail className="absolute left-4 top-4 h-5 w-5 text-gray-500" />
-            <input 
-              type="text" 
-              placeholder="Enter 6-digit code"
-              maxLength={6}
-              required 
-              className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white text-center tracking-[0.5em] font-bold text-xl placeholder:text-gray-600 placeholder:tracking-normal placeholder:font-normal placeholder:text-base focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
-              value={otp}
-              onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
-            />
+          <div className="flex justify-between gap-2 w-full">
+            {otp.map((digit, index) => (
+              <input
+                key={index}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleOtpChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onPaste={handlePaste}
+                className="w-12 h-14 md:w-14 md:h-16 rounded-xl border border-white/5 bg-[#1a1a1a] text-white text-center font-bold text-2xl focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+              />
+            ))}
           </div>
           
           <button
             type="submit"
-            disabled={loading || otp.length !== 6}
+            disabled={loading || otp.join('').length !== 6}
             className="w-full rounded-xl bg-[#0052FF] p-4 text-sm font-bold text-white hover:bg-[#0040CC] focus:outline-none focus:ring-2 focus:ring-[#0052FF] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] flex items-center justify-center gap-2"
           >
             {loading ? (
