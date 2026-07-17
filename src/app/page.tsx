@@ -101,7 +101,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-x-1 sm:gap-x-2 gap-y-3 justify-center lg:justify-start text-left mt-2">
+            <div className="grid grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-3 mx-auto lg:mx-0 w-fit text-left mt-2">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#0052FF]/10 flex items-center justify-center shrink-0">
                   <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#0052FF]" />
