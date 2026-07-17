@@ -951,8 +951,9 @@ export default function AdminDashboard() {
 
           {/* TAB: CHAT */}
           {activeTab === 'chat' && (
-            <div className="flex h-[calc(100vh-8rem)] gap-4">
-              <div className="w-1/3 bg-[#111] border border-[#222] rounded-2xl overflow-hidden flex flex-col">
+            <div className="flex h-[calc(100vh-8rem)] gap-0 md:gap-4">
+              {/* Chat List - Full width on mobile if none selected, hidden on mobile if selected, 1/3 width on desktop */}
+              <div className={`${selectedChatUser ? 'hidden md:flex' : 'flex'} w-full md:w-1/3 bg-[#111] border border-[#222] rounded-2xl md:rounded-2xl overflow-hidden flex-col`}>
                 <div className="p-4 border-b border-[#222] font-bold flex items-center justify-between bg-[#0a0a0a]">
                   <span className="text-lg">Chats</span>
                 </div>
@@ -968,7 +969,7 @@ export default function AdminDashboard() {
                     const initial = u.email ? u.email.charAt(0).toUpperCase() : '?';
                     const timeString = u.updated_at ? new Date(u.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
                     return (
-                      <button key={u.id || u.user_id} onClick={() => handleSelectChatUser(u)} className={`w-full p-3 flex items-center gap-3 text-left hover:bg-[#1a1a1a] transition-colors ${isSelected ? 'bg-[#1a1a1a]' : ''}`}>
+                      <button key={u.id || u.user_id} onClick={() => handleSelectChatUser(u)} className={`w-full p-3 flex items-center gap-3 text-left hover:bg-[#1a1a1a] transition-colors ${isSelected ? 'md:bg-[#1a1a1a]' : ''}`}>
                         <div className="w-12 h-12 rounded-full bg-[#0052FF]/20 text-[#0052FF] flex items-center justify-center font-bold text-lg shrink-0 border border-[#0052FF]/30">
                           {initial}
                         </div>
@@ -1000,30 +1001,51 @@ export default function AdminDashboard() {
                   })}
                 </div>
               </div>
-              <div className="flex-1 bg-[#111] border border-[#222] rounded-2xl flex flex-col overflow-hidden">
+              
+              {/* Chat View - Hidden on mobile if none selected, full width on mobile if selected, flex-1 on desktop */}
+              <div className={`${selectedChatUser ? 'flex' : 'hidden md:flex'} w-full md:w-auto flex-1 bg-[#111] border border-[#222] rounded-2xl flex-col overflow-hidden`}>
                 {selectedChatUser ? (
                   <>
-                    <div className="p-4 border-b border-[#222] font-bold flex justify-between items-center">
-                      <span>Chat with {selectedChatUser.email}</span>
+                    <div className="p-4 border-b border-[#222] font-bold flex items-center gap-3">
+                      <button onClick={() => setSelectedChatUser(null)} className="md:hidden p-2 -ml-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/5">
+                        <ArrowLeft className="w-5 h-5" />
+                      </button>
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-[#0052FF]/20 text-[#0052FF] flex items-center justify-center font-bold border border-[#0052FF]/30">
+                          {selectedChatUser.email ? selectedChatUser.email.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <div className="flex flex-col leading-tight">
+                          <span className="text-white capitalize truncate">{selectedChatUser.name || (selectedChatUser.email ? selectedChatUser.email.split('@')[0] : 'Unknown')}</span>
+                          <span className="text-[11px] text-gray-500 font-normal truncate">{selectedChatUser.email}</span>
+                        </div>
+                      </div>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                       {chatMessages.map(m => (
-                        <div key={m.id} className={`flex flex-col max-w-[80%] ${m.is_admin ? 'ml-auto items-end' : 'mr-auto items-start'}`}>
-                          <div className={`p-3 rounded-2xl ${m.is_admin ? 'bg-[#0052FF] text-white' : 'bg-[#222] text-gray-200'}`}>
+                        <div key={m.id} className={`flex flex-col max-w-[85%] sm:max-w-[80%] ${m.is_admin ? 'ml-auto items-end' : 'mr-auto items-start'}`}>
+                          <div className={`p-3 rounded-2xl ${m.is_admin ? 'bg-[#0052FF] text-white rounded-br-sm' : 'bg-[#222] text-gray-200 rounded-bl-sm'}`}>
                             {formatMessage(m.content)}
                           </div>
-                          <div className="text-[10px] text-gray-500 mt-1">{new Date(m.created_at).toLocaleTimeString()}</div>
+                          <div className="text-[10px] text-gray-500 mt-1">{new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
                         </div>
                       ))}
                       <div ref={chatEndRef} />
                     </div>
-                    <form onSubmit={handleSendMessage} className="p-4 border-t border-[#222] flex gap-2">
-                      <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type a message..." className="flex-1 bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-2 text-white outline-none focus:border-[#0052FF]" />
-                      <button type="submit" className="p-3 bg-[#0052FF] text-white rounded-lg hover:bg-[#0040CC]"><Send className="w-5 h-5"/></button>
+                    <form onSubmit={handleSendMessage} className="p-3 sm:p-4 border-t border-[#222] flex gap-2">
+                      <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type a message..." className="flex-1 bg-[#1a1a1a] border border-[#333] rounded-full px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-white outline-none focus:border-[#0052FF] transition-colors" />
+                      <button type="submit" disabled={!chatInput.trim()} className="w-10 h-10 sm:w-12 sm:h-12 bg-[#0052FF] text-white rounded-full flex items-center justify-center hover:bg-[#0040CC] transition-colors disabled:opacity-50 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5"/></button>
                     </form>
                   </>
                 ) : (
-                  <div className="flex-1 flex items-center justify-center text-gray-500">Select a user to start chatting</div>
+                  <div className="flex-1 flex flex-col items-center justify-center text-gray-500 space-y-4 p-8 text-center">
+                    <div className="w-20 h-20 bg-[#1a1a1a] rounded-full flex items-center justify-center">
+                      <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    </div>
+                    <div>
+                      <p className="text-xl font-bold text-white mb-2">CoinBase Support</p>
+                      <p className="text-sm">Select a user from the list to start chatting</p>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
