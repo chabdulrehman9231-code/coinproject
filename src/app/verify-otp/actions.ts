@@ -58,10 +58,7 @@ export async function sendOtpEmail(email: string, fullName: string) {
                   <tr>
                     <td align="center" style="padding: 40px 0 30px 0; border-bottom: 1px solid #222222;">
                       <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-align: center;">
-                        <div style="display: inline-block; width: 11px; height: 11px; border: 10px solid #0052FF; border-radius: 50%; vertical-align: middle; margin-right: 6px; box-sizing: content-box;"></div><span style="color: #0052FF; -webkit-text-fill-color: #0052FF; vertical-align: middle;">CoinBase</span><span style="color: #ffffff; vertical-align: middle;"> Trades</span>
-                      </div>
-                        <span style="color: #0052FF; vertical-align: middle;">CoinBase</span>
-                        <span style="color: #ffffff; vertical-align: middle;"> Trades</span>
+                        <img src="https://raw.githubusercontent.com/chabdulrehman9231-code/coinproject/main/public/logo.png" width="32" height="32" alt="Logo" style="vertical-align: middle; margin-right: 6px; display: inline-block;" /><span style="background-image: linear-gradient(#0052FF, #0052FF); -webkit-background-clip: text; background-clip: text; color: #0052FF; -webkit-text-fill-color: transparent; vertical-align: middle;">CoinBase</span><span style="color: #ffffff; vertical-align: middle;"> Trades</span>
                       </div>
                     </td>
                   </tr>
@@ -80,7 +77,7 @@ export async function sendOtpEmail(email: string, fullName: string) {
                         <tr>
                           <td align="center">
                             <div style="background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px 30px; display: inline-block;">
-                              <div style="color: #0052FF; -webkit-text-fill-color: #0052FF; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: monospace;">${otp}</div>
+                              <div style="background-image: linear-gradient(#0052FF, #0052FF); -webkit-background-clip: text; background-clip: text; color: #0052FF; -webkit-text-fill-color: transparent; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: monospace;">${otp}</div>
                             </div>
                           </td>
                         </tr>
