@@ -59,7 +59,7 @@ export default function TradingChart({ symbol = 'BTCUSDT', interval = '1m' }: { 
         }));
         candlestickSeries.setData(formattedData);
       })
-      .catch(err => console.error("Error fetching historical data:", err));
+      .catch(err => console.warn("Error fetching historical data:", err));
 
     // 3. Connect to Binance WebSocket for Live Ticks
     const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${symbol.toLowerCase()}@kline_${interval}`);

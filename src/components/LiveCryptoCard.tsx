@@ -13,11 +13,11 @@ interface TickerData {
   volume: number;
 }
 
-const TOP_COINS = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT', 'DOGEUSDT'];
+let cachedTickers: Record<string, TickerData> | null = null;
 
 export default function LiveCryptoCard() {
   const router = useRouter();
-  const [tickers, setTickers] = useState<Record<string, TickerData>>({});
+  const [tickers, setTickers] = useState<Record<string, TickerData>>(cachedTickers || {});
 
   useEffect(() => {
     // Initial Load via REST API
@@ -27,12 +27,12 @@ export default function LiveCryptoCard() {
         if (Array.isArray(dataArray)) {
           const initial: Record<string, TickerData> = {};
           for (const data of dataArray) {
-            if (TOP_COINS.includes(data.symbol)) {
+            if (data.symbol.endsWith('USDT')) {
               const changePercent = parseFloat(data.priceChangePercent);
               initial[data.symbol] = {
                 symbol: data.symbol,
                 baseAsset: data.symbol.replace('USDT', ''),
-                price: parseFloat(data.lastPrice).toFixed(data.symbol.includes('DOGE') || data.symbol.includes('XRP') ? 4 : 2),
+                price: parseFloat(data.lastPrice).toFixed(data.symbol.includes('DOGE') || data.symbol.includes('XRP') || data.symbol.includes('SHIB') || data.symbol.includes('PEPE') || data.symbol.includes('ADA') ? 5 : 2),
                 change: changePercent.toFixed(2),
                 isPositive: changePercent >= 0,
                 volume: parseFloat(data.quoteVolume)
@@ -40,6 +40,7 @@ export default function LiveCryptoCard() {
             }
           }
           setTickers(initial);
+          cachedTickers = initial;
         }
       })
       .catch(err => console.error("Error fetching initial tickers:", err));
@@ -58,12 +59,12 @@ export default function LiveCryptoCard() {
             let updated = false;
             
             for (const data of dataArray) {
-              if (data.s && TOP_COINS.includes(data.s) && data.c && data.P) {
+              if (data.s && data.s.endsWith('USDT') && data.c && data.P) {
                 const changePercent = parseFloat(data.P);
                 next[data.s] = {
                   symbol: data.s,
                   baseAsset: data.s.replace('USDT', ''),
-                  price: parseFloat(data.c).toFixed(data.s.includes('DOGE') || data.s.includes('XRP') ? 4 : 2),
+                  price: parseFloat(data.c).toFixed(data.s.includes('DOGE') || data.s.includes('XRP') || data.s.includes('SHIB') || data.s.includes('PEPE') || data.s.includes('ADA') ? 5 : 2),
                   change: changePercent.toFixed(2),
                   isPositive: changePercent >= 0,
                   volume: parseFloat(data.q)
@@ -71,7 +72,11 @@ export default function LiveCryptoCard() {
                 updated = true;
               }
             }
-            return updated ? next : prev;
+            if (updated) {
+              cachedTickers = next;
+              return next;
+            }
+            return prev;
           });
         }
       } catch (err) {}
@@ -81,10 +86,9 @@ export default function LiveCryptoCard() {
   }, []);
 
   const displayCoins = useMemo(() => {
-    // Sort based on the order defined in TOP_COINS
-    return Object.values(tickers).sort((a, b) => {
-      return TOP_COINS.indexOf(a.symbol) - TOP_COINS.indexOf(b.symbol);
-    });
+    return Object.values(tickers)
+      .sort((a, b) => b.volume - a.volume)
+      .slice(0, 10);
   }, [tickers]);
 
   return (
@@ -94,8 +98,57 @@ export default function LiveCryptoCard() {
         <p className="text-gray-400 text-sm mt-1">Real-time prices from Binance</p>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse min-w-[600px]">
+      <div className="w-full">
+        {/* Mobile View (Cards) */}
+        <div className="md:hidden flex flex-col">
+          {displayCoins.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">Connecting to live feed...</div>
+          ) : (
+            displayCoins.map((coin, i) => (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                key={coin.symbol} 
+                className="flex flex-col gap-3 p-5 border-b border-white/5 hover:bg-white/[0.02] cursor-pointer transition-colors"
+                onClick={() => router.push('/login')}
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden shrink-0">
+                      <img src={`https://assets.coincap.io/assets/icons/${coin.baseAsset.toLowerCase()}@2x.png`} alt={coin.baseAsset} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = 'https://assets.coincap.io/assets/icons/btc@2x.png'; }} />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-[17px] leading-tight">{coin.baseAsset}</span>
+                      <span className="text-gray-500 text-xs font-medium mt-0.5">{coin.baseAsset}/USDT</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold text-[17px] block leading-tight">${coin.price}</span>
+                    <div className={`flex items-center justify-end gap-1 font-bold text-xs mt-1 ${coin.isPositive ? 'text-[#00C29A]' : 'text-red-500'}`}>
+                      {coin.isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                      {coin.isPositive ? '+' : ''}{coin.change}%
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center mt-2 pt-3 border-t border-white/5">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">24H Volume</span>
+                    <span className="text-gray-300 font-medium text-xs">${(coin.volume / 1000000).toFixed(2)}M</span>
+                  </div>
+                  <button className="text-white font-semibold text-xs bg-[#0052FF] px-4 py-1.5 rounded-full hover:bg-[#0045d8] transition-colors">
+                    Trade
+                  </button>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop View (Table) */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[600px]">
           <thead>
             <tr className="border-b border-white/5 text-gray-500 text-sm">
               <th className="py-4 px-6 md:px-8 font-medium">Asset</th>
@@ -118,12 +171,12 @@ export default function LiveCryptoCard() {
                   transition={{ delay: i * 0.1 }}
                   key={coin.symbol} 
                   className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group cursor-pointer"
-                  onClick={() => router.push(`/trade?symbol=${coin.symbol}`)}
+                  onClick={() => router.push('/login')}
                 >
                   <td className="py-5 px-6 md:px-8">
                     <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center overflow-hidden">
-                        <img src={`https://assets.coincap.io/assets/icons/${coin.baseAsset.toLowerCase()}@2x.png`} alt={coin.baseAsset} className="w-6 h-6 object-cover" onError={(e) => { e.currentTarget.src = 'https://assets.coincap.io/assets/icons/btc@2x.png'; }} />
+                        <img src={`https://assets.coincap.io/assets/icons/${coin.baseAsset.toLowerCase()}@2x.png`} alt={coin.baseAsset} className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = 'https://assets.coincap.io/assets/icons/btc@2x.png'; }} />
                       </div>
                       <div className="flex flex-col">
                         <span className="font-bold text-[17px]">{coin.baseAsset}</span>
@@ -153,9 +206,10 @@ export default function LiveCryptoCard() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
       <div className="p-6 text-center border-t border-white/5">
-         <button onClick={() => router.push('/trade')} className="text-gray-400 hover:text-white font-medium flex items-center justify-center gap-1 mx-auto transition-colors">
+         <button onClick={() => router.push('/login')} className="text-gray-400 hover:text-white font-medium flex items-center justify-center gap-1 mx-auto transition-colors">
             View All Markets <ChevronRight className="w-4 h-4" />
          </button>
       </div>

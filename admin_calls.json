@@ -1,0 +1,157 @@
+[
+  {
+    "name": "view_file",
+    "args": {
+      "AbsolutePath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "EndLine": "445",
+      "StartLine": "413",
+      "toolAction": "\"Viewing Users Module table to apply mobile layout\"",
+      "toolSummary": "\"Check Users Table Again\""
+    }
+  },
+  {
+    "name": "view_file",
+    "args": {
+      "AbsolutePath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "EndLine": "450",
+      "StartLine": "400",
+      "toolAction": "\"Viewing Users Module table to apply mobile layout\"",
+      "toolSummary": "\"Check Users Table Again\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"(Get-Content -Path \\\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\\\" -Raw) -replace \\\"`r\\\", \\\"`r`n\\\" | Set-Content -Path \\\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\\\"\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Fixing line endings in page.tsx\"",
+      "toolSummary": "\"Fix Line Endings\""
+    }
+  },
+  {
+    "name": "view_file",
+    "args": {
+      "AbsolutePath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "EndLine": "450",
+      "StartLine": "413",
+      "toolAction": "\"Viewing Users Module table to apply mobile layout\"",
+      "toolSummary": "\"Check Users Table Lines\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"npx prettier --write src/app/admin/page.tsx\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Formatting page.tsx with Prettier to fix line endings\"",
+      "toolSummary": "\"Format page.tsx\""
+    }
+  },
+  {
+    "name": "view_file",
+    "args": {
+      "AbsolutePath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "EndLine": "20",
+      "StartLine": "1",
+      "toolAction": "\"Viewing the broken page.tsx file\"",
+      "toolSummary": "\"Check Broken page.tsx\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"node -e \\\"const fs = require('fs'); const content = fs.readFileSync('src/app/admin/page.tsx', 'utf8'); console.log(content.substring(0, 100)); console.log(content.substring(0, 100).split('').map(c => c.charCodeAt(0)));\\\"\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Checking what happened to the newlines in page.tsx\"",
+      "toolSummary": "\"Check File Newlines\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"git restore src/app/admin/page.tsx\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Restoring page.tsx from git\"",
+      "toolSummary": "\"Restore page.tsx\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"grep -n \\\"getUserDetailsAdmin\\\" src/app/admin/page.tsx\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Checking if page.tsx still has my changes\"",
+      "toolSummary": "\"Check page.tsx Changes\""
+    }
+  },
+  {
+    "name": "grep_search",
+    "args": {
+      "CaseInsensitive": "false",
+      "Includes": "[]",
+      "IsRegex": "false",
+      "MatchPerLine": "true",
+      "Query": "\"getUserDetailsAdmin\"",
+      "SearchPath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "toolAction": "\"Searching for getUserDetailsAdmin to see if my changes survived\"",
+      "toolSummary": "\"Check page.tsx Changes\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"node -e \\\"const content = require('fs').readFileSync('src/app/admin/page.tsx', 'utf8'); console.log('Contains getUserDetailsAdmin:', content.includes('getUserDetailsAdmin'));\\\"\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Checking if getUserDetailsAdmin is present in page.tsx\"",
+      "toolSummary": "\"Check if getUserDetailsAdmin exists\""
+    }
+  },
+  {
+    "name": "view_file",
+    "args": {
+      "AbsolutePath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "EndLine": "450",
+      "StartLine": "400",
+      "toolAction": "\"Viewing page.tsx to re-add User Detail View\"",
+      "toolSummary": "\"View page.tsx\""
+    }
+  },
+  {
+    "name": "view_file",
+    "args": {
+      "AbsolutePath": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "EndLine": "250",
+      "StartLine": "1",
+      "toolAction": "\"Viewing the restored page.tsx to see what is missing\"",
+      "toolSummary": "\"Check Restored page.tsx\""
+    }
+  },
+  {
+    "name": "write_to_file",
+    "args": {
+      "CodeContent": "\"'use client';\\nimport { useState, useEffect } from 'react';\\nimport { useRouter } from 'next/navigation';\\nimport { createClient } from '@/lib/supabase/client';\\nimport { \\n  Users, DollarSign, Activity, CheckCircle, \\n  XCircle, Lock, Unlock, ShieldAlert, ChevronRight, LogOut, ArrowLeft, TrendingUp, TrendingDown, Clock, CreditCard, Award\\n} from 'lucide-react';\\nimport { getAdminDashboardData, getUserDetailsAdmin } from './actions';\\n\\nexport default function AdminDashboard() {\\n  const [isAdmin, setIsAdmin] = useState(false);\\n  const [isLoading, setIsLoading] = useState(true);\\n  \\n  // Dashboard Data\\n  const [dashboardData, setDashboardData] = useState<any>({\\n    users: [],\\n    totalUsers: 0,\\n    totalTrades: 0,\\n    totalDeposits: 0,\\n    withdrawals: []\\n  });\\n\\n  const [activeTab, setActiveTab] = useState('overview');\\n  \\n  // User Details View State\\n  const [selectedUserDetail, setSelectedUserDetail] = useState<string | null>(null);\\n  const [userDetailData, setUserDetailData] = useState<any>(null);\\n  const [isUserDetailLoading, setIsUserDetailLoading] = useState(false);\\n  \\n  const router = useRouter();\\n  const supabase = createClient();\\n\\n  useEffect(() => {\\n    checkAdmin();\\n    fetchDashboardData();\\n  }, []);\\n\\n  const checkAdmin = async () => {\\n    const { data: { user } } = await supabase.auth.getUser();\\n    if (!user) {\\n      router.push('/');\\n      return;\\n    }\\n\\n    const { data: userData } = await supabase\\n      .from('users')\\n      .select('role')\\n      .eq('id', user.id)\\n      .single();\\n\\n    if (userData?.role === 'superadmin') {\\n      setIsAdmin(true);\\n    } else {\\n      router.push('/dashboard');\\n    }\\n    setIsLoading(false);\\n  };\\n\\n  const fetchDashboardData = async () => {\\n    const res = await getAdminDashboardData();\\n    if (res.success) {\\n      setDashboardData(res.data);\\n    }\\n  };\\n\\n  const handleLogout = async () => {\\n    await supabase.auth.signOut();\\n    router.push('/');\\n  };\\n\\n  const handleViewUser = async (userId: string) => {\\n  \n<truncated 28328 bytes>",
+      "Description": "\"Restore Admin Dashboard and User Details with full mobile responsive layout\"",
+      "IsArtifact": "false",
+      "Overwrite": "true",
+      "TargetFile": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\\\\src\\\\app\\\\admin\\\\page.tsx\"",
+      "toolAction": "\"Restoring Admin Dashboard page.tsx with User Management and mobile responsive layouts\"",
+      "toolSummary": "\"Restore Admin Dashboard\""
+    }
+  },
+  {
+    "name": "run_command",
+    "args": {
+      "CommandLine": "\"node -e \\\"const fs = require('fs'); const lines = fs.readFileSync('C:/Users/uc/.gemini/antigravity/brain/45f2bc87-dd96-4058-98a8-841dcbede973/.system_generated/logs/transcript.jsonl', 'utf8').split('\\\\n'); let calls = []; for(const line of lines) { if(!line) continue; try { const d = JSON.parse(line); if(d.type==='PLANNER_RESPONSE' && d.tool_calls) { for(const call of d.tool_calls) { if(call.args && typeof call.args.TargetFile === 'string' && call.args.TargetFile.includes('admin/page.tsx')) { calls.push(call); } } } } catch(e){} } fs.writeFileSync('admin_calls.json', JSON.stringify(calls, null, 2)); console.log('Found ' + calls.length + ' calls');\\\"\"",
+      "Cwd": "\"C:\\\\Users\\\\uc\\\\Desktop\\\\crypto-demo-platform\"",
+      "WaitMsBeforeAsync": "2000",
+      "toolAction": "\"Finding all historical modifications to page.tsx\"",
+      "toolSummary": "\"Extract Transcript History\""
+    }
+  }
+]

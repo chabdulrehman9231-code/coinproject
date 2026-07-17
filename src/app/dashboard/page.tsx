@@ -2,9 +2,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import BottomNav from '@/components/BottomNav';
 import Header from '@/components/Header';
-import { Bell, Clock, Zap, FileText, Share2, MessageSquare, Search, User } from 'lucide-react';
+import { 
+  Bell, User, HeadphonesIcon, TrendingUp, TrendingDown, Clock, 
+  ArrowRight, ShieldCheck, Zap, MessageSquare, Menu, FileText, Upload, History, Search, Eye, EyeOff, RefreshCw, Download, Crown 
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import UserDrawer from '@/components/UserDrawer';
+import DepositModal from '@/components/DepositModal';
+import WithdrawModal from '@/components/WithdrawModal';
+import { createClient } from '@/lib/supabase/client';
+import { getUserBalance } from './actions';
 
 interface TickerData {
   symbol: string;
@@ -15,13 +22,57 @@ interface TickerData {
   volume: number;
 }
 
+let cachedDashboardTickers: Record<string, TickerData> | null = null;
+
 export default function DashboardPage() {
   const router = useRouter();
-  const [tickers, setTickers] = useState<Record<string, TickerData>>({});
+  const [tickers, setTickers] = useState<Record<string, TickerData>>(cachedDashboardTickers || {});
   const [searchQuery, setSearchQuery] = useState('');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [balance, setBalance] = useState<number>(0);
+  const [creditScore, setCreditScore] = useState<number>(700);
+  const [vipLevel, setVipLevel] = useState<string>('Bronze');
+  const [showBalance, setShowBalance] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
+  const supabase = createClient();
+
+  const fetchBalance = async () => {
+    setIsRefreshing(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user?.id) {
+      // Check verification status
+      const { data: userData } = await supabase.from('users').select('is_verified').eq('id', session.user.id).single();
+      if (userData && userData.is_verified === false) {
+        router.push(`/verify-otp?email=${encodeURIComponent(session.user.email || '')}`);
+        return;
+      }
+
+      const res = await getUserBalance(session.user.id);
+      if (res.success) {
+        setBalance(res.balance || 0);
+        setCreditScore(res.creditScore ?? 700);
+        setVipLevel(res.vipLevel || 'Bronze');
+      }
+      
+      // Fetch unread chat messages
+      const { count } = await supabase
+        .from('messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', session.user.id)
+        .neq('sender_id', session.user.id)
+        .eq('is_read', false);
+      
+      if (count) setUnreadChatCount(count);
+    }
+    setTimeout(() => setIsRefreshing(false), 500); // Add a small delay for visual feedback
+  };
 
   useEffect(() => {
+    fetchBalance();
+
     // 1. Initial Load via REST API for instant data
     fetch('https://api.binance.com/api/v3/ticker/24hr')
       .then(res => res.json())
@@ -41,7 +92,11 @@ export default function DashboardPage() {
               };
             }
           }
-          setTickers(initial);
+          setTickers(prev => {
+            const merged = { ...prev, ...initial };
+            cachedDashboardTickers = merged;
+            return merged;
+          });
         }
       })
       .catch(err => console.error("Error fetching initial tickers:", err));
@@ -82,16 +137,20 @@ export default function DashboardPage() {
               }
             }
             
-            return updated ? next : prev;
+            if (updated) {
+              cachedDashboardTickers = next;
+              return next;
+            }
+            return prev;
           });
         }
       } catch (err) {
-        console.error("WebSocket message parsing error:", err);
+        console.warn("WebSocket message parsing error:", err);
       }
     };
 
     ws.onerror = (error) => {
-      console.error("WebSocket Error:", error);
+      console.warn("WebSocket Error:", error);
     };
 
     return () => {
@@ -106,24 +165,24 @@ export default function DashboardPage() {
       .slice(0, 100); // Show top 100 to maintain smooth performance
   }, [tickers, searchQuery]);
 
-  const topGainers = useMemo(() => {
-    return Object.values(tickers)
-      .sort((a, b) => parseFloat(b.change) - parseFloat(a.change))
-      .slice(0, 3);
-  }, [tickers]);
-
-  const displayGainers = topGainers.length >= 3 ? topGainers : [
-    { symbol: 'BTCUSDT', baseAsset: 'BTC', price: '...', change: '0.00', isPositive: true },
-    { symbol: 'ETHUSDT', baseAsset: 'ETH', price: '...', change: '0.00', isPositive: true },
-    { symbol: 'BNBUSDT', baseAsset: 'BNB', price: '...', change: '0.00', isPositive: true }
-  ];
-
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white font-sans">
       <Header />
       {/* Mobile Header */}
-      <header className="flex md:hidden items-center justify-between px-4 py-3 relative">
-        <div className="flex items-center gap-3">
+      <header className="flex md:hidden items-center justify-between px-4 py-3">
+        {/* Left: Logo */}
+        <div className="flex items-center">
+           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm0-10.667c2.946 0 5.333-2.387 5.333-5.333S18.946 10.667 16 10.667 10.667 13.054 10.667 16s2.387 5.333 5.333 5.333z" fill="#0052FF"/>
+           </svg>
+        </div>
+        
+        {/* Right: Notification & Profile */}
+        <div className="flex items-center gap-4">
+          <div className="relative cursor-pointer">
+            <Bell className="h-6 w-6 text-gray-300" />
+            <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-red-500 border border-[#0a0a0a]" />
+          </div>
           <div 
             onClick={() => setIsDrawerOpen(true)}
             className="w-8 h-8 rounded-full border border-[#0052FF] flex items-center justify-center cursor-pointer hover:bg-[#0052FF]/10 transition-colors"
@@ -131,84 +190,79 @@ export default function DashboardPage() {
             <User className="w-5 h-5 text-[#0052FF]" />
           </div>
         </div>
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm0-10.667c2.946 0 5.333-2.387 5.333-5.333S18.946 10.667 16 10.667 10.667 13.054 10.667 16s2.387 5.333 5.333 5.333z" fill="#0052FF"/>
-           </svg>
-        </div>
-        <div className="relative">
-          <Bell className="h-6 w-6 text-gray-300" />
-          <div className="absolute top-0 right-0 w-2 h-2 rounded-full bg-red-500 border border-[#0a0a0a]" />
-        </div>
       </header>
 
       {/* Main Scrollable Area */}
-      <main className="flex-1 overflow-y-auto pb-20">
+      <main className="flex-1 overflow-y-auto pb-20 w-full">
+        <div className="max-w-[1200px] mx-auto w-full flex flex-col">
         
-        <div className="px-4 mt-2">
-        <div className="relative">
-          <div className="w-full h-[140px] rounded-[20px] bg-gradient-to-br from-[#0052FF] to-[#3385ff] p-6 relative overflow-hidden flex flex-col justify-center shadow-lg shadow-[#0052FF]/20">
-            <h2 className="text-3xl font-extrabold text-white z-10 leading-tight tracking-wide drop-shadow-sm">
-              Coinbase<br />Trrades
-            </h2>
-            <p className="text-xs font-semibold mt-2 z-10 text-white/90 drop-shadow-sm">Trade Crypto Seamlessly</p>
-            
-            {/* Abstract background shapes */}
-            <div className="absolute right-[-40px] top-[-40px] w-48 h-48 bg-white/10 rounded-full blur-2xl" />
-            <div className="absolute left-[-20px] bottom-[-20px] w-32 h-32 bg-[#0052FF]/40 rounded-full blur-xl" />
-            
-            {/* Premium Logo on the right */}
-            <div className="absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 bg-white/10 rounded-2xl rotate-12 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
-               <svg 
-                width="36" height="36" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"
-               >
-                  <path d="M24 8L8 36H40L24 8Z" fill="#0052FF" opacity="1"/>
-                  <path d="M24 16L14 36H34L24 16Z" fill="#0052FF" opacity="1"/>
-               </svg>
-            </div>
-          </div>
-          
-          <div className="flex justify-center gap-1.5 mt-3">
-            <div className="w-5 h-1.5 rounded-full bg-[#0052FF] transition-all" />
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-600 transition-all" />
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-600 transition-all" />
-          </div>
-        </div>
-        </div>
-
-        {/* Top Cards (Gainers) */}
-        <div className="flex px-4 gap-3 mt-4 overflow-x-auto pb-2 scrollbar-hide">
-          {displayGainers.map((data: any) => {
-            return (
-              <div 
-                key={data.symbol} 
-                onClick={() => data.price !== '...' && router.push(`/trade?symbol=${data.symbol}`)}
-                className="min-w-[110px] flex-1 rounded-xl bg-[#161616] p-3 flex flex-col items-center shadow-sm cursor-pointer hover:bg-[#1a1a1a] transition-colors"
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-[10px] text-gray-400 font-medium mb-1">
-                    {data.baseAsset}/USDT
+        {/* Total Portfolio Value Card */}
+        <div className="px-4 mt-6">
+          <div className="w-full rounded-2xl bg-[#161616] p-5 md:p-6 border border-white/5 relative flex flex-col gap-5 shadow-lg">
+            {/* Top section with balances */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm text-gray-400 font-medium">Total Portfolio Value</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl md:text-4xl font-bold text-white">
+                    {showBalance ? `$${balance.toFixed(2)}` : '******'}
                   </span>
-                  <span className={`text-lg font-bold ${data.isPositive ? 'text-[#0052FF]' : 'text-red-500'}`}>
-                    {data.price}
-                  </span>
-                  <span className={`text-xs font-medium ${data.isPositive ? 'text-[#0052FF]' : 'text-red-500'} mt-0.5`}>
-                    {data.isPositive && data.price !== '...' ? '+' : ''}{data.change}%
-                  </span>
+                  <div className="flex items-center gap-2 text-gray-500 mt-1">
+                    <button onClick={() => setShowBalance(!showBalance)} className="hover:text-gray-300 transition-colors p-1">
+                      {showBalance ? <Eye className="w-4 h-4 md:w-5 md:h-5" /> : <EyeOff className="w-4 h-4 md:w-5 md:h-5" />}
+                    </button>
+                    <button onClick={fetchBalance} disabled={isRefreshing} className="hover:text-gray-300 transition-colors p-1">
+                      <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${isRefreshing ? 'animate-spin text-[#0052FF]' : ''}`} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            );
-          })}
+
+              {/* NEW: Credit Score & VIP Badges */}
+              <div className="flex flex-row sm:flex-col items-center sm:items-end gap-2">
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs shadow-lg backdrop-blur-md ${
+                  vipLevel === 'Diamond' ? 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-blue-400 border-blue-500/30' :
+                  vipLevel === 'Gold' ? 'bg-gradient-to-r from-yellow-600/20 to-orange-600/20 text-yellow-500 border-yellow-500/30' :
+                  vipLevel === 'Silver' ? 'bg-gradient-to-r from-gray-400/20 to-gray-300/20 text-gray-300 border-gray-400/30' :
+                  'bg-gradient-to-r from-orange-800/20 to-orange-600/20 text-orange-600 border-orange-700/30'
+                }`}>
+                  <Crown className="w-4 h-4" />
+                  <span className="uppercase tracking-wider">{vipLevel} VIP</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111] border border-[#333] font-bold text-xs text-gray-300 shadow-inner">
+                  <ShieldCheck className={`w-4 h-4 ${creditScore >= 750 ? 'text-[#00C29A]' : creditScore >= 600 ? 'text-yellow-500' : 'text-red-500'}`} />
+                  <span>Credit Score: <span className={creditScore >= 750 ? 'text-[#00C29A]' : creditScore >= 600 ? 'text-yellow-500' : 'text-red-500'}>{creditScore}</span></span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Bottom section with buttons */}
+            <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-2">
+              <button onClick={() => setIsDepositModalOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white px-3 md:px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all">
+                <Download className="w-4 h-4" /> Deposit
+              </button>
+              <button onClick={() => setIsWithdrawModalOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-[#1a1a1a] hover:bg-[#222] border border-white/5 text-white px-3 md:px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all">
+                <Upload className="w-4 h-4" /> Withdraw
+              </button>
+              <button onClick={() => router.push('/chat')} className="relative flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-[#1a1a1a] hover:bg-[#222] border border-white/5 text-white px-3 md:px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all min-w-[100px]">
+                <HeadphonesIcon className="w-4 h-4" /> Support
+                {unreadChatCount > 0 && (
+                  <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-[#161616]">
+                    {unreadChatCount}
+                  </div>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-5 gap-2 px-4 py-6 mt-2 border-b border-[#1a1a1a]">
+        <div className="flex justify-evenly gap-4 px-4 py-6 mt-2 border-b border-[#1a1a1a] max-w-sm mx-auto w-full">
           {[
-            { icon: Clock, label: 'Finance' },
-            { icon: Zap, label: 'Option', badge: true },
-            { icon: FileText, label: 'Docs' },
-            { icon: Share2, label: 'Share' },
+            { icon: Zap, label: 'Option', path: '/option', badge: true },
             { icon: MessageSquare, label: 'Chat', path: '/chat' },
+            { icon: History, label: 'Trade History', path: '/trade-history' },
           ].map((action, i) => {
             const Icon = action.icon;
             return (
@@ -217,8 +271,13 @@ export default function DashboardPage() {
                 className="flex flex-col items-center gap-2 relative cursor-pointer"
                 onClick={() => action.path ? router.push(action.path) : null}
               >
-                <div className="w-12 h-12 rounded-full bg-[#161616] flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-[#161616] flex items-center justify-center relative">
                   <Icon className="h-5 w-5 text-[#0052FF]" />
+                  {action.path === '/chat' && unreadChatCount > 0 && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-bold border border-[#0a0a0a]">
+                      {unreadChatCount}
+                    </div>
+                  )}
                 </div>
                 {action.badge && (
                   <div className="absolute top-0 right-1 w-3 h-3 bg-red-500 rounded-full border border-[#0a0a0a]" />
@@ -316,11 +375,26 @@ export default function DashboardPage() {
             })
           )}
         </div>
-      </div>
+        </div>
+        </div>
       </main>
 
       <BottomNav />
       <UserDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
+      <DepositModal 
+        isOpen={isDepositModalOpen} 
+        onClose={() => {
+          setIsDepositModalOpen(false);
+          fetchBalance(); // Refresh balance when modal closes in case admin approved it quickly
+        }} 
+      />
+      <WithdrawModal 
+        isOpen={isWithdrawModalOpen} 
+        onClose={() => {
+          setIsWithdrawModalOpen(false);
+          fetchBalance(); // Refresh balance when modal closes
+        }} 
+      />
     </div>
   );
 }

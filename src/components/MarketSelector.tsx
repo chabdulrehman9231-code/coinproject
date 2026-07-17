@@ -19,9 +19,11 @@ interface MarketSelectorProps {
   baseRoute?: string;
 }
 
+let cachedMarketTickers: Record<string, TickerData> | null = null;
+
 export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRoute = '/trade' }: MarketSelectorProps) {
   const router = useRouter();
-  const [tickers, setTickers] = useState<Record<string, TickerData>>({});
+  const [tickers, setTickers] = useState<Record<string, TickerData>>(cachedMarketTickers || {});
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -46,10 +48,14 @@ export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRou
               };
             }
           }
-          setTickers(initial);
+          setTickers(prev => {
+            const merged = { ...prev, ...initial };
+            cachedMarketTickers = merged;
+            return merged;
+          });
         }
       })
-      .catch(err => console.error("Error fetching initial tickers:", err));
+      .catch(err => console.warn("Error fetching initial tickers:", err));
 
     // Setup WebSocket for LIVE updates
     const ws = new WebSocket(`wss://stream.binance.com:9443/ws/!ticker@arr`);
@@ -79,7 +85,11 @@ export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRou
                 updated = true;
               }
             }
-            return updated ? next : prev;
+            if (updated) {
+              cachedMarketTickers = next;
+              return next;
+            }
+            return prev;
           });
         }
       } catch (err) {}
@@ -99,6 +109,7 @@ export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRou
 
   return (
     <div className="fixed inset-0 z-50 bg-[#0a0a0a] flex flex-col text-white animate-in slide-in-from-left">
+      <div className="max-w-[1200px] mx-auto w-full flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center gap-4 px-4 py-4 border-b border-[#1a1a1a]">
         <button onClick={onClose} className="p-1 hover:bg-[#1a1a1a] rounded-full transition-colors">
@@ -140,7 +151,11 @@ export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRou
               <div 
                 key={data.symbol}
                 onClick={() => {
-                  router.push(`${baseRoute}?symbol=${data.symbol}`);
+                  if (baseRoute === '/option') {
+                    router.push(`/option/${data.baseAsset}_USDT`);
+                  } else {
+                    router.push(`${baseRoute}?symbol=${data.symbol}`);
+                  }
                   onClose();
                 }}
                 className={`flex items-center justify-between px-4 py-3 border-b border-[#1a1a1a]/50 hover:bg-[#161616] cursor-pointer transition-colors ${isCurrent ? 'bg-[#161616]' : ''}`}
@@ -165,6 +180,7 @@ export default function MarketSelector({ isOpen, onClose, currentSymbol, baseRou
             );
           })
         )}
+      </div>
       </div>
     </div>
   );

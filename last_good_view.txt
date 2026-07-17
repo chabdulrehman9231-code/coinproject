@@ -1,0 +1,16 @@
+Created At: 2026-07-17T01:19:26Z
+Completed At: 2026-07-17T01:19:28Z
+File Path: `file:///C:/Users/uc/Desktop/crypto-demo-platform/src/app/admin/page.tsx`
+Total Lines: 432
+Total Bytes: 24622
+Showing lines 150 to 200
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+150:           <h1 className="text-xl font-extrabold text-[#0052FF]">Super Admin</h1>
+151:           <p className="text-xs text-gray-500 mt-1">Coinbase Trades</p>
+152:         </div>
+153:         <nav className="flex-1 py-4 overflow-y-auto">
+154:           {[
+155:             { id: 'overview', icon: Activity, label: 'Overview' },
+156:             { id: 'users', icon: Users, label: 'User Management' },
+157:             { id: 'wallets', icon: Wallet, label: 'Wallet Manager' },
+158:             { id: 'funds', icon: DollarSign, label: 'Funds ... (truncated)

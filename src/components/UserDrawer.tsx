@@ -2,10 +2,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { getUserBalance } from '@/app/dashboard/actions';
 import { 
   User, Copy, Download, Upload, FileText, 
-  CreditCard, ShieldCheck, Shield, Briefcase, 
-  Info, LogOut, ChevronRight, X, ShieldAlert
+  Shield, LogOut, ChevronRight, X, ShieldAlert
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -18,6 +18,8 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
   const [email, setEmail] = useState('');
   const [uid, setUid] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [vipLevel, setVipLevel] = useState('Bronze');
+  const [creditScore, setCreditScore] = useState(700);
   const router = useRouter();
   const supabase = createClient();
 
@@ -31,6 +33,12 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
         if (data?.role === 'superadmin') {
           setIsAdmin(true);
         }
+        getUserBalance(user.id).then(res => {
+          if (res.success) {
+            setVipLevel(res.vipLevel || 'Bronze');
+            setCreditScore(res.creditScore ?? 700);
+          }
+        });
       }
     });
   }, [supabase]);
@@ -49,13 +57,14 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
     ...(isAdmin ? [{ icon: ShieldAlert, label: 'Admin Panel', action: () => router.push('/admin') }] : []),
     { icon: Download, label: 'Deposit', action: () => router.push('/assets') },
     { icon: Upload, label: 'Withdraw', action: () => router.push('/assets') },
-    { icon: FileText, label: 'Transaction History', action: () => router.push('/assets') },
-    { icon: ShieldCheck, label: 'KYC Verification', action: () => {} },
-    { icon: CreditCard, label: 'Bind Bank Card', action: () => {} },
-    { icon: Shield, label: 'Security Center', action: () => {} },
-    { icon: Briefcase, label: 'Assets', action: () => router.push('/assets') },
-    { icon: Info, label: 'About Coinbase Trrades', action: () => {} },
+    { icon: FileText, label: 'Transaction History', action: () => router.push('/transactions') },
+    { icon: Shield, label: 'Security Center', action: () => router.push('/security') },
   ];
+
+  let vipColor = 'text-amber-500';
+  if (vipLevel === 'Silver') vipColor = 'text-gray-300';
+  if (vipLevel === 'Gold') vipColor = 'text-yellow-400';
+  if (vipLevel === 'Diamond') vipColor = 'text-cyan-400';
 
   return (
     <AnimatePresence>
@@ -87,11 +96,21 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
                 >
                   <X className="w-6 h-6" />
                 </button>
-                <div className="w-16 h-16 rounded-full bg-[#0052FF] flex items-center justify-center mb-4 mt-2">
-                  <User className="w-8 h-8 text-white" />
+                <div className="flex items-center gap-4 mb-4 mt-2">
+                  <div className="w-16 h-16 rounded-full bg-[#0052FF] flex items-center justify-center shrink-0">
+                    <User className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <div className={`px-2 py-0.5 bg-[#222] border border-[#333] rounded text-[10px] font-bold uppercase w-max tracking-wider ${vipColor}`}>
+                      VIP: {vipLevel}
+                    </div>
+                    <div className="px-2 py-0.5 bg-[#222] border border-[#333] rounded text-[10px] font-bold text-[#00C29A] uppercase w-max tracking-wider">
+                      Credit: {creditScore}
+                    </div>
+                  </div>
                 </div>
                 <h2 className="text-lg font-bold text-white mb-1 truncate">
-                  Hello, {email || 'User'}
+                  {email || 'User'}
                 </h2>
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <span>UID: {uid}</span>

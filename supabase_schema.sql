@@ -12,6 +12,8 @@ create table users (
   full_name text,
   phone_number text,
   role text default 'user' not null, -- 'user' or 'admin'
+  credit_score integer default 700 not null,
+  vip_level text default 'Bronze' not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -57,13 +59,15 @@ create policy "Users can insert their own orders." on orders for insert with che
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.users (id, email, full_name, phone_number, role)
+  insert into public.users (id, email, full_name, phone_number, role, credit_score, vip_level)
   values (
     new.id, 
     new.email, 
     new.raw_user_meta_data->>'full_name',
     new.raw_user_meta_data->>'phone_number',
-    'user'
+    'user',
+    700,
+    'Bronze'
   );
   
   -- Only create a default USDT wallet with 0 balance

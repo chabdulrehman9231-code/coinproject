@@ -1,41 +1,48 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Download, Upload, Maximize2 } from 'lucide-react';
+import { Download, Upload, Wallet } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import Header from '@/components/Header';
+import WithdrawModal from '@/components/WithdrawModal';
 import { createClient } from '@/lib/supabase/client';
+import { getUserBalance } from '@/app/dashboard/actions';
+import { useRouter } from 'next/navigation';
 
 export default function AssetsPage() {
-  const [activeTab, setActiveTab] = useState('currency');
-  const [balance, setBalance] = useState('0.0000');
-  const [uid, setUid] = useState('GOKLADQT'); // Mock default, could be derived from user ID later
+  const [balance, setBalance] = useState<number | string>(0);
+  const [uid, setUid] = useState('N/A');
+  const [vipLevel, setVipLevel] = useState('Bronze');
+  const [creditScore, setCreditScore] = useState(700);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const router = useRouter();
 
   const supabase = createClient();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (user) {
-        // Just take the first 8 chars of their UUID as a mock UID for display
         setUid(user.id.split('-')[0].toUpperCase());
-        
-        supabase
-          .from('wallets')
-          .select('balance')
-          .eq('user_id', user.id)
-          .eq('asset', 'USDT')
-          .single()
-          .then(({ data }) => {
-            if (data) {
-              setBalance(Number(data.balance).toFixed(4));
-            }
-          });
+        getUserBalance(user.id).then(res => {
+          if (res.success) {
+            setBalance(Number(res.balance).toFixed(2));
+            setVipLevel(res.vipLevel || 'Bronze');
+            setCreditScore(res.creditScore ?? 700);
+          }
+        });
       }
     });
   }, [supabase]);
 
+  // Determine VIP color
+  let vipColor = 'text-amber-500';
+  if (vipLevel === 'Silver') vipColor = 'text-gray-300';
+  if (vipLevel === 'Gold') vipColor = 'text-yellow-400';
+  if (vipLevel === 'Diamond') vipColor = 'text-cyan-400';
+
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#0a0a0a] text-white font-sans">
+    <div className="flex h-screen flex-col overflow-hidden bg-[#000000] text-white font-sans">
       <Header />
+      
       {/* Mobile Header */}
       <header className="flex md:hidden items-center justify-center px-4 py-4 shrink-0">
         <h1 className="text-xl font-bold">Assets</h1>
@@ -43,76 +50,70 @@ export default function AssetsPage() {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto pb-24">
-        
-        {/* Tabs */}
-        <div className="flex px-4 border-b border-[#1a1a1a] text-sm font-medium">
-          <button 
-            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'currency' ? 'text-white border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('currency')}
-          >
-            Currency Account
-          </button>
-          <button 
-            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'contract' ? 'text-white border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('contract')}
-          >
-            Contract Account
-          </button>
-          <button 
-            className={`flex-1 py-3 text-center transition-colors ${activeTab === 'options' ? 'text-white border-b-2 border-[#0052FF]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('options')}
-          >
-            Options Account
-          </button>
-        </div>
+        <div className="max-w-4xl mx-auto w-full pt-4 px-4">
+          
+          {/* Centered Balance Card */}
+          <div className="bg-[#111] rounded-3xl p-8 shadow-xl border border-[#222] flex flex-col items-center text-center">
+            
+            {/* Wallet Icon */}
+            <div className="w-14 h-14 rounded-2xl bg-[#0052FF]/10 flex items-center justify-center mb-4 border border-[#0052FF]/20">
+              <Wallet className="w-6 h-6 text-[#0052FF]" />
+            </div>
 
-        {/* Total Assets Summary */}
-        <div className="px-5 py-6">
-          <div className="text-gray-400 text-sm mb-1">Total Assets(USDT)</div>
-          <div className="text-4xl font-extrabold tracking-tight">{balance}</div>
-          <div className="text-gray-500 text-sm mt-1">≈{balance} USD</div>
-          <div className="text-[#0052FF] text-sm font-bold mt-4 tracking-wider">UID: {uid}</div>
-        </div>
+            {/* Title & Balance */}
+            <div className="text-gray-400 text-sm mb-2">Total Portfolio Value</div>
+            <div className="text-white text-5xl font-extrabold tracking-tight mb-8">
+              {balance} <span className="text-2xl text-gray-500 font-bold ml-1">USDT</span>
+            </div>
 
-        {/* Asset Valuations Card */}
-        <div className="mx-4 bg-[#161616] rounded-2xl p-5 shadow-lg border border-white/5">
-          <div className="flex justify-between items-center mb-1">
-            <div className="text-gray-400 text-[13px]">Asset valuations (USDT)</div>
-            <div className="bg-[#0052FF] text-white text-xs font-bold px-3 py-1.5 rounded-lg">Currency</div>
-          </div>
-          <div className="text-[#0052FF] text-3xl font-extrabold">{balance}</div>
-          <div className="text-gray-500 text-[13px] mt-1">Available</div>
+            {/* Info Boxes */}
+            <div className="flex justify-center gap-2 md:gap-4 mb-8 w-full max-w-lg">
+              <div className="flex-1 bg-[#161616] border border-[#222] rounded-2xl py-3 px-2 flex flex-col items-center">
+                <span className="text-gray-500 text-[11px] mb-1 uppercase">UID</span>
+                <span className="text-white text-xs font-bold tracking-wider">{uid}</span>
+              </div>
+              <div className="flex-1 bg-[#161616] border border-[#222] rounded-2xl py-3 px-2 flex flex-col items-center">
+                <span className="text-gray-500 text-[11px] mb-1 uppercase">VIP Level</span>
+                <span className={`text-xs font-bold uppercase ${vipColor}`}>{vipLevel}</span>
+              </div>
+              <div className="flex-1 bg-[#161616] border border-[#222] rounded-2xl py-3 px-2 flex flex-col items-center">
+                <span className="text-gray-500 text-[11px] mb-1 uppercase">Credit Score</span>
+                <span className="text-[#00C29A] text-xs font-bold">{creditScore}</span>
+              </div>
+            </div>
 
-          <div className="grid grid-cols-3 gap-4 mt-6 border-t border-[#222] pt-6">
-            <button className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0052FF]/30">
-                <Download className="w-5 h-5 text-[#0052FF]" />
-              </div>
-              <span className="text-xs font-bold">Deposit</span>
-            </button>
-            <button className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0052FF]/30">
-                <Upload className="w-5 h-5 text-[#0052FF]" />
-              </div>
-              <span className="text-xs font-bold">Withdraw</span>
-            </button>
-            <button className="flex flex-col items-center gap-2 group">
-              <div className="w-12 h-12 rounded-xl bg-[#222] flex items-center justify-center group-hover:bg-[#2a2a2a] transition-colors border border-transparent group-hover:border-[#0052FF]/30">
-                <Maximize2 className="w-5 h-5 text-[#0052FF]" />
-              </div>
-              <span className="text-xs font-bold">Transfer</span>
-            </button>
+            {/* Action Buttons */}
+            <div className="flex justify-center gap-3 w-full max-w-lg">
+              <button className="flex-1 flex items-center justify-center gap-2 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors">
+                <Download className="w-5 h-5" /> Deposit
+              </button>
+              <button onClick={() => setIsWithdrawModalOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-[#FF4444] hover:bg-[#FF4444]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors">
+                <Upload className="w-5 h-5" /> Withdraw
+              </button>
+            </div>
+
           </div>
         </div>
-
-        {/* Empty State */}
-        <div className="flex justify-center items-center py-20">
-          <p className="text-gray-600 text-sm">No balances in this account.</p>
-        </div>
-
       </main>
 
       <BottomNav />
+      
+      <WithdrawModal 
+        isOpen={isWithdrawModalOpen} 
+        onClose={() => {
+          setIsWithdrawModalOpen(false);
+          // fetch balance to update UI
+          const fetchBal = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              const res = await getUserBalance(user.id);
+              if (res.success) setBalance(res.balance);
+            }
+          };
+          fetchBal();
+        }} 
+      />
     </div>
   );
 }

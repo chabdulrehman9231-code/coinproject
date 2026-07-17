@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ChevronLeft, Menu } from "lucide-react";
-import TradingChart from "@/components/TradingChart";
+import { ChevronLeft, Menu, TrendingUp, TrendingDown, ChevronRight } from "lucide-react";
+import AdvancedTradingChart from "@/components/AdvancedTradingChart";
 import OrderForm from "@/components/OrderForm";
 import MarketSelector from "@/components/MarketSelector";
 import Header from "@/components/Header";
@@ -13,7 +13,16 @@ interface TickerStats {
   isPositive: boolean;
   high: string;
   low: string;
+  volume: string;
 }
+
+const formatVolume = (volStr: string) => {
+  const vol = parseFloat(volStr);
+  if (vol >= 1_000_000_000) return (vol / 1_000_000_000).toFixed(2) + 'B';
+  if (vol >= 1_000_000) return (vol / 1_000_000).toFixed(2) + 'M';
+  if (vol >= 1_000) return (vol / 1_000).toFixed(2) + 'K';
+  return vol.toFixed(2);
+};
 
 import { Suspense } from "react";
 
@@ -29,24 +38,12 @@ function TradeContent() {
     change: "0.00",
     isPositive: true,
     high: "0.00",
-    low: "0.00"
+    low: "0.00",
+    volume: "0.00"
   });
 
   const [activeTab, setActiveTab] = useState<'trade'|'orders'>('trade');
-  const [activeTimeframe, setActiveTimeframe] = useState('1min');
   const [isMarketSelectorOpen, setIsMarketSelectorOpen] = useState(false);
-
-  const mapTimeframeToInterval = (tf: string) => {
-    switch (tf) {
-      case '1min': return '1m';
-      case '5min': return '5m';
-      case '30min': return '30m';
-      case '1H': return '1h';
-      case '4H': return '4h';
-      case '1D': return '1d';
-      default: return '1m';
-    }
-  };
 
   useEffect(() => {
     // Fetch initial data via REST for instant load
@@ -61,7 +58,8 @@ function TradeContent() {
             change: changePercent.toFixed(2),
             isPositive: changePercent >= 0,
             high: parseFloat(data.highPrice).toFixed(isSmall ? 5 : 2),
-            low: parseFloat(data.lowPrice).toFixed(isSmall ? 5 : 2)
+            low: parseFloat(data.lowPrice).toFixed(isSmall ? 5 : 2),
+            volume: formatVolume(data.quoteVolume)
           });
         }
       })
@@ -80,7 +78,8 @@ function TradeContent() {
           change: changePercent.toFixed(2),
           isPositive: changePercent >= 0,
           high: parseFloat(data.h).toFixed(isSmall ? 5 : 2),
-          low: parseFloat(data.l).toFixed(isSmall ? 5 : 2)
+          low: parseFloat(data.l).toFixed(isSmall ? 5 : 2),
+          volume: formatVolume(data.q)
         });
       }
     };
@@ -125,47 +124,45 @@ function TradeContent() {
         <div className="w-6" /> {/* Placeholder to balance flex */}
       </header>
       
-      <main className="flex-1 overflow-hidden flex flex-col pb-0">
-        {/* Ticker Info */}
-        <div className="flex justify-between px-4 py-3 shrink-0">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className={`text-3xl font-bold ${stats.isPositive ? 'text-[#00C29A]' : 'text-[#ff5f6e]'}`}>
-                {stats.price}
+      <main className="flex-1 overflow-hidden flex flex-col pb-0 w-full">
+        <div className="max-w-[1200px] mx-auto w-full flex flex-col h-full overflow-hidden">
+        {/* Ticker Info Card */}
+        <div className="mx-4 mt-4 bg-[#161616] rounded-2xl p-4 md:p-5 border border-[#1a1a1a] flex justify-between items-center shrink-0">
+          <div 
+            className="flex flex-col gap-1 cursor-pointer group" 
+            onClick={() => setIsMarketSelectorOpen(true)}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold text-white">${stats.price}</span>
+              <span className={`text-sm font-bold flex items-center gap-1 ${stats.isPositive ? 'text-[#00C29A]' : 'text-[#ff5f6e]'}`}>
+                {stats.isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                {stats.isPositive ? '+' : ''}{stats.change}%
               </span>
-              <div className="flex items-center gap-1 text-[10px] font-bold text-[#00C29A] bg-[#00C29A]/10 px-1.5 py-0.5 rounded">
-                <div className="w-1.5 h-1.5 rounded-full bg-[#00C29A] animate-pulse" />
-                LIVE
-              </div>
             </div>
-            <span className={`text-sm font-medium mt-1 ${stats.isPositive ? 'text-[#00C29A]' : 'text-[#ff5f6e]'}`}>
-              {stats.isPositive ? '+' : ''}{stats.change}%
+            <span className="text-sm text-gray-400 font-medium group-hover:text-white transition-colors flex items-center gap-1">
+              {baseAsset}/USDT • Live <ChevronRight className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
             </span>
           </div>
-          
-          <div className="flex flex-col text-right">
-            <span className="text-[10px] text-gray-500">24H High / Low</span>
-            <span className="text-xs font-medium text-white mt-0.5">{stats.high}</span>
-            <span className="text-xs font-medium text-white">{stats.low}</span>
+
+          <div className="flex items-center gap-6 text-right">
+            <div className="hidden md:flex flex-col">
+              <span className="text-xs text-gray-500 mb-0.5">24h High</span>
+              <span className="text-sm font-bold text-[#00C29A]">${stats.high}</span>
+            </div>
+            <div className="hidden md:flex flex-col">
+              <span className="text-xs text-gray-500 mb-0.5">24h Low</span>
+              <span className="text-sm font-bold text-[#ff5f6e]">${stats.low}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-500 mb-0.5">Volume(24h)</span>
+              <span className="text-sm font-bold text-white">{stats.volume}</span>
+            </div>
           </div>
-        </div>
-        
-        {/* Timeframe Selector */}
-        <div className="flex gap-4 px-4 py-3 mt-1 shrink-0 text-[13px] font-medium text-gray-500">
-          {['1min', '5min', '30min', '1H', '4H', '1D'].map((time) => (
-            <button 
-              key={time}
-              onClick={() => setActiveTimeframe(time)}
-              className={`${activeTimeframe === time ? 'text-[#0052FF]' : 'hover:text-gray-300'}`}
-            >
-              {time}
-            </button>
-          ))}
         </div>
         
         {/* Live Chart Area */}
-        <div className="w-full flex-1 border-b border-[#1a1a1a] min-h-0 relative">
-          <TradingChart symbol={symbol} interval={mapTimeframeToInterval(activeTimeframe)} />
+        <div className="w-full flex-1 border-b border-[#1a1a1a] min-h-0 relative mt-4">
+          <AdvancedTradingChart symbol={symbol} />
         </div>
         
         {/* Tabs */}
@@ -197,6 +194,7 @@ function TradeContent() {
               No open orders
             </div>
           )}
+        </div>
         </div>
       </main>
 

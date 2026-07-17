@@ -9,7 +9,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Crypto Demo Trading",
+  title: "CoinBase Trades",
   description: "Demo crypto trading platform with live charts",
   manifest: "/manifest.json",
 };
