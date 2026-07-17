@@ -33,12 +33,69 @@ export async function sendOtpEmail(email: string, fullName: string) {
       to: [email],
       subject: 'Your Verification Code',
       html: `
-        <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #050505; color: white;">
-          <h2 style="color: #0052FF;">Welcome to CoinBase Trades, ${fullName}!</h2>
-          <p>Your account verification code is:</p>
-          <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; margin: 20px 0; color: #00C29A;">${otp}</div>
-          <p style="color: #888;">Please enter this code on the verification page to activate your account. Do not share this code with anyone.</p>
-        </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Verify your email</title>
+        </head>
+        <body style="margin: 0; padding: 0; background-color: #0a0a0a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; width: 100%; height: 100%;">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0a0a0a; width: 100%; padding: 40px 20px;">
+            <tr>
+              <td align="center">
+                <!-- Main Container -->
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 500px; background-color: #121212; border-radius: 16px; overflow: hidden; border: 1px solid #222222;">
+                  <!-- Header -->
+                  <tr>
+                    <td align="center" style="padding: 40px 0 30px 0; border-bottom: 1px solid #222222;">
+                      <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">
+                        <span style="color: #0052FF;">CoinBase</span>
+                        <span style="color: #ffffff;"> Trades</span>
+                      </div>
+                    </td>
+                  </tr>
+                  
+                  <!-- Content -->
+                  <tr>
+                    <td style="padding: 40px 30px;">
+                      <h2 style="margin: 0 0 15px 0; color: #ffffff; font-size: 24px; font-weight: 600; text-align: center;">Verify Your Email</h2>
+                      <p style="margin: 0 0 30px 0; color: #a0a0a0; font-size: 16px; line-height: 24px; text-align: center;">
+                        Hi <strong style="color: #ffffff;">${fullName}</strong>,<br><br>
+                        We're excited to have you on board. Please use the following 6-digit verification code to activate your account.
+                      </p>
+                      
+                      <!-- OTP Box -->
+                      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td align="center">
+                            <div style="background-color: #1a1a1a; border: 1px solid #333333; border-radius: 12px; padding: 20px 30px; display: inline-block;">
+                              <div style="color: #0052FF; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: monospace;">${otp}</div>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                      
+                      <p style="margin: 30px 0 0 0; color: #888888; font-size: 14px; line-height: 20px; text-align: center;">
+                        If you didn't request this code, you can safely ignore this email.
+                      </p>
+                    </td>
+                  </tr>
+                  
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background-color: #0f0f0f; padding: 20px 30px; text-align: center; border-top: 1px solid #222222;">
+                      <p style="margin: 0; color: #666666; font-size: 12px;">
+                        &copy; ${new Date().getFullYear()} CoinBase Trades. All rights reserved.
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
       `,
     });
 
