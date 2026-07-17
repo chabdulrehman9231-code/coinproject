@@ -54,9 +54,6 @@ export async function sendOtpEmail(email: string, fullName: string) {
                         <span style="color: #0052FF; vertical-align: middle;">CoinBase</span>
                         <span style="color: #ffffff; vertical-align: middle;"> Trades</span>
                       </div>
-                        <span style="color: #0052FF; vertical-align: middle;">CoinBase</span>
-                        <span style="color: #ffffff; vertical-align: middle;"> Trades</span>
-                      </div>
                     </td>
                   </tr>
                   
