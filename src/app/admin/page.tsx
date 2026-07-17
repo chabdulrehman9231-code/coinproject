@@ -74,7 +74,7 @@ export default function AdminDashboard() {
       const fetchTrades = async () => {
         try {
           const tRes = await getActiveOptionTradesAdmin();
-          if (tRes.success) setActiveTrades(tRes.data);
+          if (tRes.success) setActiveTrades(tRes.data || []);
         } catch (error) {
           console.error("fetchTrades polling error:", error);
         }
