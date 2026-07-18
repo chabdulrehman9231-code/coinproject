@@ -1,13 +1,14 @@
 'use client';
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronLeft, Menu, ChevronDown, TrendingUp, TrendingDown, ChevronRight, AlertTriangle, Download, Check, QrCode, X } from "lucide-react";
+import { ChevronLeft, Menu, ChevronDown, TrendingUp, TrendingDown, ChevronRight, AlertTriangle, Download, Check, QrCode, X, Share2 } from "lucide-react";
 import AdvancedTradingChart from "@/components/AdvancedTradingChart";
 import MarketSelector from "@/components/MarketSelector";
 import Header from "@/components/Header";
 import { createClient } from "@/lib/supabase/client";
 import { Suspense } from "react";
 import { openOptionTrade } from "@/app/option/actions";
+import { toPng } from 'html-to-image';
 
 interface TickerStats {
   price: string;
@@ -216,6 +217,63 @@ function OptionContent() {
       setBufferedResult(null);
     }
   }, [bufferedResult, countdown]);
+
+  const handleDownloadCard = async () => {
+    const cardElement = document.getElementById('pnl-share-card');
+    if (!cardElement) return;
+
+    setIsSavingCard(true);
+    try {
+      const dataUrl = await toPng(cardElement, {
+        cacheBust: true,
+        backgroundColor: '#0d0d0d',
+        style: {
+          borderRadius: '24px',
+        }
+      });
+
+      const link = document.createElement('a');
+      link.download = `CoinbaseTrades-PNL-${shareCardData.symbol}-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Error generating card image:', error);
+      alert('Failed to generate card image. Please try again.');
+    } finally {
+      setIsSavingCard(false);
+    }
+  };
+
+  const handleShareCard = async () => {
+    const cardElement = document.getElementById('pnl-share-card');
+    if (!cardElement) return;
+
+    try {
+      const dataUrl = await toPng(cardElement, { cacheBust: true, backgroundColor: '#0d0d0d' });
+      
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], 'PNL-Share-Card.png', { type: 'image/png' });
+
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Coinbase Trades Options PNL',
+          text: `Check out my options trade on Coinbase Trades! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-100.00%'}`,
+        });
+      } else {
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        const shareText = `Check out my options trade on Coinbase Trades! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-100.00%'} \nJoin now: ${origin}/login?mode=signup&ref=${shareCardData.referral_code || ''}`;
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+        window.open(whatsappUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Error sharing card:', error);
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+      const shareText = `Check out my options trade on Coinbase Trades! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-100.00%'} \nJoin now: ${origin}/login?mode=signup&ref=${shareCardData.referral_code || ''}`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+    }
+  };
 
   const handleOpenPosition = async () => {
     setIsPlacingTrade(true);
@@ -676,157 +734,164 @@ function OptionContent() {
           setTradeResult(null);
           setShowShareCard(false);
         }}>
-          <div 
-            className={`bg-[#0d0d0d] border-2 rounded-3xl p-6 max-w-sm w-full shadow-[0_0_50px_rgba(0,0,0,0.8)] relative flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 ${
-              shareCardData.status === 'won' ? 'border-[#00C29A]/30 shadow-[#00C29A]/5' : 'border-red-500/30 shadow-red-500/5'
-            }`}
-            onClick={e => e.stopPropagation()}
+          {/* Top Close Button (Outside of downloadable card, floats on overlay to avoid overlap) */}
+          <button 
+            onClick={() => {
+              setActiveTrade(null);
+              setTradeResult(null);
+              setShowShareCard(false);
+            }}
+            className="absolute top-6 right-6 p-2 bg-[#111] border border-[#222] text-gray-400 hover:text-white rounded-full transition-colors z-[110] shadow-lg hover:scale-105 active:scale-95"
+            title="Close modal"
           >
-            {/* Platform Branding Header */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-2">
-                <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                  <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
-                </svg>
-                <span className="text-sm font-extrabold tracking-tight text-white">
-                  Coinbase<span className="font-light text-[#0052FF]"> Trades</span>
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-black uppercase bg-[#1a1a1a] text-[#EAB308] border border-[#EAB308]/20 px-2 py-0.5 rounded-md tracking-wider shrink-0">
+            <X className="w-5 h-5" />
+          </button>
+
+          {/* Modal Container: Holds both card and actions */}
+          <div className="max-w-sm w-full space-y-4" onClick={e => e.stopPropagation()}>
+            
+            {/* The Actual Shareable Card (PNG source) */}
+            <div 
+              id="pnl-share-card"
+              className={`bg-[#0d0d0d] border-2 rounded-3xl p-6 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative flex flex-col overflow-hidden ${
+                shareCardData.status === 'won' ? 'border-[#00C29A]/30 shadow-[#00C29A]/5' : 'border-red-500/30 shadow-red-500/5'
+              }`}
+            >
+              {/* Platform Branding Header */}
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-2">
+                  <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+                    <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
+                  </svg>
+                  <span className="text-sm font-extrabold tracking-tight text-white">
+                    Coinbase<span className="font-light text-[#0052FF]"> Trades</span>
+                  </span>
+                </div>
+                <span className="text-[9px] font-black uppercase bg-[#1a1a1a] text-[#EAB308] border border-[#EAB308]/20 px-2.5 py-0.5 rounded-md tracking-wider shrink-0">
                   Option Contract
                 </span>
+              </div>
+
+              {/* Position Symbol & Direction */}
+              <div className="mb-4 flex justify-between items-end border-b border-white/5 pb-3">
+                <div>
+                  <h3 className="text-lg font-black text-white tracking-wide font-mono">{shareCardData.symbol.replace('USDT', '/USDT')}</h3>
+                  <p className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase mt-0.5">USDT Margined</p>
+                </div>
+                <div className="text-right">
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider ${
+                    shareCardData.direction === 'UP' ? 'bg-[#00C29A]/10 text-[#00C29A]' : 'bg-red-500/10 text-red-500'
+                  }`}>
+                    {shareCardData.direction === 'UP' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+                    {shareCardData.direction === 'UP' ? 'CALL (UP)' : 'PUT (DOWN)'}
+                  </span>
+                </div>
+              </div>
+
+              {/* ROI Percentage */}
+              <div className="mb-6 py-2">
+                <div className="text-[9px] font-extrabold text-gray-500 uppercase tracking-widest mb-1.5">
+                  Return on Investment (ROI)
+                </div>
+                {shareCardData.status === 'won' ? (
+                  <div className="text-5xl font-black text-[#00C29A] font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(0,194,154,0.15)] flex items-baseline">
+                    +{shareCardData.profit_rate}%
+                    <span className="text-xs font-bold text-[#00C29A] ml-2 tracking-normal">Profit</span>
+                  </div>
+                ) : (
+                  <div className="text-5xl font-black text-red-500 font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(255,95,110,0.15)] flex items-baseline">
+                    -100.00%
+                    <span className="text-xs font-bold text-red-500 ml-2 tracking-normal">Loss</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Details Grid */}
+              <div className="bg-[#141414] rounded-2xl p-4 border border-white/5 space-y-3 mb-6">
+                <div className="grid grid-cols-2 text-xs">
+                  <div>
+                    <span className="text-gray-500 block mb-0.5">Bet Amount</span>
+                    <span className="font-bold text-white font-mono">{parseFloat(shareCardData.amount).toFixed(2)} USDT</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-500 block mb-0.5">Payout</span>
+                    <span className={`font-bold font-mono ${shareCardData.status === 'won' ? 'text-[#00C29A]' : 'text-gray-400'}`}>
+                      {shareCardData.totalReturn.toFixed(2)} USDT
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 text-xs border-t border-white/5 pt-3">
+                  <div>
+                    <span className="text-gray-500 block mb-0.5">Entry Price</span>
+                    <span className="font-bold text-white font-mono">
+                      ${parseFloat(shareCardData.entry_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-500 block mb-0.5">Exit Price</span>
+                    <span className="font-bold text-white font-mono">
+                      ${shareCardData.exitPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 text-xs border-t border-white/5 pt-3">
+                  <div>
+                    <span className="text-gray-500 block mb-0.5">Time Frame</span>
+                    <span className="font-bold text-white">{shareCardData.duration_seconds} sec</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-500 block mb-0.5">Net Profit</span>
+                    <span className={`font-bold font-mono ${shareCardData.status === 'won' ? 'text-[#00C29A]' : 'text-red-500'}`}>
+                      {shareCardData.status === 'won' ? `+${shareCardData.potentialProfit.toFixed(2)}` : `-${parseFloat(shareCardData.amount).toFixed(2)}`} USDT
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card Footer with Promotional QR Mock */}
+              <div className="flex justify-between items-center border-t border-dashed border-[#333] pt-4 mb-1">
+                <div className="flex-1 pr-4">
+                  <p className="text-[10px] text-gray-300 font-bold leading-tight">Option Trading made simple.</p>
+                  <p className="text-[9px] text-gray-500 mt-1">Start earning commissions at Coinbase Trades.</p>
+                </div>
+                <div className="w-14 h-14 bg-white rounded-xl p-1 shrink-0 flex items-center justify-center shadow-lg relative group">
+                  <QrCode className="w-12 h-12 text-black" />
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons (Excluded from printable PNG) */}
+            <div className="space-y-2">
+              <div className="flex gap-2">
                 <button 
-                  onClick={() => {
-                    setActiveTrade(null);
-                    setTradeResult(null);
-                    setShowShareCard(false);
-                  }}
-                  className="p-1.5 bg-[#1a1a1a] text-gray-400 hover:text-white rounded-full transition-colors shrink-0"
+                  onClick={handleDownloadCard}
+                  disabled={isSavingCard}
+                  className="flex-1 py-3 bg-[#161616] hover:bg-[#222] border border-[#333] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  {isSavingCard ? (
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <Download className="w-3.5 h-3.5" /> Save Card
+                    </>
+                  )}
+                </button>
+                <button 
+                  onClick={handleShareCard}
+                  className="flex-1 py-3 bg-[#075e54]/15 hover:bg-[#075e54]/35 border border-[#075e54]/30 text-[#25d366] rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                >
+                  <Share2 className="w-3.5 h-3.5" /> Share Card
                 </button>
               </div>
-            </div>
-
-            {/* Position Symbol & Direction */}
-            <div className="mb-4 flex justify-between items-end border-b border-white/5 pb-3">
-              <div>
-                <h3 className="text-lg font-black text-white tracking-wide font-mono">{shareCardData.symbol.replace('USDT', '/USDT')}</h3>
-                <p className="text-[10px] text-gray-500 font-semibold tracking-wider uppercase mt-0.5">USDT Margined</p>
-              </div>
-              <div className="text-right">
-                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider ${
-                  shareCardData.direction === 'UP' ? 'bg-[#00C29A]/10 text-[#00C29A]' : 'bg-red-500/10 text-red-500'
-                }`}>
-                  {shareCardData.direction === 'UP' ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                  {shareCardData.direction === 'UP' ? 'CALL (UP)' : 'PUT (DOWN)'}
-                </span>
-              </div>
-            </div>
-
-            {/* ROI Percentage */}
-            <div className="mb-6 py-2">
-              <div className="text-[9px] font-extrabold text-gray-500 uppercase tracking-widest mb-1.5">
-                Return on Investment (ROI)
-              </div>
-              {shareCardData.status === 'won' ? (
-                <div className="text-5xl font-black text-[#00C29A] font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(0,194,154,0.15)] flex items-baseline">
-                  +{shareCardData.profit_rate}%
-                  <span className="text-xs font-bold text-[#00C29A] ml-2 tracking-normal">Profit</span>
-                </div>
-              ) : (
-                <div className="text-5xl font-black text-red-500 font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(255,95,110,0.15)] flex items-baseline">
-                  -100.00%
-                  <span className="text-xs font-bold text-red-500 ml-2 tracking-normal">Loss</span>
-                </div>
-              )}
-            </div>
-
-            {/* Details Grid */}
-            <div className="bg-[#141414] rounded-2xl p-4 border border-white/5 space-y-3 mb-6">
-              <div className="grid grid-cols-2 text-xs">
-                <div>
-                  <span className="text-gray-500 block mb-0.5">Bet Amount</span>
-                  <span className="font-bold text-white font-mono">{parseFloat(shareCardData.amount).toFixed(2)} USDT</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-gray-500 block mb-0.5">Payout</span>
-                  <span className={`font-bold font-mono ${shareCardData.status === 'won' ? 'text-[#00C29A]' : 'text-gray-400'}`}>
-                    {shareCardData.totalReturn.toFixed(2)} USDT
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 text-xs border-t border-white/5 pt-3">
-                <div>
-                  <span className="text-gray-500 block mb-0.5">Entry Price</span>
-                  <span className="font-bold text-white font-mono">
-                    ${parseFloat(shareCardData.entry_price).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className="text-gray-500 block mb-0.5">Exit Price</span>
-                  <span className="font-bold text-white font-mono">
-                    ${shareCardData.exitPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 text-xs border-t border-white/5 pt-3">
-                <div>
-                  <span className="text-gray-500 block mb-0.5">Time Frame</span>
-                  <span className="font-bold text-white">{shareCardData.duration_seconds} sec</span>
-                </div>
-                <div className="text-right">
-                  <span className="text-gray-500 block mb-0.5">Net Profit</span>
-                  <span className={`font-bold font-mono ${shareCardData.status === 'won' ? 'text-[#00C29A]' : 'text-red-500'}`}>
-                    {shareCardData.status === 'won' ? `+${shareCardData.potentialProfit.toFixed(2)}` : `-${parseFloat(shareCardData.amount).toFixed(2)}`} USDT
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Card Footer with Promotional QR Mock */}
-            <div className="flex justify-between items-center border-t border-dashed border-[#333] pt-4 mb-4">
-              <div className="flex-1 pr-4">
-                <p className="text-[10px] text-gray-300 font-bold leading-tight">Option Trading made simple.</p>
-                <p className="text-[9px] text-gray-500 mt-1">Start earning commissions at Coinbase Trades.</p>
-              </div>
-              <div className="w-14 h-14 bg-white rounded-xl p-1 shrink-0 flex items-center justify-center shadow-lg relative group">
-                <QrCode className="w-12 h-12 text-black" />
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <button 
-                onClick={() => {
-                  setIsSavingCard(true);
-                  setTimeout(() => {
-                    setIsSavingCard(false);
-                    alert('Card image saved successfully!');
-                  }, 1200);
-                }}
-                disabled={isSavingCard}
-                className="flex-1 py-3 bg-[#161616] hover:bg-[#222] border border-[#333] text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
-              >
-                {isSavingCard ? (
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    <Download className="w-3.5 h-3.5" /> Save Card
-                  </>
-                )}
-              </button>
               <button 
                 onClick={() => {
                   setActiveTrade(null);
                   setTradeResult(null);
                   setShowShareCard(false);
                 }}
-                className="flex-1 py-3 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white rounded-xl text-xs font-bold transition-all active:scale-[0.98] text-center"
+                className="w-full py-3 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white rounded-xl text-xs font-bold transition-all active:scale-[0.98] text-center"
               >
                 Start New Trade
               </button>
