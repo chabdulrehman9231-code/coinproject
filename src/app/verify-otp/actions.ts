@@ -2,6 +2,7 @@
 
 import { Resend } from 'resend';
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { headers } from 'next/headers';
 
 // Initialize Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -26,6 +27,11 @@ export async function sendOtpEmail(email: string, fullName: string) {
     if (!updated || updated.length === 0) {
       throw new Error("User record not found in database. Please try again.");
     }
+
+    const headersList = await headers();
+    const host = headersList.get('host') || 'coinbasetrades.com';
+    const protocol = host.includes('localhost') ? 'http' : 'https';
+    const logoUrl = `${protocol}://${host}/logo.png`;
 
     // Send email
     await resend.emails.send({
@@ -58,7 +64,7 @@ export async function sendOtpEmail(email: string, fullName: string) {
                   <tr>
                     <td align="center" style="padding: 40px 0 30px 0; border-bottom: 1px solid #222222;">
                       <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-align: center;">
-                        <div style="display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 6px solid #0052FF; border-right-color: transparent; vertical-align: middle; margin-right: 6px;"></div><span style="background-image: linear-gradient(#0052FF, #0052FF); -webkit-background-clip: text; background-clip: text; color: #0052FF; -webkit-text-fill-color: transparent; vertical-align: middle;">CoinBase</span><span style="color: #ffffff; vertical-align: middle;"> Trades</span>
+                        <img src="${logoUrl}" width="28" height="28" style="vertical-align: middle; margin-right: 8px; display: inline-block;" alt="Coinbase Logo" /><span style="background-image: linear-gradient(#0052FF, #0052FF); -webkit-background-clip: text; background-clip: text; color: #0052FF; -webkit-text-fill-color: transparent; vertical-align: middle;">CoinBase</span><span style="color: #ffffff; vertical-align: middle;"> Trades</span>
                       </div>
                     </td>
                   </tr>
