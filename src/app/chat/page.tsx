@@ -204,7 +204,7 @@ export default function ChatSupport() {
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-gray-500" />
-                <span>12 PM - 12 AM</span>
+                <span>10 AM - 10 PM</span>
               </div>
             </div>
           </div>
