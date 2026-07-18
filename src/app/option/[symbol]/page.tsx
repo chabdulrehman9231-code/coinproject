@@ -275,6 +275,38 @@ function OptionContent() {
     }
   };
 
+  const handleShowPastShareCard = (trade: any) => {
+    const entry = parseFloat(trade.entry_price || '0');
+    const isUp = trade.direction === 'UP';
+    const isWon = trade.status === 'won';
+
+    // Generate a small random percentage deviation (between 0.05% and 0.20%)
+    const deviation = (Math.random() * 0.15 + 0.05) / 100;
+    let exit = entry;
+
+    if (isUp) {
+      if (isWon) {
+        exit = entry * (1 + deviation);
+      } else {
+        exit = entry * (1 - deviation);
+      }
+    } else {
+      if (isWon) {
+        exit = entry * (1 - deviation);
+      } else {
+        exit = entry * (1 + deviation);
+      }
+    }
+
+    setShareCardData({
+      ...trade,
+      exitPrice: exit,
+      potentialProfit: isWon ? parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100) : 0,
+      totalReturn: isWon ? parseFloat(trade.amount) + (parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100)) : 0
+    });
+    setShowShareCard(true);
+  };
+
   const handleOpenPosition = async () => {
     setIsPlacingTrade(true);
     const timeInSeconds = parseInt(timeFrame.label);
@@ -637,7 +669,11 @@ function OptionContent() {
                     {/* Mobile Card View */}
                     <div className="md:hidden flex flex-col gap-3 mt-2">
                       {tradeHistory.map(trade => (
-                        <div key={trade.id} className="bg-[#1a1a1a] rounded-xl border border-[#333] p-4 flex flex-col gap-3">
+                        <div 
+                          key={trade.id} 
+                          onClick={() => handleShowPastShareCard(trade)}
+                          className="bg-[#1a1a1a] rounded-xl border border-[#333] p-4 flex flex-col gap-3 cursor-pointer hover:border-white/25 transition-all hover:bg-[#222]/50 active:scale-[0.99]"
+                        >
                           <div className="flex justify-between items-start">
                             <div className="flex flex-col">
                               <div className="font-bold text-white text-base">{trade.symbol}</div>
@@ -688,7 +724,12 @@ function OptionContent() {
                       </thead>
                       <tbody className="text-sm">
                         {tradeHistory.map(trade => (
-                          <tr key={trade.id} className="border-b border-[#222] hover:bg-[#1a1a1a] transition-colors">
+                          <tr 
+                            key={trade.id} 
+                            onClick={() => handleShowPastShareCard(trade)}
+                            className="border-b border-[#222] hover:bg-[#1a1a1a] transition-colors cursor-pointer"
+                            title="Click to view PNL Card"
+                          >
                             <td className="py-3 px-4 font-bold text-white">{trade.symbol}</td>
                             <td className="py-3 px-4">
                               <span className={`flex items-center gap-1 font-bold ${trade.direction === 'UP' ? 'text-[#00C29A]' : 'text-red-500'}`}>
