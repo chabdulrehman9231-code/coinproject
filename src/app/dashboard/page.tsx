@@ -43,8 +43,13 @@ export default function DashboardPage() {
     setIsRefreshing(true);
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user?.id) {
-      // Check verification status
-      const { data: userData } = await supabase.from('users').select('is_verified').eq('id', session.user.id).single();
+      // Check if user is disabled or unverified
+      const { data: userData } = await supabase.from('users').select('is_verified, is_disabled').eq('id', session.user.id).single();
+      if (userData?.is_disabled) {
+        await supabase.auth.signOut();
+        router.push('/login?error=disabled');
+        return;
+      }
       if (userData && userData.is_verified === false) {
         router.push(`/verify-otp?email=${encodeURIComponent(session.user.email || '')}`);
         return;

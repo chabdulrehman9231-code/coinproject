@@ -87,7 +87,7 @@ export async function getUserDetailsAdmin(userId: string) {
   try {
     const { data: user, error: userError } = await supabaseAdmin
       .from('users')
-      .select('id, email, full_name, role, created_at, phone_number, credit_score, vip_level, wallets(balance)')
+      .select('id, email, full_name, role, created_at, phone_number, credit_score, vip_level, is_disabled, wallets(balance)')
       .eq('id', userId)
       .single();
 
@@ -664,6 +664,21 @@ export async function rejectKycAdmin(submissionId: string, userId: string, reaso
 
     return { success: true };
   } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function toggleUserDisabledStatus(userId: string, isDisabled: boolean) {
+  try {
+    const { error } = await supabaseAdmin
+      .from('users')
+      .update({ is_disabled: isDisabled })
+      .eq('id', userId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error toggling user disabled status:', error);
     return { success: false, error: error.message };
   }
 }

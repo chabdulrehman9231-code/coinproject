@@ -28,6 +28,9 @@ export default function AuthPage() {
         setReferralCode(ref.toUpperCase());
         setIsLogin(false);
       }
+      if (params.get('error') === 'disabled') {
+        setError("You Can not access your account, contact custmer support");
+      }
     }
   }, []);
   
@@ -84,8 +87,11 @@ export default function AuthPage() {
     // Redirect if already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        supabase.from('users').select('role').eq('id', session.user.id).single().then(({ data }) => {
-          if (data?.role === 'superadmin') {
+        supabase.from('users').select('role, is_disabled').eq('id', session.user.id).single().then(({ data }) => {
+          if (data?.is_disabled) {
+            supabase.auth.signOut();
+            setError("You Can not access your account, contact custmer support");
+          } else if (data?.role === 'superadmin') {
             supabase.auth.signOut();
             setError("Access Denied: Super Admins must use the /admin portal.");
           } else {
@@ -106,12 +112,17 @@ export default function AuthPage() {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         
-        // Block super admin
+        // Check if user is disabled or is super admin
         const { data: userData } = await supabase
           .from('users')
-          .select('role')
+          .select('role, is_disabled')
           .eq('id', data.user.id)
           .single();
+
+        if (userData?.is_disabled) {
+          await supabase.auth.signOut();
+          throw new Error("You Can not access your account, contact custmer support");
+        }
 
         if (userData?.role === 'superadmin') {
           await supabase.auth.signOut();

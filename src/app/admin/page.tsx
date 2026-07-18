@@ -14,7 +14,7 @@ import {
   getWithdrawalsAdmin, approveWithdrawal, rejectWithdrawal,
   resolveOptionTradeByAdmin, getActiveOptionTradesAdmin,
   getChatUsers, getAdminMessages, sendAdminMessage, markMessagesAsReadByAdmin,
-  updateUserMetrics,
+  updateUserMetrics, toggleUserDisabledStatus,
   getKycSubmissionsAdmin, approveKycAdmin, rejectKycAdmin
 } from './actions';
 
@@ -41,6 +41,7 @@ export default function AdminDashboard() {
   const [editVipLevel, setEditVipLevel] = useState<string>('Bronze');
   const [isVipDropdownOpen, setIsVipDropdownOpen] = useState(false);
   const [isUpdatingMetrics, setIsUpdatingMetrics] = useState(false);
+  const [isTogglingDisabled, setIsTogglingDisabled] = useState(false);
   
   const [wallets, setWallets] = useState<any[]>([]);
   const [deposits, setDeposits] = useState<any[]>([]);
@@ -251,6 +252,27 @@ export default function AdminDashboard() {
       alert('Failed to update metrics: ' + res.error);
     }
     setIsUpdatingMetrics(false);
+  };
+
+  const handleToggleDisabled = async () => {
+    if (!selectedUserDetail || !userDetailData) return;
+    
+    const newDisabledStatus = !userDetailData.is_disabled;
+    const confirmMsg = `Are you sure you want to ${newDisabledStatus ? 'DISABLE' : 'ENABLE'} this user's account?`;
+    if (!confirm(confirmMsg)) return;
+
+    setIsTogglingDisabled(true);
+    const res = await toggleUserDisabledStatus(selectedUserDetail, newDisabledStatus);
+    if (res.success) {
+      const uRes = await getUserDetailsAdmin(selectedUserDetail);
+      if (uRes.success) {
+        setUserDetailData(uRes.data);
+      }
+      alert(`User account ${newDisabledStatus ? 'disabled' : 'enabled'} successfully!`);
+    } else {
+      alert('Failed to update account status: ' + res.error);
+    }
+    setIsTogglingDisabled(false);
   };
 
   // --- Wallet Actions ---
@@ -657,6 +679,30 @@ export default function AdminDashboard() {
                               </div>
                             )}
                           </div>
+                        </div>
+                        <div className="flex flex-col gap-2 w-full md:w-64">
+                          <label className="text-gray-400 font-medium text-sm">Account Status</label>
+                          <button 
+                            onClick={handleToggleDisabled}
+                            disabled={isTogglingDisabled}
+                            className={`px-4 py-2.5 rounded-xl font-bold transition-all text-sm text-center flex items-center justify-center gap-2 border ${
+                              userDetailData.is_disabled 
+                                ? 'bg-red-500/10 hover:bg-red-500/20 text-red-500 border-red-500/20' 
+                                : 'bg-[#00C29A]/10 hover:bg-[#00C29A]/20 text-[#00C29A] border-[#00C29A]/20'
+                            }`}
+                          >
+                            {isTogglingDisabled ? (
+                              <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                            ) : userDetailData.is_disabled ? (
+                              <>
+                                <Lock className="w-4 h-4" /> Disabled
+                              </>
+                            ) : (
+                              <>
+                                <Unlock className="w-4 h-4" /> Active
+                              </>
+                            )}
+                          </button>
                         </div>
                       </div>
                     </div>
