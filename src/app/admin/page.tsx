@@ -42,6 +42,14 @@ export default function AdminDashboard() {
   const [isVipDropdownOpen, setIsVipDropdownOpen] = useState(false);
   const [isUpdatingMetrics, setIsUpdatingMetrics] = useState(false);
   const [isTogglingDisabled, setIsTogglingDisabled] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState<any>({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmText: '',
+    confirmColor: 'red',
+    onConfirm: () => {}
+  });
   
   const [wallets, setWallets] = useState<any[]>([]);
   const [deposits, setDeposits] = useState<any[]>([]);
@@ -258,21 +266,30 @@ export default function AdminDashboard() {
     if (!selectedUserDetail || !userDetailData) return;
     
     const newDisabledStatus = !userDetailData.is_disabled;
-    const confirmMsg = `Are you sure you want to ${newDisabledStatus ? 'DISABLE' : 'ENABLE'} this user's account?`;
-    if (!confirm(confirmMsg)) return;
+    const actionWord = newDisabledStatus ? 'DISABLE' : 'ENABLE';
+    const userName = userDetailData.full_name || userDetailData.name || userDetailData.email.split('@')[0];
 
-    setIsTogglingDisabled(true);
-    const res = await toggleUserDisabledStatus(selectedUserDetail, newDisabledStatus);
-    if (res.success) {
-      const uRes = await getUserDetailsAdmin(selectedUserDetail);
-      if (uRes.success) {
-        setUserDetailData(uRes.data);
+    setConfirmDialog({
+      isOpen: true,
+      title: `${actionWord} ACCOUNT?`,
+      message: `Are you sure you want to ${actionWord.toLowerCase()} the account of user "${userName}"? The user will be ${newDisabledStatus ? 'BLOCKED from' : 'RESTORED access to'} logging in or using the platform dashboard.`,
+      confirmText: `${actionWord} USER`,
+      confirmColor: newDisabledStatus ? 'red' : 'green',
+      onConfirm: async () => {
+        setIsTogglingDisabled(true);
+        const res = await toggleUserDisabledStatus(selectedUserDetail, newDisabledStatus);
+        if (res.success) {
+          const uRes = await getUserDetailsAdmin(selectedUserDetail);
+          if (uRes.success) {
+            setUserDetailData(uRes.data);
+          }
+          alert(`User account ${newDisabledStatus ? 'disabled' : 'enabled'} successfully!`);
+        } else {
+          alert('Failed to update account status: ' + res.error);
+        }
+        setIsTogglingDisabled(false);
       }
-      alert(`User account ${newDisabledStatus ? 'disabled' : 'enabled'} successfully!`);
-    } else {
-      alert('Failed to update account status: ' + res.error);
-    }
-    setIsTogglingDisabled(false);
+    });
   };
 
   // --- Wallet Actions ---
@@ -1546,6 +1563,47 @@ export default function AdminDashboard() {
               >
                 Reject KYC
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirmation Modal */}
+      {confirmDialog.isOpen && (
+        <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setConfirmDialog((prev: any) => ({ ...prev, isOpen: false }))}>
+          <div 
+            className="bg-[#111] border border-[#222] rounded-3xl p-6 max-w-sm w-full shadow-2xl relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
+                confirmDialog.confirmColor === 'red' ? 'bg-red-500/10 text-red-500' : 'bg-[#00C29A]/10 text-[#00C29A]'
+              }`}>
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              
+              <h3 className="text-xl font-bold text-white mb-2">{confirmDialog.title}</h3>
+              <p className="text-sm text-gray-400 leading-relaxed mb-6">{confirmDialog.message}</p>
+              
+              <div className="flex gap-3 w-full">
+                <button 
+                  onClick={() => setConfirmDialog((prev: any) => ({ ...prev, isOpen: false }))} 
+                  className="flex-1 py-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] text-white font-bold rounded-xl transition-all text-xs active:scale-[0.98]"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => {
+                    confirmDialog.onConfirm();
+                    setConfirmDialog((prev: any) => ({ ...prev, isOpen: false }));
+                  }} 
+                  className={`flex-1 py-3 text-white font-bold rounded-xl transition-all text-xs active:scale-[0.98] ${
+                    confirmDialog.confirmColor === 'red' ? 'bg-red-500 hover:bg-red-600' : 'bg-[#00C29A] hover:bg-[#009f7e]'
+                  }`}
+                >
+                  {confirmDialog.confirmText || 'Confirm'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
