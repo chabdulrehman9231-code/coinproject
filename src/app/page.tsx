@@ -16,7 +16,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => router.push('/')}>
             {/* New Coinbase 'C' Logo */}
             <svg className="w-7 h-7 md:w-8 md:h-8 shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm0-10.667c2.946 0 5.333-2.387 5.333-5.333S18.946 10.667 16 10.667 10.667 13.054 10.667 16s2.387 5.333 5.333 5.333z" fill="#0052FF"/>
+              <path d="M31.776 13.333A16 16 0 1 0 31.776 18.667L20.618 18.667A5.333 5.333 0 1 1 20.618 13.333Z" fill="#0052FF"/>
             </svg>
             <span className="text-[17px] sm:text-xl md:text-2xl font-extrabold text-white tracking-tight whitespace-nowrap">CoinBase Trades</span>
           </div>
@@ -336,7 +336,7 @@ export default function LandingPage() {
             <div className="col-span-2 lg:col-span-2 flex flex-col gap-6">
               <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/')}>
                 <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm0-10.667c2.946 0 5.333-2.387 5.333-5.333S18.946 10.667 16 10.667 10.667 13.054 10.667 16s2.387 5.333 5.333 5.333z" fill="#0052FF"/>
+                  <path d="M31.776 13.333A16 16 0 1 0 31.776 18.667L20.618 18.667A5.333 5.333 0 1 1 20.618 13.333Z" fill="#0052FF"/>
                 </svg>
                 <span className="text-xl font-extrabold tracking-tight text-white">CoinBase Trades</span>
               </div>

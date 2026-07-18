@@ -320,14 +320,14 @@ export default function AuthPage() {
 
         <div className="flex justify-center mb-6">
            {/* Logo */}
-            <motion.svg 
-             initial={{ scale: 0.8 }}
-             animate={{ scale: 1 }}
-             transition={{ type: "spring", stiffness: 200, damping: 10 }}
-             width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
-            >
-               <path d="M16 32C7.163 32 0 24.837 0 16S7.163 0 16 0s16 7.163 16 16-7.163 16-16 16zm0-10.667c2.946 0 5.333-2.387 5.333-5.333S18.946 10.667 16 10.667 10.667 13.054 10.667 16s2.387 5.333 5.333 5.333z" fill="#0052FF"/>
-            </motion.svg>
+             <motion.svg 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 10 }}
+              width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
+             >
+                <path d="M31.776 13.333A16 16 0 1 0 31.776 18.667L20.618 18.667A5.333 5.333 0 1 1 20.618 13.333Z" fill="#0052FF"/>
+             </motion.svg>
         </div>
 
         <motion.h2 
