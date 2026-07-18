@@ -682,31 +682,32 @@ function OptionContent() {
             }`}
             onClick={e => e.stopPropagation()}
           >
-            {/* Top Close Button */}
-            <button 
-              onClick={() => {
-                setActiveTrade(null);
-                setTradeResult(null);
-                setShowShareCard(false);
-              }}
-              className="absolute top-4 right-4 p-2 bg-[#1a1a1a] text-gray-400 hover:text-white rounded-full transition-colors z-10"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
             {/* Platform Branding Header */}
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full border-[3px] border-[#0052FF] flex items-center justify-center shrink-0">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#0052FF]" />
-                </div>
-                <span className="font-extrabold text-sm tracking-tight text-white flex items-center gap-1">
-                  Coinbase <span className="text-[#0052FF]">Trades</span>
+                <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+                  <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
+                </svg>
+                <span className="text-sm font-extrabold tracking-tight text-white">
+                  Coinbase<span className="font-light text-[#0052FF]"> Trades</span>
                 </span>
               </div>
-              <span className="text-[9px] font-black uppercase bg-[#1a1a1a] text-[#EAB308] border border-[#EAB308]/20 px-2 py-0.5 rounded-md tracking-wider">
-                Option Contract
-              </span>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-[9px] font-black uppercase bg-[#1a1a1a] text-[#EAB308] border border-[#EAB308]/20 px-2 py-0.5 rounded-md tracking-wider shrink-0">
+                  Option Contract
+                </span>
+                <button 
+                  onClick={() => {
+                    setActiveTrade(null);
+                    setTradeResult(null);
+                    setShowShareCard(false);
+                  }}
+                  className="p-1.5 bg-[#1a1a1a] text-gray-400 hover:text-white rounded-full transition-colors shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             {/* Position Symbol & Direction */}
