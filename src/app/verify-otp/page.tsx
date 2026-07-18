@@ -150,7 +150,7 @@ function VerifyOtpContent() {
         </AnimatePresence>
         
         <form onSubmit={handleVerify} className="flex flex-col gap-6">
-          <div className="flex justify-between gap-2 w-full">
+          <div className="flex justify-center gap-2.5 w-full">
             {otp.map((digit, index) => (
               <input
                 key={index}
@@ -164,7 +164,7 @@ function VerifyOtpContent() {
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
-                className="w-12 h-14 md:w-14 md:h-16 rounded-xl border border-white/5 bg-[#1a1a1a] text-white text-center font-bold text-2xl focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                className="w-12 h-14 rounded-xl border border-white/5 bg-[#1a1a1a] text-white text-center font-bold text-2xl focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
               />
             ))}
           </div>
