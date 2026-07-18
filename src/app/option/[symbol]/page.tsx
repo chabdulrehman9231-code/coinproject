@@ -7,7 +7,7 @@ import MarketSelector from "@/components/MarketSelector";
 import Header from "@/components/Header";
 import { createClient } from "@/lib/supabase/client";
 import { Suspense } from "react";
-import { openOptionTrade } from "@/app/option/actions";
+import { openOptionTrade, autoResolveOptionTradeAsLost } from "@/app/option/actions";
 import { toPng } from 'html-to-image';
 
 interface TickerStats {
@@ -170,53 +170,106 @@ function OptionContent() {
     };
   }, [activeTrade, supabase]);
 
-  // Apply buffered result only when timer finishes
+  // Apply buffered result or auto-resolve as lost when timer finishes
   useEffect(() => {
-    if (bufferedResult && countdown <= 0) {
-      setIsWaitingForResult(false);
-      setTradeResult(bufferedResult.status);
-      setTradeHistory(prev => [bufferedResult, ...prev]);
+    if (countdown <= 0 && activeTrade && !tradeResult) {
+      if (bufferedResult) {
+        // Super admin already made a decision, apply it immediately
+        setIsWaitingForResult(false);
+        setTradeResult(bufferedResult.status);
+        setTradeHistory(prev => [bufferedResult, ...prev]);
 
-      // Calculate dynamic exit price based on direction and won/lost status
-      const entry = parseFloat(bufferedResult.entry_price || '0');
-      const isUp = bufferedResult.direction === 'UP';
-      const isWon = bufferedResult.status === 'won';
+        // Calculate dynamic exit price based on direction and won/lost status
+        const entry = parseFloat(bufferedResult.entry_price || '0');
+        const isUp = bufferedResult.direction === 'UP';
+        const isWon = bufferedResult.status === 'won';
 
-      // Generate a small random percentage deviation (between 0.05% and 0.20%)
-      const deviation = (Math.random() * 0.15 + 0.05) / 100;
-      let exit = entry;
+        // Generate a small random percentage deviation (between 0.05% and 0.20%)
+        const deviation = (Math.random() * 0.15 + 0.05) / 100;
+        let exit = entry;
 
-      if (isUp) {
-        if (isWon) {
-          exit = entry * (1 + deviation); // WIN on UP: exit > entry
+        if (isUp) {
+          if (isWon) {
+            exit = entry * (1 + deviation); // WIN on UP: exit > entry
+          } else {
+            exit = entry * (1 - deviation); // LOSS on UP: exit < entry
+          }
         } else {
-          exit = entry * (1 - deviation); // LOSS on UP: exit < entry
+          if (isWon) {
+            exit = entry * (1 - deviation); // WIN on DOWN: exit < entry
+          } else {
+            exit = entry * (1 + deviation); // LOSS on DOWN: exit > entry
+          }
         }
+
+        setShareCardData({
+          ...bufferedResult,
+          exitPrice: exit,
+          potentialProfit: isWon ? parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100) : 0,
+          totalReturn: isWon ? parseFloat(bufferedResult.amount) + (parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100)) : 0
+        });
+
+        // Open the share card modal!
+        setShowShareCard(true);
+        
+        if (bufferedResult.status === 'won') {
+           const payout = parseFloat(bufferedResult.amount) + (parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100));
+           setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
+        }
+        setBufferedResult(null);
       } else {
-        if (isWon) {
-          exit = entry * (1 - deviation); // WIN on DOWN: exit < entry
-        } else {
-          exit = entry * (1 + deviation); // LOSS on DOWN: exit > entry
-        }
-      }
+        // No decision from super admin, auto-resolve as lost!
+        setIsWaitingForResult(true); // briefly show spinner
+        autoResolveOptionTradeAsLost(activeTrade.id).then(res => {
+          setIsWaitingForResult(false);
+          if (res.success && res.trade) {
+            const result = res.trade;
+            setTradeResult(result.status);
+            setTradeHistory(prev => [result, ...prev]);
 
-      setShareCardData({
-        ...bufferedResult,
-        exitPrice: exit,
-        potentialProfit: isWon ? parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100) : 0,
-        totalReturn: isWon ? parseFloat(bufferedResult.amount) + (parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100)) : 0
-      });
+            // Calculate dynamic exit price (status is always 'lost' since it was auto-resolved)
+            const entry = parseFloat(result.entry_price || '0');
+            const isUp = result.direction === 'UP';
+            const isWon = result.status === 'won'; // In case admin resolved it at the last millisecond as won
 
-      // Open the share card modal!
-      setShowShareCard(true);
-      
-      if (bufferedResult.status === 'won') {
-         const payout = parseFloat(bufferedResult.amount) + (parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100));
-         setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
+            const deviation = (Math.random() * 0.15 + 0.05) / 100;
+            let exit = entry;
+
+            if (isUp) {
+              if (isWon) {
+                exit = entry * (1 + deviation);
+              } else {
+                exit = entry * (1 - deviation); // LOSS on UP: exit < entry
+              }
+            } else {
+              if (isWon) {
+                exit = entry * (1 - deviation);
+              } else {
+                exit = entry * (1 + deviation); // LOSS on DOWN: exit > entry
+              }
+            }
+
+            setShareCardData({
+              ...result,
+              exitPrice: exit,
+              potentialProfit: isWon ? parseFloat(result.amount) * (parseFloat(result.profit_rate)/100) : 0,
+              totalReturn: isWon ? parseFloat(result.amount) + (parseFloat(result.amount) * (parseFloat(result.profit_rate)/100)) : 0
+            });
+
+            // Open the share card modal!
+            setShowShareCard(true);
+
+            if (isWon) {
+              const payout = parseFloat(result.amount) + (parseFloat(result.amount) * (parseFloat(result.profit_rate)/100));
+              setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
+            }
+          } else {
+            console.error("Auto resolve failed:", res?.error);
+          }
+        });
       }
-      setBufferedResult(null);
     }
-  }, [bufferedResult, countdown]);
+  }, [bufferedResult, countdown, activeTrade, tradeResult]);
 
   const handleDownloadCard = async () => {
     const cardElement = document.getElementById('pnl-share-card');

@@ -81,3 +81,49 @@ export async function openOptionTrade(
   revalidatePath('/option');
   return { success: true, trade };
 }
+
+export async function autoResolveOptionTradeAsLost(tradeId: string) {
+  try {
+    // 1. Get the trade details
+    const { data: trade, error: fetchError } = await supabaseAdmin
+      .from('option_trades')
+      .select('*')
+      .eq('id', tradeId)
+      .single();
+
+    if (fetchError || !trade) throw new Error('Trade not found');
+
+    // If already resolved by admin during the countdown/waiting, do not overwrite it!
+    if (trade.status !== 'pending') {
+      return { success: true, trade };
+    }
+
+    // 2. Fetch user's USDT wallet balance (no payout addition for loss)
+    let finalBalance = 0;
+    const { data: wallet } = await supabaseAdmin
+      .from('wallets')
+      .select('balance')
+      .eq('user_id', trade.user_id)
+      .eq('asset', 'USDT')
+      .single();
+      
+    if (wallet) {
+      finalBalance = Number(wallet.balance);
+    }
+
+    // 3. Mark the trade as lost
+    const { data: updatedTrade, error: updateError } = await supabaseAdmin
+      .from('option_trades')
+      .update({ status: 'lost', closing_balance: finalBalance })
+      .eq('id', tradeId)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+
+    return { success: true, trade: updatedTrade };
+  } catch (error: any) {
+    console.error('Error auto-resolving trade:', error);
+    return { success: false, error: error.message };
+  }
+}
