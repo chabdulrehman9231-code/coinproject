@@ -5,7 +5,8 @@ import { createClient } from '@/lib/supabase/client';
 import { getUserBalance } from '@/app/dashboard/actions';
 import { 
   User, Copy, Download, Upload, FileText, 
-  Shield, LogOut, ChevronRight, X, ShieldAlert
+  Shield, LogOut, ChevronRight, X, ShieldAlert,
+  Users, IdCard, CreditCard, LineChart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -58,6 +59,10 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
     { icon: Download, label: 'Deposit', action: () => router.push('/assets') },
     { icon: Upload, label: 'Withdraw', action: () => router.push('/assets') },
     { icon: FileText, label: 'Transaction History', action: () => router.push('/transactions') },
+    { icon: LineChart, label: 'Trade History', action: () => router.push('/trade-history') },
+    { icon: Users, label: 'Referral', action: () => router.push('/referral') },
+    { icon: IdCard, label: 'KYC Verification', action: () => router.push('/kyc') },
+    { icon: CreditCard, label: 'Payment Method', action: () => router.push('/payment-method') },
     { icon: Shield, label: 'Security Center', action: () => router.push('/security') },
   ];
 

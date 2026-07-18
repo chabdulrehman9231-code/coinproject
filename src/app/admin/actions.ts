@@ -105,13 +105,20 @@ export async function getUserDetailsAdmin(userId: string) {
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
+    const { data: paymentMethods } = await supabaseAdmin
+      .from('payment_methods')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
     return {
       success: true,
       data: {
         ...user,
         balance: user.wallets && user.wallets.length > 0 ? user.wallets[0].balance : 0,
         transactions: transactions || [],
-        trades: trades || []
+        trades: trades || [],
+        paymentMethods: paymentMethods || []
       }
     };
   } catch (error: any) {
@@ -592,6 +599,68 @@ export async function rejectWithdrawal(transactionId: string) {
         .update({ balance: wallet.balance + tx.amount })
         .eq('id', wallet.id);
     }
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getKycSubmissionsAdmin() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('kyc_submissions')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function approveKycAdmin(submissionId: string, userId: string) {
+  try {
+    // 1. Update submission status
+    const { error: subError } = await supabaseAdmin
+      .from('kyc_submissions')
+      .update({ status: 'approved', updated_at: new Date().toISOString() })
+      .eq('id', submissionId);
+
+    if (subError) throw subError;
+
+    // 2. Update user KYC status
+    const { error: userError } = await supabaseAdmin
+      .from('users')
+      .update({ kyc_status: 'verified' })
+      .eq('id', userId);
+
+    if (userError) throw userError;
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function rejectKycAdmin(submissionId: string, userId: string, reason: string) {
+  try {
+    // 1. Update submission status & reason
+    const { error: subError } = await supabaseAdmin
+      .from('kyc_submissions')
+      .update({ status: 'rejected', rejection_reason: reason, updated_at: new Date().toISOString() })
+      .eq('id', submissionId);
+
+    if (subError) throw subError;
+
+    // 2. Update user KYC status
+    const { error: userError } = await supabaseAdmin
+      .from('users')
+      .update({ kyc_status: 'rejected' })
+      .eq('id', userId);
+
+    if (userError) throw userError;
 
     return { success: true };
   } catch (error: any) {

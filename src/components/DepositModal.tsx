@@ -80,9 +80,9 @@ export default function DepositModal({ isOpen, onClose }: { isOpen: boolean, onC
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#111111] border border-[#222] rounded-2xl max-w-md w-full relative overflow-hidden shadow-2xl">
-        <div className="flex justify-between items-center p-4 border-b border-[#222]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm">
+      <div className="bg-[#111111] border-t sm:border border-[#222] rounded-t-3xl sm:rounded-2xl max-w-md w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col">
+        <div className="flex justify-between items-center p-4 border-b border-[#222] sticky top-0 bg-[#111111] z-10">
           <h2 className="font-bold text-lg text-white">Deposit USDT</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors p-1"><X className="w-5 h-5" /></button>
         </div>

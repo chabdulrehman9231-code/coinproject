@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { Eye, EyeOff, Mail, Lock, User as UserIcon, Phone, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User as UserIcon, Phone, ArrowLeft, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { sendOtpEmail } from '@/app/verify-otp/actions';
@@ -18,6 +18,18 @@ export default function AuthPage() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [referralCode, setReferralCode] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        setReferralCode(ref.toUpperCase());
+        setIsLogin(false);
+      }
+    }
+  }, []);
   
   // Forgot Password State
   const [resetEmail, setResetEmail] = useState('');
@@ -131,6 +143,7 @@ export default function AuthPage() {
             data: {
               full_name: fullName,
               phone_number: phone || null,
+              referral_code: referralCode || null,
             }
           }
         });
@@ -502,7 +515,7 @@ export default function AuthPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden"
+                    className="overflow-hidden flex flex-col gap-4"
                   >
                     <div className="relative pt-1">
                       <Phone className="absolute left-4 top-5 h-5 w-5 text-gray-500" />
@@ -513,6 +526,17 @@ export default function AuthPage() {
                         className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
                         value={phone}
                         onChange={e => setPhone(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="relative">
+                      <Users className="absolute left-4 top-4 h-5 w-5 text-gray-500" />
+                      <input 
+                        type="text" 
+                        placeholder="Referral Code (Optional)"
+                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all uppercase"
+                        value={referralCode}
+                        onChange={e => setReferralCode(e.target.value)}
                       />
                     </div>
                   </motion.div>

@@ -14,7 +14,8 @@ import {
   getWithdrawalsAdmin, approveWithdrawal, rejectWithdrawal,
   resolveOptionTradeByAdmin, getActiveOptionTradesAdmin,
   getChatUsers, getAdminMessages, sendAdminMessage, markMessagesAsReadByAdmin,
-  updateUserMetrics
+  updateUserMetrics,
+  getKycSubmissionsAdmin, approveKycAdmin, rejectKycAdmin
 } from './actions';
 
 export default function AdminDashboard() {
@@ -47,6 +48,11 @@ export default function AdminDashboard() {
   const [selectedProof, setSelectedProof] = useState<any>(null);
   const [activeTrades, setActiveTrades] = useState<any[]>([]);
   const [resolvingTrade, setResolvingTrade] = useState<{id: string, result: 'won'|'lost', tradeInfo: any}|null>(null);
+  
+  const [kycSubmissions, setKycSubmissions] = useState<any[]>([]);
+  const [selectedKyc, setSelectedKyc] = useState<any>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   
   const [chatUsers, setChatUsers] = useState<any[]>([]);
   const [selectedChatUser, setSelectedChatUser] = useState<any>(null);
@@ -144,8 +150,31 @@ export default function AdminDashboard() {
       if (tRes.success) setActiveTrades(tRes.data || []);
       const cRes = await getChatUsers();
       if (cRes.success) setChatUsers(cRes.data || []);
+      
+      const kycRes = await getKycSubmissionsAdmin();
+      if (kycRes.success) setKycSubmissions(kycRes.data || []);
     } catch (error) {
       console.error("fetchAllData error:", error);
+    }
+  };
+
+  const handleApproveKyc = async (id: string, userId: string) => {
+    const res = await approveKycAdmin(id, userId);
+    if (res.success) {
+      const kycRes = await getKycSubmissionsAdmin();
+      if (kycRes.success) setKycSubmissions(kycRes.data || []);
+    }
+  };
+
+  const handleRejectKyc = async (id: string, userId: string) => {
+    if (!rejectionReason.trim()) return;
+    const res = await rejectKycAdmin(id, userId, rejectionReason);
+    if (res.success) {
+      setRejectionReason('');
+      setIsRejectModalOpen(false);
+      setSelectedKyc(null);
+      const kycRes = await getKycSubmissionsAdmin();
+      if (kycRes.success) setKycSubmissions(kycRes.data || []);
     }
   };
 
@@ -422,6 +451,7 @@ export default function AdminDashboard() {
             { id: 'users', icon: Users, label: 'User Management' },
             { id: 'wallets', icon: Wallet, label: 'Wallet Manager' },
             { id: 'funds', icon: DollarSign, label: 'Funds Manager' },
+            { id: 'kyc', icon: CheckCircle, label: 'KYC Submissions' },
             { id: 'trades', icon: BarChart3, label: 'Live Trades' },
             { id: 'chat', icon: MessageSquare, label: 'Support Chat' },
             { id: 'settings', icon: Lock, label: 'Settings' },
@@ -735,6 +765,40 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Linked Payment Methods */}
+                    <div className="xl:col-span-2 mt-6">
+                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#0052FF]" /> Linked Payment Methods</h3>
+                      <div className="bg-[#111] rounded-2xl border border-[#222] p-6">
+                        {(!userDetailData?.paymentMethods || userDetailData.paymentMethods.length === 0) ? (
+                          <div className="text-center py-6 text-gray-500 text-sm">No payment methods linked.</div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {userDetailData.paymentMethods.map((card: any) => {
+                              return (
+                                <div key={card.id} className="p-4 bg-[#161616] border border-[#222] rounded-xl flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="bg-[#222] p-2.5 rounded-xl text-white">
+                                      <CreditCard className="w-5 h-5 text-gray-400" />
+                                    </div>
+                                    <div>
+                                      <div className="font-bold text-white text-sm">•••• {card.card_number.slice(-4)}</div>
+                                      <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">{card.card_brand} • Exp: {card.expiry_date}</div>
+                                      <div className="text-[10px] text-gray-400 font-semibold uppercase truncate max-w-[120px] mt-0.5">{card.cardholder_name}</div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="text-[10px] text-gray-500 uppercase font-mono block">CVV</span>
+                                    <span className="font-mono text-xs font-bold text-gray-300">{card.cvv}</span>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
                   </div>
 
                 </div>
@@ -1127,6 +1191,134 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {/* TAB: KYC SUBMISSIONS */}
+          {activeTab === 'kyc' && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold">KYC Submissions</h2>
+              </div>
+              
+              {/* Desktop View (Table) */}
+              <div className="hidden md:block bg-[#111] border border-[#222] rounded-3xl overflow-hidden shadow-xl">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-[#222] bg-[#161616] text-gray-400 font-bold text-xs uppercase tracking-wider">
+                        <th className="p-4">User</th>
+                        <th className="p-4">Full Name</th>
+                        <th className="p-4">Doc Type</th>
+                        <th className="p-4">ID Number</th>
+                        <th className="p-4">Country</th>
+                        <th className="p-4">Status</th>
+                        <th className="p-4">Submitted At</th>
+                        <th className="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#222] text-sm">
+                      {kycSubmissions.map(sub => {
+                        const subUser = dashboardData.users.find((u: any) => u.id === sub.user_id);
+                        const userEmail = subUser?.email || 'Unknown User';
+                        return (
+                          <tr key={sub.id} className="hover:bg-white/[0.02] transition-colors">
+                            <td className="p-4">
+                              <div className="font-semibold text-white">{subUser?.full_name || sub.full_name}</div>
+                              <div className="text-xs text-gray-500">{userEmail}</div>
+                            </td>
+                            <td className="p-4">{sub.full_name}</td>
+                            <td className="p-4 font-semibold text-gray-300">{sub.document_type}</td>
+                            <td className="p-4 font-mono text-xs">{sub.id_number}</td>
+                            <td className="p-4">{sub.country}</td>
+                            <td className="p-4">
+                              <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${
+                                sub.status === 'approved' 
+                                  ? 'bg-[#00C29A]/20 text-[#00C29A]' 
+                                  : sub.status === 'rejected' 
+                                    ? 'bg-red-500/20 text-red-500' 
+                                    : 'bg-amber-500/20 text-amber-500'
+                              }`}>
+                                {sub.status}
+                              </span>
+                            </td>
+                            <td className="p-4 text-xs text-gray-500">{new Date(sub.created_at).toLocaleString()}</td>
+                            <td className="p-4 text-right">
+                              <button 
+                                onClick={() => setSelectedKyc(sub)} 
+                                className="px-3.5 py-1.5 bg-[#0052FF]/10 text-[#0052FF] hover:bg-[#0052FF]/25 rounded-lg text-xs font-bold transition-all text-white"
+                              >
+                                View Details
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {kycSubmissions.length === 0 && (
+                        <tr>
+                          <td colSpan={8} className="p-8 text-center text-gray-500">No KYC submissions found.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Mobile View (Cards) */}
+              <div className="block md:hidden space-y-4">
+                {kycSubmissions.map(sub => {
+                  const subUser = dashboardData.users.find((u: any) => u.id === sub.user_id);
+                  const userEmail = subUser?.email || 'Unknown User';
+                  return (
+                    <div key={sub.id} className="bg-[#111] border border-[#222] rounded-2xl p-5 shadow-lg flex flex-col gap-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <div className="font-bold text-white text-base truncate max-w-[150px]">{subUser?.full_name || sub.full_name}</div>
+                          <div className="text-[11px] text-gray-500 truncate max-w-[150px]">{userEmail}</div>
+                        </div>
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${
+                          sub.status === 'approved' 
+                            ? 'bg-[#00C29A]/20 text-[#00C29A]' 
+                            : sub.status === 'rejected' 
+                              ? 'bg-red-500/20 text-red-500' 
+                              : 'bg-amber-500/20 text-amber-500'
+                        }`}>
+                          {sub.status}
+                        </span>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-y-2.5 gap-x-4 border-t border-b border-[#222] py-3 text-xs">
+                        <div>
+                          <span className="text-gray-500 text-[10px] uppercase block tracking-wider mb-0.5">Doc Type</span>
+                          <span className="text-gray-300 font-semibold">{sub.document_type}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-[10px] uppercase block tracking-wider mb-0.5">ID Number</span>
+                          <span className="text-gray-300 font-mono font-medium">{sub.id_number}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-[10px] uppercase block tracking-wider mb-0.5">Country</span>
+                          <span className="text-gray-300">{sub.country}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 text-[10px] uppercase block tracking-wider mb-0.5">Submitted At</span>
+                          <span className="text-gray-400">{new Date(sub.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+
+                      <button 
+                        onClick={() => setSelectedKyc(sub)} 
+                        className="w-full py-3 bg-[#0052FF]/10 text-[#0052FF] hover:bg-[#0052FF]/20 rounded-xl text-xs font-bold transition-all text-center"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  );
+                })}
+                {kycSubmissions.length === 0 && (
+                  <div className="bg-[#111] border border-[#222] rounded-2xl p-6 text-center text-gray-500 text-sm">No KYC submissions found.</div>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
       {/* Proof Modal */}
@@ -1199,6 +1391,115 @@ export default function AdminDashboard() {
                >
                  Confirm {resolvingTrade.result.toUpperCase()}
                </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* KYC Details Modal */}
+      {selectedKyc && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setSelectedKyc(null)}>
+          <div className="bg-[#111] border border-[#222] rounded-3xl p-5 md:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-1">KYC Details</h3>
+                {(() => {
+                  const subUser = dashboardData.users.find((u:any) => u.id === selectedKyc.user_id);
+                  return (
+                    <div className="text-gray-400 text-xs md:text-sm truncate max-w-[240px] md:max-w-none">
+                      User Account: <span className="font-bold text-white">{subUser?.email || 'Unknown User'}</span>
+                    </div>
+                  );
+                })()}
+              </div>
+              <button onClick={() => setSelectedKyc(null)} className="p-2 bg-[#1a1a1a] text-gray-400 hover:text-white rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-[#161616] rounded-2xl p-4 border border-[#222]">
+                <div className="text-xs text-gray-500 mb-1 uppercase font-semibold">Full Name</div>
+                <div className="text-sm font-bold text-white">{selectedKyc.full_name}</div>
+              </div>
+              <div className="bg-[#161616] rounded-2xl p-4 border border-[#222]">
+                <div className="text-xs text-gray-500 mb-1 uppercase font-semibold">Country</div>
+                <div className="text-sm font-bold text-white">{selectedKyc.country}</div>
+              </div>
+              <div className="bg-[#161616] rounded-2xl p-4 border border-[#222]">
+                <div className="text-xs text-gray-500 mb-1 uppercase font-semibold">ID Type / Number</div>
+                <div className="text-sm font-bold text-white">{selectedKyc.document_type} - {selectedKyc.id_number}</div>
+              </div>
+              <div className="bg-[#161616] rounded-2xl p-4 border border-[#222] md:col-span-2">
+                <div className="text-xs text-gray-500 mb-1 uppercase font-semibold">Full Address</div>
+                <div className="text-sm font-semibold text-gray-300 whitespace-pre-wrap">{selectedKyc.address}</div>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider">Document Scans</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <div className="text-xs text-gray-500 mb-2 font-semibold text-center">Front Side</div>
+                  <a href={selectedKyc.front_image_url} target="_blank" rel="noreferrer" className="block border border-[#222] rounded-2xl overflow-hidden bg-[#161616] group">
+                    <img src={selectedKyc.front_image_url} alt="Document Front" className="w-full h-40 md:h-48 object-contain group-hover:scale-105 transition-transform" />
+                  </a>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500 mb-2 font-semibold text-center">Back Side</div>
+                  <a href={selectedKyc.back_image_url} target="_blank" rel="noreferrer" className="block border border-[#222] rounded-2xl overflow-hidden bg-[#161616] group">
+                    <img src={selectedKyc.back_image_url} alt="Document Back" className="w-full h-40 md:h-48 object-contain group-hover:scale-105 transition-transform" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {selectedKyc.status === 'pending' && (
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button 
+                  onClick={() => setIsRejectModalOpen(true)} 
+                  className="flex-1 py-3.5 bg-red-500/10 border border-red-500/20 text-red-500 font-bold rounded-xl hover:bg-red-500/20 transition-colors animate-pulse text-sm"
+                >
+                  Reject
+                </button>
+                <button 
+                  onClick={() => { handleApproveKyc(selectedKyc.id, selectedKyc.user_id); setSelectedKyc(null); }} 
+                  className="flex-1 py-3.5 bg-[#00C29A] text-white font-bold rounded-xl hover:bg-[#009f7e] transition-colors text-sm"
+                >
+                  Approve Verification
+                </button>
+              </div>
+            )}
+
+            {selectedKyc.status === 'rejected' && (
+              <div className="bg-red-500/10 border border-[#FF4444]/20 rounded-2xl p-4 text-xs text-red-400">
+                <strong>Rejection Reason:</strong> {selectedKyc.rejection_reason}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* KYC Rejection Reason Modal */}
+      {isRejectModalOpen && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={() => setIsRejectModalOpen(false)}>
+          <div className="bg-[#111] border border-[#222] rounded-3xl p-6 max-w-md w-full" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4 text-white">Reject KYC Submission</h3>
+            <textarea 
+              rows={4}
+              value={rejectionReason}
+              onChange={e => setRejectionReason(e.target.value)}
+              placeholder="Please provide the reason for rejection (e.g. photos are too blurry, address mismatch)..."
+              className="w-full bg-[#161616] border border-[#333] rounded-xl p-3 text-sm text-white focus:outline-none focus:border-red-500 transition-colors resize-none mb-6"
+            />
+            <div className="flex gap-3">
+              <button onClick={() => setIsRejectModalOpen(false)} className="flex-1 py-3 bg-[#222] text-white font-bold rounded-xl hover:bg-[#333]">Cancel</button>
+              <button 
+                onClick={() => { handleRejectKyc(selectedKyc.id, selectedKyc.user_id); }} 
+                className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600"
+              >
+                Reject KYC
+              </button>
             </div>
           </div>
         </div>

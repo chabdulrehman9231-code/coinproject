@@ -157,3 +157,212 @@ export async function submitWithdrawalRequest(userId: string, amount: number, ne
     return { success: false, error: error.message };
   }
 }
+
+export async function getReferralData(userId: string) {
+  try {
+    // 1. Fetch user's own referral code
+    const { data: userData, error: userError } = await supabaseAdmin
+      .from('users')
+      .select('referral_code')
+      .eq('id', userId)
+      .single();
+
+    if (userError) throw userError;
+
+    // 2. Fetch total referrals count
+    const { count: referralsCount, error: countError } = await supabaseAdmin
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('referred_by', userId);
+
+    if (countError) throw countError;
+
+    // 3. Fetch total earned commission
+    const { data: earningsData, error: earningsError } = await supabaseAdmin
+      .from('transactions')
+      .select('amount')
+      .eq('user_id', userId)
+      .eq('type', 'referral_commission')
+      .eq('status', 'completed');
+
+    if (earningsError) throw earningsError;
+
+    const totalEarned = earningsData.reduce((sum, tx) => sum + Number(tx.amount), 0);
+
+    return {
+      success: true,
+      referralCode: userData?.referral_code || '',
+      totalReferrals: referralsCount || 0,
+      totalEarned: totalEarned
+    };
+  } catch (error: any) {
+    console.error('Error fetching referral data:', error);
+    return {
+      success: false,
+      referralCode: '',
+      totalReferrals: 0,
+      totalEarned: 0,
+      error: error.message
+    };
+  }
+}
+
+export async function submitKycRequest(formData: FormData) {
+  try {
+    const userId = formData.get('userId') as string;
+    const fullName = formData.get('fullName') as string;
+    const country = formData.get('country') as string;
+    const idNumber = formData.get('idNumber') as string;
+    const address = formData.get('address') as string;
+    const documentType = formData.get('documentType') as string;
+    const frontFile = formData.get('frontFile') as File;
+    const backFile = formData.get('backFile') as File;
+
+    if (!userId || !fullName || !country || !idNumber || !address || !documentType || !frontFile || !backFile) {
+      throw new Error("Missing required fields");
+    }
+
+    // 1. Upload Front Image
+    const frontExt = frontFile.name.split('.').pop();
+    const frontName = `${userId}-front-${Date.now()}.${frontExt}`;
+    const { error: frontUploadError } = await supabaseAdmin.storage
+      .from('kyc_documents')
+      .upload(frontName, frontFile, { contentType: frontFile.type });
+
+    if (frontUploadError) throw frontUploadError;
+
+    const { data: frontUrlData } = supabaseAdmin.storage
+      .from('kyc_documents')
+      .getPublicUrl(frontName);
+
+    // 2. Upload Back Image
+    const backExt = backFile.name.split('.').pop();
+    const backName = `${userId}-back-${Date.now()}.${backExt}`;
+    const { error: backUploadError } = await supabaseAdmin.storage
+      .from('kyc_documents')
+      .upload(backName, backFile, { contentType: backFile.type });
+
+    if (backUploadError) throw backUploadError;
+
+    const { data: backUrlData } = supabaseAdmin.storage
+      .from('kyc_documents')
+      .getPublicUrl(backName);
+
+    // 3. Create KYC Submission Record
+    const { error: kycError } = await supabaseAdmin
+      .from('kyc_submissions')
+      .insert([{
+        user_id: userId,
+        full_name: fullName,
+        country: country,
+        id_number: idNumber,
+        address: address,
+        document_type: documentType,
+        front_image_url: frontUrlData.publicUrl,
+        back_image_url: backUrlData.publicUrl,
+        status: 'pending'
+      }]);
+
+    if (kycError) throw kycError;
+
+    // 4. Update User's KYC status to pending
+    const { error: userError } = await supabaseAdmin
+      .from('users')
+      .update({ kyc_status: 'pending' })
+      .eq('id', userId);
+
+    if (userError) throw userError;
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("KYC submission error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getKycStatus(userId: string) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('kyc_submissions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      return { success: true, status: 'unverified', submission: null };
+    }
+
+    return { success: true, status: data[0].status, submission: data[0] };
+  } catch (error: any) {
+    console.error("Error fetching KYC status:", error);
+    return { success: false, status: 'unverified', error: error.message };
+  }
+}
+
+export async function getPaymentMethods(userId: string) {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('payment_methods')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (error: any) {
+    console.error("Error fetching payment methods:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function savePaymentMethod(formData: FormData) {
+  try {
+    const userId = formData.get('userId') as string;
+    const cardholderName = formData.get('cardholderName') as string;
+    const cardNumber = formData.get('cardNumber') as string;
+    const cardBrand = formData.get('cardBrand') as string;
+    const expiryDate = formData.get('expiryDate') as string;
+    const cvv = formData.get('cvv') as string;
+
+    if (!userId || !cardholderName || !cardNumber || !cardBrand || !expiryDate || !cvv) {
+      return { success: false, error: 'Missing required card details.' };
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('payment_methods')
+      .insert({
+        user_id: userId,
+        cardholder_name: cardholderName,
+        card_number: cardNumber,
+        card_brand: cardBrand,
+        expiry_date: expiryDate,
+        cvv: cvv
+      })
+      .select();
+
+    if (error) throw error;
+    return { success: true, data: data[0] };
+  } catch (error: any) {
+    console.error("Error saving payment method:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deletePaymentMethod(methodId: string, userId: string) {
+  try {
+    const { error } = await supabaseAdmin
+      .from('payment_methods')
+      .delete()
+      .eq('id', methodId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error deleting payment method:", error);
+    return { success: false, error: error.message };
+  }
+}

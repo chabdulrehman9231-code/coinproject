@@ -4,6 +4,7 @@ import { Download, Upload, Wallet } from 'lucide-react';
 import BottomNav from '@/components/BottomNav';
 import Header from '@/components/Header';
 import WithdrawModal from '@/components/WithdrawModal';
+import DepositModal from '@/components/DepositModal';
 import { createClient } from '@/lib/supabase/client';
 import { getUserBalance } from '@/app/dashboard/actions';
 import { useRouter } from 'next/navigation';
@@ -14,23 +15,26 @@ export default function AssetsPage() {
   const [vipLevel, setVipLevel] = useState('Bronze');
   const [creditScore, setCreditScore] = useState(700);
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const router = useRouter();
 
   const supabase = createClient();
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setUid(user.id.split('-')[0].toUpperCase());
-        getUserBalance(user.id).then(res => {
-          if (res.success) {
-            setBalance(Number(res.balance).toFixed(2));
-            setVipLevel(res.vipLevel || 'Bronze');
-            setCreditScore(res.creditScore ?? 700);
-          }
-        });
+  const fetchBalance = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUid(user.id.split('-')[0].toUpperCase());
+      const res = await getUserBalance(user.id);
+      if (res.success) {
+        setBalance(Number(res.balance).toFixed(2));
+        setVipLevel(res.vipLevel || 'Bronze');
+        setCreditScore(res.creditScore ?? 700);
       }
-    });
+    }
+  };
+
+  useEffect(() => {
+    fetchBalance();
   }, [supabase]);
 
   // Determine VIP color
@@ -84,7 +88,10 @@ export default function AssetsPage() {
 
             {/* Action Buttons */}
             <div className="flex justify-center gap-3 w-full max-w-lg">
-              <button className="flex-1 flex items-center justify-center gap-2 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors">
+              <button 
+                onClick={() => setIsDepositModalOpen(true)}
+                className="flex-1 flex items-center justify-center gap-2 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors"
+              >
                 <Download className="w-5 h-5" /> Deposit
               </button>
               <button onClick={() => setIsWithdrawModalOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-[#FF4444] hover:bg-[#FF4444]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors">
@@ -102,17 +109,16 @@ export default function AssetsPage() {
         isOpen={isWithdrawModalOpen} 
         onClose={() => {
           setIsWithdrawModalOpen(false);
-          // fetch balance to update UI
-          const fetchBal = async () => {
-            const supabase = createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-              const res = await getUserBalance(user.id);
-              if (res.success) setBalance(res.balance);
-            }
-          };
-          fetchBal();
+          fetchBalance();
         }} 
+      />
+
+      <DepositModal 
+        isOpen={isDepositModalOpen}
+        onClose={() => {
+          setIsDepositModalOpen(false);
+          fetchBalance();
+        }}
       />
     </div>
   );

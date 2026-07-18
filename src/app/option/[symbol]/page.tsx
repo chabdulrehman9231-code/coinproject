@@ -19,11 +19,11 @@ interface TickerStats {
 
 const TIME_FRAMES = [
   { label: '30 sec', profit: 10, min: 100 },
-  { label: '60 sec', profit: 20, min: 10000 },
-  { label: '120 sec', profit: 30, min: 30000 },
-  { label: '180 sec', profit: 50, min: 100000 },
-  { label: '240 sec', profit: 70, min: 250000 },
-  { label: '300 sec', profit: 90, min: 500000 },
+  { label: '60 sec', profit: 20, min: 5000 },
+  { label: '120 sec', profit: 30, min: 20000 },
+  { label: '180 sec', profit: 50, min: 50000 },
+  { label: '240 sec', profit: 70, min: 150000 },
+  { label: '300 sec', profit: 90, min: 300000 },
 ];
 
 function OptionContent() {
@@ -469,10 +469,7 @@ function OptionContent() {
                        </>
                     )}
                   </button>
-                  <div className="flex items-center gap-1.5 justify-center mt-3 text-[10px] text-gray-500">
-                    <AlertTriangle className="w-3 h-3 text-[#EAB308]" />
-                    Contract trading involves significant risk. Trade responsibly.
-                  </div>
+                  {/* Warning notice removed */}
                 </div>
               </div>
             </div>

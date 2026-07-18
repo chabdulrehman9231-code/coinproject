@@ -72,11 +72,7 @@ export default function Header() {
             <MessageSquare className="h-[22px] w-[22px]" />
           </div>
 
-          {/* Bell Icon */}
-          <div className="relative cursor-pointer hover:text-white text-gray-400 mx-2 transition-colors">
-            <Bell className="h-[22px] w-[22px]" />
-            <div className="absolute -top-1.5 -right-1.5 w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold rounded-full bg-[#f04a27] text-white border-2 border-[#0a0a0a]">1</div>
-          </div>
+          {/* Bell Icon removed */}
 
           {/* User Avatar */}
           <div 
