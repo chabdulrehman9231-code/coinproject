@@ -326,7 +326,7 @@ export default function AuthPage() {
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
               width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
              >
-                <path d="M31.776 13.333A16 16 0 1 0 31.776 18.667L20.618 18.667A5.333 5.333 0 1 1 20.618 13.333Z" fill="#0052FF"/>
+                <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
              </motion.svg>
         </div>
 
