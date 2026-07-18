@@ -810,7 +810,7 @@ function OptionContent() {
               <div className="bg-[#141414] rounded-2xl p-4 border border-white/5 space-y-3 mb-6">
                 <div className="grid grid-cols-2 text-xs">
                   <div>
-                    <span className="text-gray-500 block mb-0.5">Bet Amount</span>
+                    <span className="text-gray-500 block mb-0.5">Trade Amount</span>
                     <span className="font-bold text-white font-mono">{parseFloat(shareCardData.amount).toFixed(2)} USDT</span>
                   </div>
                   <div className="text-right">
