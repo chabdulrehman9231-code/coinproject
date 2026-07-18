@@ -65,7 +65,7 @@ export async function sendResetOtp(email: string) {
                   <tr>
                     <td align="center" style="padding: 40px 0 30px 0; border-bottom: 1px solid #222222;">
                       <div style="font-size: 28px; font-weight: 800; letter-spacing: -0.5px; text-align: center;">
-                        <div style="display: inline-block; border-radius: 50%; background-image: linear-gradient(#0052FF, #0052FF); padding: 10px; vertical-align: middle; margin-right: 6px;"><div style="width: 11px; height: 11px; border-radius: 50%; background-color: #121212;"></div></div><span style="background-image: linear-gradient(#0052FF, #0052FF); -webkit-background-clip: text; background-clip: text; color: #0052FF; -webkit-text-fill-color: transparent; vertical-align: middle;">CoinBase</span><span style="color: #ffffff; vertical-align: middle;"> Trades</span>
+                        <div style="display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 6px solid #0052FF; border-right-color: transparent; vertical-align: middle; margin-right: 6px;"></div><span style="background-image: linear-gradient(#0052FF, #0052FF); -webkit-background-clip: text; background-clip: text; color: #0052FF; -webkit-text-fill-color: transparent; vertical-align: middle;">CoinBase</span><span style="color: #ffffff; vertical-align: middle;"> Trades</span>
                       </div>
                     </td>
                   </tr>
