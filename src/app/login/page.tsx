@@ -312,7 +312,7 @@ export default function AuthPage() {
               else setForgotPasswordMode(false);
               setError(null);
             }}
-            className="absolute top-8 left-8 text-gray-500 hover:text-white transition-colors"
+            className="absolute top-6 left-6 p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white transition-all"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -355,21 +355,19 @@ export default function AuthPage() {
           )}
         </AnimatePresence>
         
-        {/* ---- FORGOT PASSWORD FLOW ---- */}
         {forgotPasswordMode === 'email' && (
           <form onSubmit={handleSendResetOtp} className="flex flex-col gap-4">
-            <p className="text-gray-400 text-sm text-center mb-2">Enter your registered email address and we'll send you a 6-digit verification code.</p>
-            <div className="relative">
-              <Mail className="absolute left-4 top-4 h-5 w-5 text-gray-500" />
-              <input 
-                type="email" 
-                placeholder="Email address"
-                required 
-                className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
-                value={resetEmail}
-                onChange={e => setResetEmail(e.target.value)}
-              />
-            </div>
+            <p className="text-gray-400 text-sm text-center leading-relaxed mb-6 max-w-[280px] mx-auto">
+              Enter your registered email address and we'll send you a 6-digit verification code.
+            </p>
+            <input 
+              type="email" 
+              placeholder="Email address"
+              required 
+              className="w-full rounded-xl border border-white/10 bg-[#1a1a1a] p-4 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+              value={resetEmail}
+              onChange={e => setResetEmail(e.target.value)}
+            />
             <button
               type="submit"
               disabled={loading}
