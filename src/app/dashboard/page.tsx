@@ -177,9 +177,7 @@ export default function DashboardPage() {
       <header className="flex md:hidden items-center justify-between px-4 py-3">
         {/* Left: Logo */}
         <div className="flex items-center">
-           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#BF953F"/>
-           </svg>
+           <img src="/logo.svg" className="w-8 h-8 object-contain" style={{ imageRendering: '-webkit-optimize-contrast' }} alt="Coinflow VIP Logo" />
         </div>
         
         {/* Right: Notification & Profile */}
