@@ -106,7 +106,7 @@ export default function OrderForm({ symbol = 'BTCUSDT' }: { symbol?: string }) {
           <span className="text-[12px] text-gray-500 whitespace-nowrap truncate ml-2">Avail: {usdtBalance.toFixed(2)}</span>
         </div>
         
-        <div className="bg-[#1a1a1a] rounded-xl flex items-center px-3 py-3 border border-transparent focus-within:border-[#0052FF]/30 transition-colors">
+        <div className="bg-[#1a1a1a] rounded-xl flex items-center px-3 py-3 border border-transparent focus-within:border-[#BF953F]/30 transition-colors">
           <input 
             type="number" 
             value={buyAmount}

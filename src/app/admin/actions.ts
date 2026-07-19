@@ -682,3 +682,39 @@ export async function toggleUserDisabledStatus(userId: string, isDisabled: boole
     return { success: false, error: error.message };
   }
 }
+
+export async function updateUserBalance(userId: string, newBalance: number) {
+  try {
+    // 1. Check if user has a USDT wallet
+    const { data: wallets, error: fetchError } = await supabaseAdmin
+      .from('wallets')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('asset', 'USDT');
+
+    if (fetchError) throw fetchError;
+
+    if (wallets && wallets.length > 0) {
+      // 2. Update existing wallet
+      const { error: updateError } = await supabaseAdmin
+        .from('wallets')
+        .update({ balance: newBalance })
+        .eq('user_id', userId)
+        .eq('asset', 'USDT');
+
+      if (updateError) throw updateError;
+    } else {
+      // 3. Create wallet if it doesn't exist
+      const { error: insertError } = await supabaseAdmin
+        .from('wallets')
+        .insert([{ user_id: userId, asset: 'USDT', balance: newBalance }]);
+
+      if (insertError) throw insertError;
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error updating user balance:', error);
+    return { success: false, error: error.message };
+  }
+}

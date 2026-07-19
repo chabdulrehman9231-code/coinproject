@@ -178,7 +178,7 @@ export default function DashboardPage() {
         {/* Left: Logo */}
         <div className="flex items-center">
            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
+              <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#BF953F"/>
            </svg>
         </div>
         
@@ -190,9 +190,9 @@ export default function DashboardPage() {
           </div>
           <div 
             onClick={() => setIsDrawerOpen(true)}
-            className="w-8 h-8 rounded-full border border-[#0052FF] flex items-center justify-center cursor-pointer hover:bg-[#0052FF]/10 transition-colors"
+            className="w-8 h-8 rounded-full border border-[#BF953F] flex items-center justify-center cursor-pointer hover:bg-[#BF953F]/10 transition-colors"
           >
-            <User className="w-5 h-5 text-[#0052FF]" />
+            <User className="w-5 h-5 text-[#BF953F]" />
           </div>
         </div>
       </header>
@@ -217,7 +217,7 @@ export default function DashboardPage() {
                       {showBalance ? <Eye className="w-4 h-4 md:w-5 md:h-5" /> : <EyeOff className="w-4 h-4 md:w-5 md:h-5" />}
                     </button>
                     <button onClick={fetchBalance} disabled={isRefreshing} className="hover:text-gray-300 transition-colors p-1">
-                      <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${isRefreshing ? 'animate-spin text-[#0052FF]' : ''}`} />
+                      <RefreshCw className={`w-4 h-4 md:w-5 md:h-5 ${isRefreshing ? 'animate-spin text-[#BF953F]' : ''}`} />
                     </button>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export default function DashboardPage() {
 
             {/* Bottom section with buttons */}
             <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-2">
-              <button onClick={() => setIsDepositModalOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white px-3 md:px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all">
+              <button onClick={() => setIsDepositModalOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-[#BF953F] hover:bg-[#BF953F]/90 text-white px-3 md:px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all">
                 <Download className="w-4 h-4" /> Deposit
               </button>
               <button onClick={() => setIsWithdrawModalOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-[#1a1a1a] hover:bg-[#222] border border-white/5 text-white px-3 md:px-5 py-2.5 rounded-xl text-xs md:text-sm font-semibold transition-all">
@@ -277,7 +277,7 @@ export default function DashboardPage() {
                 onClick={() => action.path ? router.push(action.path) : null}
               >
                 <div className="w-12 h-12 rounded-full bg-[#161616] flex items-center justify-center relative">
-                  <Icon className="h-5 w-5 text-[#0052FF]" />
+                  <Icon className="h-5 w-5 text-[#BF953F]" />
                   {action.path === '/chat' && unreadChatCount > 0 && (
                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-bold border border-[#0a0a0a]">
                       {unreadChatCount}
@@ -298,7 +298,7 @@ export default function DashboardPage() {
         <div className="px-4 sticky top-0 bg-[#0a0a0a] z-10">
           <div className="flex items-center justify-center py-3 relative">
             <div className="absolute w-full h-[1px] bg-[#1a1a1a] top-1/2 -translate-y-1/2" />
-            <h3 className="text-sm font-bold text-[#0052FF] bg-[#0a0a0a] px-3 relative z-10">Markets</h3>
+            <h3 className="text-sm font-bold text-[#BF953F] bg-[#0a0a0a] px-3 relative z-10">Markets</h3>
           </div>
           
           <div className="relative mb-4">
@@ -308,7 +308,7 @@ export default function DashboardPage() {
                 placeholder="Search coin (e.g. BTC)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#161616] border border-white/5 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#0052FF] transition-colors"
+                className="w-full bg-[#161616] border border-white/5 rounded-lg py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-[#BF953F] transition-colors"
               />
           </div>
 

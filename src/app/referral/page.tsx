@@ -73,7 +73,7 @@ export default function ReferralPage() {
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-10 h-10 border-4 border-[#0052FF] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#BF953F] border-t-transparent rounded-full animate-spin"></div>
               <p className="text-sm text-gray-500">Loading referral stats...</p>
             </div>
           ) : (
@@ -83,8 +83,8 @@ export default function ReferralPage() {
               <div className="grid grid-cols-2 gap-4">
                 {/* Total Referrals */}
                 <div className="bg-[#111] rounded-2xl p-5 border border-[#222] flex flex-col items-center justify-center text-center shadow-lg relative overflow-hidden">
-                  <div className="w-10 h-10 rounded-full bg-[#0052FF]/10 flex items-center justify-center mb-3">
-                    <Users className="w-5 h-5 text-[#0052FF]" />
+                  <div className="w-10 h-10 rounded-full bg-[#BF953F]/10 flex items-center justify-center mb-3">
+                    <Users className="w-5 h-5 text-[#BF953F]" />
                   </div>
                   <div className="text-3xl font-extrabold text-white mb-1">
                     {totalReferrals}
@@ -110,9 +110,9 @@ export default function ReferralPage() {
 
               {/* Invite Code Card */}
               <div className="bg-[#111] rounded-3xl p-6 border border-[#222] shadow-xl text-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#0052FF]/30 to-transparent" />
+                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#BF953F]/30 to-transparent" />
                 
-                <div className="text-sm font-semibold text-[#0052FF] mb-4 uppercase tracking-wider">
+                <div className="text-sm font-semibold text-[#BF953F] mb-4 uppercase tracking-wider">
                   My Invite Code
                 </div>
                 
@@ -139,7 +139,7 @@ export default function ReferralPage() {
 
                 <button 
                   onClick={handleCopyLink}
-                  className="w-full py-3.5 rounded-xl border border-[#0052FF] text-[#0052FF] hover:bg-[#0052FF]/10 active:scale-[0.98] transition-all font-bold text-sm flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl border border-[#BF953F] text-[#BF953F] hover:bg-[#BF953F]/10 active:scale-[0.98] transition-all font-bold text-sm flex items-center justify-center gap-2"
                 >
                   {copiedLink ? (
                     <>
@@ -166,15 +166,15 @@ export default function ReferralPage() {
 
                 <ul className="flex flex-col gap-4 text-sm text-gray-400">
                   <li className="flex items-start gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0052FF] mt-2 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#BF953F] mt-2 shrink-0" />
                     <span>Earn <strong className="text-white font-semibold">5% commission</strong> on your referrals' approved deposits.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0052FF] mt-2 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#BF953F] mt-2 shrink-0" />
                     <span>Enjoy lifetime referral tracking on all referred accounts.</span>
                   </li>
                   <li className="flex items-start gap-2.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#0052FF] mt-2 shrink-0" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#BF953F] mt-2 shrink-0" />
                     <span>Commissions are calculated and credited automatically upon deposit approval.</span>
                   </li>
                 </ul>

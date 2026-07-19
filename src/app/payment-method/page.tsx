@@ -256,8 +256,8 @@ export default function PaymentMethodPage() {
           </div>
 
           {/* Secure details bar */}
-          <div className="bg-[#0052FF]/5 border border-[#0052FF]/10 rounded-2xl p-4 flex items-center gap-3 mb-6">
-            <ShieldCheck className="w-5 h-5 text-[#0052FF]" />
+          <div className="bg-[#BF953F]/5 border border-[#BF953F]/10 rounded-2xl p-4 flex items-center gap-3 mb-6">
+            <ShieldCheck className="w-5 h-5 text-[#BF953F]" />
             <div className="text-[11px] text-gray-400 leading-normal">
               Payment processing is secure and PCI-DSS compliant. Card details are fully encrypted and protected.
             </div>
@@ -265,7 +265,7 @@ export default function PaymentMethodPage() {
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0052FF]" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#BF953F]" />
               <div className="text-xs text-gray-500">Loading payment methods...</div>
             </div>
           ) : (
@@ -277,7 +277,7 @@ export default function PaymentMethodPage() {
                   <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Saved Cards</h2>
                   <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0052FF] hover:bg-[#0040CC] rounded-lg text-xs font-bold transition-all text-white"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#BF953F] hover:bg-[#9E7B35] rounded-lg text-xs font-bold transition-all text-white"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Add Card
@@ -295,7 +295,7 @@ export default function PaymentMethodPage() {
                     </div>
                     <button 
                       onClick={() => setIsModalOpen(true)}
-                      className="px-5 py-2.5 bg-[#0052FF]/10 text-[#0052FF] hover:bg-[#0052FF]/20 rounded-xl text-xs font-bold transition-all"
+                      className="px-5 py-2.5 bg-[#BF953F]/10 text-[#BF953F] hover:bg-[#BF953F]/20 rounded-xl text-xs font-bold transition-all"
                     >
                       Attach Card Now
                     </button>
@@ -412,7 +412,7 @@ export default function PaymentMethodPage() {
                   value={cardholderName}
                   onChange={e => setCardholderName(e.target.value.toUpperCase())}
                   placeholder="John Doe"
-                  className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors"
+                  className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors"
                 />
               </div>
 
@@ -425,7 +425,7 @@ export default function PaymentMethodPage() {
                     value={cardNumber}
                     onChange={handleCardNumberChange}
                     placeholder="4000 1234 5678 9010"
-                    className="w-full bg-[#161616] border border-[#222] rounded-xl pl-4 pr-14 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors font-mono tracking-wider"
+                    className="w-full bg-[#161616] border border-[#222] rounded-xl pl-4 pr-14 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors font-mono tracking-wider"
                   />
                   {/* Dynamic Brand Logo inside Card Number Input Field */}
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center">
@@ -447,7 +447,7 @@ export default function PaymentMethodPage() {
                     value={expiryDate}
                     onChange={handleExpiryDateChange}
                     placeholder="MM/YY"
-                    className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors font-mono"
+                    className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors font-mono"
                   />
                 </div>
                 <div>
@@ -459,7 +459,7 @@ export default function PaymentMethodPage() {
                     onChange={handleCvvChange}
                     placeholder="123"
                     maxLength={4}
-                    className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors font-mono"
+                    className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors font-mono"
                   />
                 </div>
               </div>
@@ -475,7 +475,7 @@ export default function PaymentMethodPage() {
                 <button 
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 py-3 bg-[#0052FF] hover:bg-[#0040CC] disabled:bg-[#0052FF]/50 text-white font-bold rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-[#BF953F] hover:bg-[#9E7B35] disabled:bg-[#BF953F]/50 text-white font-bold rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
                 >
                   {submitting && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />}
                   {submitting ? 'Linking...' : 'Link Card'}

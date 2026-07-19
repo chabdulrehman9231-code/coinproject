@@ -9,9 +9,19 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "CoinBase Trades",
+  title: "Coinflow VIP",
   description: "Demo crypto trading platform with live charts",
   manifest: "/manifest.json",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -22,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full antialiased dark">
       <body className={`${inter.className} min-h-full bg-[#050505] text-[#EAECEF]`}>
-        <div className="w-full bg-[#0a0a0a] min-h-screen relative shadow-2xl shadow-blue-500/5 flex flex-col overflow-x-hidden">
+        <div className="w-full bg-[#0a0a0a] min-h-screen relative shadow-2xl shadow-[#BF953F]/5 flex flex-col overflow-x-hidden">
           {children}
         </div>
       </body>

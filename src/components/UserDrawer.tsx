@@ -102,7 +102,7 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
                   <X className="w-6 h-6" />
                 </button>
                 <div className="flex items-center gap-4 mb-4 mt-2">
-                  <div className="w-16 h-16 rounded-full bg-[#0052FF] flex items-center justify-center shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-[#BF953F] flex items-center justify-center shrink-0">
                     <User className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex flex-col gap-1.5">
@@ -119,7 +119,7 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
                 </h2>
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <span>UID: {uid}</span>
-                  <button onClick={handleCopyUid} className="text-[#0052FF] hover:text-[#3385ff] p-1">
+                  <button onClick={handleCopyUid} className="text-[#BF953F] hover:text-[#3385ff] p-1">
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
@@ -138,7 +138,7 @@ export default function UserDrawer({ isOpen, onClose }: UserDrawerProps) {
                       }}
                       className="w-full flex items-center gap-4 px-6 py-4 hover:bg-[#1a1a1a] transition-colors text-left group"
                     >
-                      <Icon className="w-5 h-5 text-[#0052FF]" />
+                      <Icon className="w-5 h-5 text-[#BF953F]" />
                       <span className="flex-1 text-sm text-gray-200 font-medium group-hover:text-white">
                         {item.label}
                       </span>

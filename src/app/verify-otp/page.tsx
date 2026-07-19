@@ -105,7 +105,7 @@ function VerifyOtpContent() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] p-4 relative overflow-hidden">
       
       {/* Background ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#0052FF]/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#BF953F]/5 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -114,8 +114,8 @@ function VerifyOtpContent() {
         className="w-full max-w-[420px] rounded-[24px] border border-white/5 bg-[#121212] p-8 shadow-2xl relative z-10"
       >
         <div className="flex justify-center mb-6">
-           <div className="w-16 h-16 rounded-full bg-[#0052FF]/10 flex items-center justify-center border border-[#0052FF]/20 shadow-[0_0_15px_rgba(0,82,255,0.2)]">
-             <ShieldCheck className="w-8 h-8 text-[#0052FF]" />
+           <div className="w-16 h-16 rounded-full bg-[#BF953F]/10 flex items-center justify-center border border-[#BF953F]/20 shadow-[0_0_15px_rgba(0,82,255,0.2)]">
+             <ShieldCheck className="w-8 h-8 text-[#BF953F]" />
            </div>
         </div>
 
@@ -164,7 +164,7 @@ function VerifyOtpContent() {
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
-                className="w-12 h-14 rounded-xl border border-white/5 bg-[#1a1a1a] text-white text-center font-bold text-2xl focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                className="w-12 h-14 rounded-xl border border-white/5 bg-[#1a1a1a] text-white text-center font-bold text-2xl focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
               />
             ))}
           </div>
@@ -172,7 +172,7 @@ function VerifyOtpContent() {
           <button
             type="submit"
             disabled={loading || otp.join('').length !== 6}
-            className="w-full rounded-xl bg-[#0052FF] p-4 text-sm font-bold text-white hover:bg-[#0040CC] focus:outline-none focus:ring-2 focus:ring-[#0052FF] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] flex items-center justify-center gap-2"
+            className="w-full rounded-xl bg-[#BF953F] p-4 text-sm font-bold text-white hover:bg-[#9E7B35] focus:outline-none focus:ring-2 focus:ring-[#BF953F] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] flex items-center justify-center gap-2"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -194,7 +194,7 @@ function VerifyOtpContent() {
             type="button" 
             onClick={handleResend}
             disabled={resendLoading}
-            className="text-[#0052FF] hover:text-[#3385ff] font-semibold transition-colors focus:outline-none disabled:opacity-50"
+            className="text-[#BF953F] hover:text-[#3385ff] font-semibold transition-colors focus:outline-none disabled:opacity-50"
           >
             {resendLoading ? 'Sending...' : 'Resend Code'}
           </button>

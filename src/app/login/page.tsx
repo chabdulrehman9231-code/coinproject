@@ -350,7 +350,7 @@ export default function AuthPage() {
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
               width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
              >
-                <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
+                <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#BF953F"/>
              </motion.svg>
         </div>
 
@@ -388,14 +388,14 @@ export default function AuthPage() {
               type="email" 
               placeholder="Email address"
               required 
-              className="w-full rounded-xl border border-white/10 bg-[#1a1a1a] p-4 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+              className="w-full rounded-xl border border-white/10 bg-[#1a1a1a] p-4 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
               value={resetEmail}
               onChange={e => setResetEmail(e.target.value)}
             />
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#0052FF] p-4 text-sm font-bold text-white hover:bg-[#0040CC] focus:outline-none focus:ring-2 focus:ring-[#0052FF] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] mt-2"
+              className="w-full rounded-xl bg-[#BF953F] p-4 text-sm font-bold text-white hover:bg-[#9E7B35] focus:outline-none focus:ring-2 focus:ring-[#BF953F] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] mt-2"
             >
               {loading ? 'Processing...' : 'Send OTP'}
             </button>
@@ -415,14 +415,14 @@ export default function AuthPage() {
                   value={digit}
                   onChange={e => handleOtpChange(index, e.target.value)}
                   onKeyDown={e => handleOtpKeyDown(index, e)}
-                  className="w-12 h-14 rounded-xl border border-white/5 bg-[#1a1a1a] text-center text-xl font-bold text-white focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                  className="w-12 h-14 rounded-xl border border-white/5 bg-[#1a1a1a] text-center text-xl font-bold text-white focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                 />
               ))}
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#0052FF] p-4 text-sm font-bold text-white hover:bg-[#0040CC] focus:outline-none focus:ring-2 focus:ring-[#0052FF] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)]"
+              className="w-full rounded-xl bg-[#BF953F] p-4 text-sm font-bold text-white hover:bg-[#9E7B35] focus:outline-none focus:ring-2 focus:ring-[#BF953F] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)]"
             >
               {loading ? 'Verifying...' : 'Verify Code'}
             </button>
@@ -447,7 +447,7 @@ export default function AuthPage() {
                 type={showPassword ? "text" : "password"} 
                 placeholder="New Password (min 6 chars)"
                 required 
-                className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 pr-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 pr-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
               />
@@ -465,7 +465,7 @@ export default function AuthPage() {
                 type="password" 
                 placeholder="Confirm New Password"
                 required 
-                className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
               />
@@ -473,7 +473,7 @@ export default function AuthPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#0052FF] p-4 text-sm font-bold text-white hover:bg-[#0040CC] focus:outline-none focus:ring-2 focus:ring-[#0052FF] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] mt-2"
+              className="w-full rounded-xl bg-[#BF953F] p-4 text-sm font-bold text-white hover:bg-[#9E7B35] focus:outline-none focus:ring-2 focus:ring-[#BF953F] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] mt-2"
             >
               {loading ? 'Processing...' : 'Reset Password'}
             </button>
@@ -499,7 +499,7 @@ export default function AuthPage() {
                         type="text" 
                         placeholder="Full name"
                         required={!isLogin}
-                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                         value={fullName}
                         onChange={e => setFullName(e.target.value)}
                       />
@@ -514,7 +514,7 @@ export default function AuthPage() {
                   type="email" 
                   placeholder="Email address"
                   required 
-                  className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                  className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                 />
@@ -534,7 +534,7 @@ export default function AuthPage() {
                         type="tel" 
                         placeholder="Phone number"
                         required={!isLogin}
-                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                         value={phone}
                         onChange={e => setPhone(e.target.value)}
                       />
@@ -545,7 +545,7 @@ export default function AuthPage() {
                       <input 
                         type="text" 
                         placeholder="Referral Code (Optional)"
-                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all uppercase"
+                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all uppercase"
                         value={referralCode}
                         onChange={e => setReferralCode(e.target.value)}
                       />
@@ -560,7 +560,7 @@ export default function AuthPage() {
                   type={showPassword ? "text" : "password"} 
                   placeholder="Password (min 6 chars)"
                   required 
-                  className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 pr-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                  className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 pr-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                 />
@@ -578,7 +578,7 @@ export default function AuthPage() {
                   <button 
                     type="button"
                     onClick={() => setForgotPasswordMode('email')}
-                    className="text-sm text-[#0052FF] hover:text-[#3385ff] transition-colors focus:outline-none"
+                    className="text-sm text-[#BF953F] hover:text-[#3385ff] transition-colors focus:outline-none"
                   >
                     Forgot password?
                   </button>
@@ -599,7 +599,7 @@ export default function AuthPage() {
                         type="password" 
                         placeholder="Confirm password"
                         required={!isLogin}
-                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#0052FF] focus:outline-none focus:ring-1 focus:ring-[#0052FF] transition-all"
+                        className="w-full rounded-xl border border-white/5 bg-[#1a1a1a] p-4 pl-12 text-white placeholder:text-gray-500 focus:border-[#BF953F] focus:outline-none focus:ring-1 focus:ring-[#BF953F] transition-all"
                         value={confirmPassword}
                         onChange={e => setConfirmPassword(e.target.value)}
                       />
@@ -611,7 +611,7 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-[#0052FF] p-4 text-sm font-bold text-white hover:bg-[#0040CC] focus:outline-none focus:ring-2 focus:ring-[#0052FF] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] mt-2"
+                className="w-full rounded-xl bg-[#BF953F] p-4 text-sm font-bold text-white hover:bg-[#9E7B35] focus:outline-none focus:ring-2 focus:ring-[#BF953F] focus:ring-offset-2 focus:ring-offset-[#121212] disabled:opacity-50 transition-all shadow-[0_0_20px_rgba(0,82,255,0.3)] mt-2"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -657,7 +657,7 @@ export default function AuthPage() {
               <button 
                 type="button" 
                 onClick={switchMode}
-                className="text-[#0052FF] hover:text-[#3385ff] font-semibold transition-colors focus:outline-none"
+                className="text-[#BF953F] hover:text-[#3385ff] font-semibold transition-colors focus:outline-none"
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
               </button>

@@ -89,9 +89,9 @@ export default function TransactionsPage() {
                 {transactions.map((tx) => (
                   <div key={tx.id} className="flex items-center justify-between p-3 sm:p-4 bg-[#161616] border border-[#222] hover:border-[#333] transition-colors rounded-2xl gap-2 sm:gap-4">
                     <div className="flex items-center gap-3 sm:gap-4 overflow-hidden">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${tx.type === 'deposit' ? 'bg-[#0052FF]/10' : 'bg-[#FF4444]/10'}`}>
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${tx.type === 'deposit' ? 'bg-[#BF953F]/10' : 'bg-[#FF4444]/10'}`}>
                         {tx.type === 'deposit' ? (
-                          <ArrowDownLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#0052FF]" />
+                          <ArrowDownLeft className="w-5 h-5 sm:w-6 sm:h-6 text-[#BF953F]" />
                         ) : (
                           <ArrowUpRight className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF4444]" />
                         )}
@@ -101,7 +101,7 @@ export default function TransactionsPage() {
                         <div className="text-[10px] sm:text-xs text-gray-500 mt-0.5 truncate">{new Date(tx.created_at).toLocaleString()}</div>
                         {tx.type === 'withdrawal' && tx.proof_image_url && (
                           <div className="text-[10px] sm:text-xs text-gray-400 mt-1 truncate">
-                            To: <span className="text-[#0052FF]">{tx.proof_image_url}</span> ({tx.target_wallet})
+                            To: <span className="text-[#BF953F]">{tx.proof_image_url}</span> ({tx.target_wallet})
                           </div>
                         )}
                       </div>

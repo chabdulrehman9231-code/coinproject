@@ -853,12 +853,10 @@ function OptionContent() {
             >
               {/* Platform Branding Header */}
               <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-2">
-                  <svg width="22" height="22" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                    <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
-                  </svg>
+                <div className="flex items-center gap-1">
+                  <img src="/logo.svg" className="w-[28px] h-[28px] object-contain mr-[-3px] shrink-0" style={{ imageRendering: '-webkit-optimize-contrast' }} alt="Coinflow VIP Logo" />
                   <span className="text-sm font-extrabold tracking-tight text-white">
-                    Coinbase<span className="font-light text-[#0052FF]"> Trades</span>
+                    Coinflow<span className="font-light text-[#BF953F]"> VIP</span>
                   </span>
                 </div>
                 <span className="text-[9px] font-black uppercase bg-[#1a1a1a] text-[#EAB308] border border-[#EAB308]/20 px-2.5 py-0.5 rounded-md tracking-wider shrink-0">
@@ -985,7 +983,7 @@ function OptionContent() {
                   setTradeResult(null);
                   setShowShareCard(false);
                 }}
-                className="w-full py-3 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white rounded-xl text-xs font-bold transition-all active:scale-[0.98] text-center"
+                className="w-full py-3 bg-[#BF953F] hover:bg-[#BF953F]/90 text-white rounded-xl text-xs font-bold transition-all active:scale-[0.98] text-center"
               >
                 Start New Trade
               </button>

@@ -39,17 +39,15 @@ export default function Header() {
     <>
       <header className="hidden md:flex h-16 items-center justify-between border-b border-[#1a1a1a] bg-[#0a0a0a] px-6 sticky top-0 z-40">
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/dashboard')}>
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
-            </svg>
-            <span className="text-xl font-extrabold tracking-tight text-white">Coinbase<span className="font-light text-[#0052FF]"> Trades</span></span>
+          <div className="flex items-center gap-1 cursor-pointer" onClick={() => router.push('/dashboard')}>
+            <img src="/logo.svg" className="w-10 h-10 object-contain mr-[-4px]" style={{ imageRendering: '-webkit-optimize-contrast' }} alt="Coinflow VIP Logo" />
+            <span className="text-2xl font-extrabold tracking-tight text-white">Coinflow<span className="font-light text-[#BF953F]"> VIP</span></span>
           </div>
           <nav className="flex items-center gap-6 text-sm font-medium">
             {navItems.map((item) => {
                const isActive = pathname === item.path || pathname.startsWith(item.path + '/');
                return (
-                <Link key={item.name} href={item.path} className={`transition-colors font-bold ${isActive ? 'text-[#0052FF]' : 'text-gray-400 hover:text-white'}`}>
+                <Link key={item.name} href={item.path} className={`transition-colors font-bold ${isActive ? 'text-[#BF953F]' : 'text-gray-400 hover:text-white'}`}>
                   {item.name}
                 </Link>
                );

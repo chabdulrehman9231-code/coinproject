@@ -143,8 +143,8 @@ export default function SecurityPage() {
             {/* Profile Section */}
             <div className="bg-[#111] rounded-3xl p-6 md:p-8 shadow-xl border border-[#222]">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 rounded-full bg-[#0052FF]/10 border border-[#0052FF]/20 flex items-center justify-center shrink-0">
-                  <User className="w-8 h-8 text-[#0052FF]" />
+                <div className="w-16 h-16 rounded-full bg-[#BF953F]/10 border border-[#BF953F]/20 flex items-center justify-center shrink-0">
+                  <User className="w-8 h-8 text-[#BF953F]" />
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white">{email}</h3>
@@ -195,7 +195,7 @@ export default function SecurityPage() {
                       type="password" 
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                       placeholder="Enter current password"
                       required={hasPassword}
                     />
@@ -208,7 +208,7 @@ export default function SecurityPage() {
                     type="password" 
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                    className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                     placeholder="Enter new password"
                     required
                   />
@@ -220,7 +220,7 @@ export default function SecurityPage() {
                     type="password" 
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                    className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                     placeholder="Re-enter new password"
                     required
                   />
@@ -254,7 +254,7 @@ export default function SecurityPage() {
                 <button 
                   type="submit"
                   disabled={!isPasswordValid || isLoading}
-                  className="w-full bg-[#0052FF] hover:bg-[#0040CC] disabled:bg-[#0052FF]/50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold mt-6 transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-[#BF953F] hover:bg-[#9E7B35] disabled:bg-[#BF953F]/50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold mt-6 transition-colors flex items-center justify-center gap-2"
                 >
                   {isLoading ? 'Updating...' : 'Update Password'}
                 </button>

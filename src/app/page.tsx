@@ -13,12 +13,9 @@ export default function LandingPage() {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 md:px-12 bg-[#050505] border-b border-white/10 sticky top-0 z-50">
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => router.push('/')}>
-            {/* New Coinbase 'C' Logo */}
-            <svg className="w-7 h-7 md:w-8 md:h-8 shrink-0" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
-            </svg>
-            <span className="text-[17px] sm:text-xl md:text-2xl font-extrabold text-white tracking-tight whitespace-nowrap">CoinBase Trades</span>
+          <div className="flex items-center gap-1 md:gap-1.5 cursor-pointer" onClick={() => router.push('/')}>
+            <img src="/logo.svg" className="w-9 h-9 md:w-11 md:h-11 object-contain mr-[-4px] md:mr-[-6px]" style={{ imageRendering: '-webkit-optimize-contrast' }} alt="Coinflow VIP Logo" />
+            <span className="text-[19px] sm:text-[23px] md:text-3xl font-extrabold text-white tracking-tight whitespace-nowrap">Coinflow<span className="text-[#BF953F]"> VIP</span></span>
           </div>
           <nav className="hidden lg:flex items-center gap-6 font-semibold text-[15px]">
             <a href="#" className="hover:text-blue-500 transition-colors">Explore</a>
@@ -43,7 +40,7 @@ export default function LandingPage() {
           </button>
           <button 
             onClick={() => router.push('/login')}
-            className="bg-[#0052FF] hover:bg-[#0045d8] text-white px-5 py-2.5 rounded-full font-semibold text-[15px] transition-colors"
+            className="bg-[#BF953F] hover:bg-[#9E7B35] text-white px-5 py-2.5 rounded-full font-semibold text-[15px] transition-colors"
           >
             Sign In
           </button>
@@ -63,7 +60,7 @@ export default function LandingPage() {
           className="flex-1 max-w-xl text-center lg:text-left"
         >
           <h1 className="text-5xl md:text-[64px] leading-[1.1] font-bold mb-6">
-            Trade Crypto<br/><span className="text-[#0052FF]">Beyond Limits</span>
+            Trade Crypto<br/><span className="text-[#BF953F]">Beyond Limits</span>
           </h1>
           <p className="text-[17px] md:text-[20px] text-gray-300 mb-8 leading-relaxed">
             Professional spot & contract trading, secure multi-network wallets, real-time charts, and 24/7 VIP support — all in one premium platform.
@@ -72,7 +69,7 @@ export default function LandingPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => router.push('/login')}
-            className="bg-[#0052FF] hover:bg-[#0045d8] text-white px-8 py-4 rounded-full font-bold text-[17px] w-full sm:w-auto transition-colors flex items-center justify-center gap-2 mx-auto lg:mx-0"
+            className="bg-[#BF953F] hover:bg-[#9E7B35] text-white px-8 py-4 rounded-full font-bold text-[17px] w-full sm:w-auto transition-colors flex items-center justify-center gap-2 mx-auto lg:mx-0"
           >
             Start Trading <ChevronRight className="w-5 h-5" />
           </motion.button>
@@ -103,8 +100,8 @@ export default function LandingPage() {
 
             <div className="grid grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-3 mx-auto lg:mx-0 w-fit text-left mt-2">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#0052FF]/10 flex items-center justify-center shrink-0">
-                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#0052FF]" />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#BF953F]/10 flex items-center justify-center shrink-0">
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#BF953F]" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] sm:text-[12px] font-bold text-gray-200 leading-none whitespace-nowrap overflow-hidden text-ellipsis">Bank-Grade Security</div>
@@ -112,8 +109,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#0052FF]/10 flex items-center justify-center shrink-0">
-                  <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-[#0052FF]" />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#BF953F]/10 flex items-center justify-center shrink-0">
+                  <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-[#BF953F]" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] sm:text-[12px] font-bold text-gray-200 leading-none whitespace-nowrap overflow-hidden text-ellipsis">Lightning Execution</div>
@@ -121,8 +118,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#0052FF]/10 flex items-center justify-center shrink-0">
-                  <Globe className="w-3 h-3 sm:w-4 sm:h-4 text-[#0052FF]" />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#BF953F]/10 flex items-center justify-center shrink-0">
+                  <Globe className="w-3 h-3 sm:w-4 sm:h-4 text-[#BF953F]" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] sm:text-[12px] font-bold text-gray-200 leading-none whitespace-nowrap overflow-hidden text-ellipsis">Global Markets</div>
@@ -130,8 +127,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#0052FF]/10 flex items-center justify-center shrink-0">
-                  <LineChart className="w-3 h-3 sm:w-4 sm:h-4 text-[#0052FF]" />
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-md sm:rounded-lg bg-[#BF953F]/10 flex items-center justify-center shrink-0">
+                  <LineChart className="w-3 h-3 sm:w-4 sm:h-4 text-[#BF953F]" />
                 </div>
                 <div className="min-w-0">
                   <div className="text-[10px] sm:text-[12px] font-bold text-gray-200 leading-none whitespace-nowrap overflow-hidden text-ellipsis">Advanced Charts</div>
@@ -150,7 +147,7 @@ export default function LandingPage() {
           className="flex-1 flex justify-center lg:justify-end w-full"
         >
           <div 
-            className="relative bg-[#0052FF] p-[14px] rounded-[3rem] w-[380px] shadow-[0_30px_60px_rgba(0,82,255,0.4)] border-4 border-[#0052FF]/50"
+            className="relative bg-[#BF953F] p-[14px] rounded-[3rem] w-[380px] shadow-[0_30px_60px_rgba(191,149,63,0.4)] border-4 border-[#BF953F]/50"
           >
             {/* Phone Screen */}
             <div className="bg-white text-black h-[720px] w-full rounded-[2.2rem] overflow-hidden flex flex-col relative shadow-inner">
@@ -204,8 +201,8 @@ export default function LandingPage() {
                 <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
                   <defs>
                     <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#0052FF" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#0052FF" stopOpacity="0" />
+                      <stop offset="0%" stopColor="#BF953F" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#BF953F" stopOpacity="0" />
                     </linearGradient>
                   </defs>
                   
@@ -220,28 +217,28 @@ export default function LandingPage() {
                   <motion.path 
                     initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 0.9, duration: 1.5, ease: "easeInOut" }}
                     d="M0,80 C 5,80 5,75 10,75 C 15,75 15,80 20,80 C 25,80 25,65 30,65 C 35,65 35,70 40,70 C 45,70 45,60 50,60 C 55,60 55,65 60,65 C 65,65 65,55 70,55 C 75,55 75,50 80,50 C 85,50 85,65 90,65 C 92.5,65 92.5,45 95,45 C 96.5,45 96.5,50 98,50" 
-                    fill="none" stroke="#0052FF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                    fill="none" stroke="#BF953F" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                   />
                 </svg>
 
                 {/* Current Price Dot Glow */}
                 <motion.div 
                   initial={{ scale: 0, opacity: 0 }} animate={{ scale: 2.5, opacity: 0 }} transition={{ delay: 2.3, repeat: Infinity, duration: 2 }}
-                  className="absolute w-3 h-3 bg-[#0052FF] rounded-full"
+                  className="absolute w-3 h-3 bg-[#BF953F] rounded-full"
                   style={{ left: '98%', top: '50%', transform: 'translate(-50%, -50%)' }}
                 />
                 
                 {/* Current Price Dot Core */}
                 <motion.div 
                   initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 2.3 }}
-                  className="absolute w-2.5 h-2.5 bg-[#0052FF] rounded-full shadow-[0_0_0_2px_white]"
+                  className="absolute w-2.5 h-2.5 bg-[#BF953F] rounded-full shadow-[0_0_0_2px_white]"
                   style={{ left: '98%', top: '50%', transform: 'translate(-50%, -50%)' }}
                 />
 
                 {/* Dotted Line */}
                 <motion.div 
                   initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }}
-                  className="absolute right-[2%] top-[50%] bottom-0 border-r-2 border-dashed border-[#0052FF]/30" 
+                  className="absolute right-[2%] top-[50%] bottom-0 border-r-2 border-dashed border-[#BF953F]/30" 
                 />
               </div>
 
@@ -252,7 +249,7 @@ export default function LandingPage() {
               >
                 <span className="hover:text-gray-800 cursor-pointer transition-colors">1H</span>
                 <span className="hover:text-gray-800 cursor-pointer transition-colors">1D</span>
-                <span className="text-[#0052FF] bg-[#0052FF]/10 px-3 py-1 rounded-full">1W</span>
+                <span className="text-[#BF953F] bg-[#BF953F]/10 px-3 py-1 rounded-full">1W</span>
                 <span className="hover:text-gray-800 cursor-pointer transition-colors">1M</span>
                 <span className="hover:text-gray-800 cursor-pointer transition-colors">1Y</span>
                 <span className="hover:text-gray-800 cursor-pointer transition-colors">ALL</span>
@@ -334,11 +331,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-16">
             {/* Logo and Brand */}
             <div className="col-span-2 lg:col-span-2 flex flex-col gap-6">
-              <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/')}>
-                <svg width="36" height="36" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#0052FF"/>
-                </svg>
-                <span className="text-xl font-extrabold tracking-tight text-white">CoinBase Trades</span>
+              <div className="flex items-center gap-1 cursor-pointer" onClick={() => router.push('/')}>
+                <img src="/logo.svg" className="w-12 h-12 object-contain mr-[-6px]" style={{ imageRendering: '-webkit-optimize-contrast' }} alt="Coinflow VIP Logo" />
+                <span className="text-2xl font-extrabold tracking-tight text-white">Coinflow<span className="text-[#BF953F]"> VIP</span></span>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                 The most trusted crypto platform. Professional spot & contract trading, secure multi-network wallets, real-time charts, and 24/7 VIP support.

@@ -60,8 +60,8 @@ export default function AssetsPage() {
           <div className="bg-[#111] rounded-3xl p-8 shadow-xl border border-[#222] flex flex-col items-center text-center">
             
             {/* Wallet Icon */}
-            <div className="w-14 h-14 rounded-2xl bg-[#0052FF]/10 flex items-center justify-center mb-4 border border-[#0052FF]/20">
-              <Wallet className="w-6 h-6 text-[#0052FF]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#BF953F]/10 flex items-center justify-center mb-4 border border-[#BF953F]/20">
+              <Wallet className="w-6 h-6 text-[#BF953F]" />
             </div>
 
             {/* Title & Balance */}
@@ -90,7 +90,7 @@ export default function AssetsPage() {
             <div className="flex justify-center gap-3 w-full max-w-lg">
               <button 
                 onClick={() => setIsDepositModalOpen(true)}
-                className="flex-1 flex items-center justify-center gap-2 bg-[#0052FF] hover:bg-[#0052FF]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 bg-[#BF953F] hover:bg-[#BF953F]/90 text-white px-4 py-3 rounded-xl font-semibold transition-colors"
               >
                 <Download className="w-5 h-5" /> Deposit
               </button>

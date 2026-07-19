@@ -105,7 +105,7 @@ export default function WithdrawModal({ isOpen, onClose }: { isOpen: boolean, on
                     type="button"
                     onClick={() => setActiveNetwork(net)}
                     className={`flex-1 py-3 rounded-xl text-sm font-bold transition-colors border ${
-                      activeNetwork === net ? 'bg-[#0052FF]/10 text-[#0052FF] border-[#0052FF]/30' : 'bg-[#1a1a1a] text-gray-400 border-transparent hover:text-white hover:bg-[#222]'
+                      activeNetwork === net ? 'bg-[#BF953F]/10 text-[#BF953F] border-[#BF953F]/30' : 'bg-[#1a1a1a] text-gray-400 border-transparent hover:text-white hover:bg-[#222]'
                     }`}
                   >
                     {net}
@@ -130,7 +130,7 @@ export default function WithdrawModal({ isOpen, onClose }: { isOpen: boolean, on
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder={`Enter ${activeNetwork} wallet address`}
-                  className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-[#0052FF] outline-none"
+                  className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-[#BF953F] outline-none"
                 />
               </div>
 
@@ -144,7 +144,7 @@ export default function WithdrawModal({ isOpen, onClose }: { isOpen: boolean, on
                   placeholder="Minimum 10 USDT"
                   min="0"
                   step="0.01"
-                  className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-[#0052FF] outline-none"
+                  className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-[#BF953F] outline-none"
                 />
                 <div className="flex justify-between items-center mt-2 text-xs">
                   <span className="text-gray-500">Available Balance:</span>

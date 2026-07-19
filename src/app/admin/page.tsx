@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { 
   Users, DollarSign, Activity, CheckCircle, 
-  XCircle, Lock, Unlock, ShieldAlert, ChevronRight, LogOut, ArrowLeft, TrendingUp, TrendingDown, Clock, CreditCard, Award, Wallet, MessageSquare, BarChart3, Image as ImageIcon, Trash2, Send, Menu, X, ChevronDown
+  XCircle, Lock, Unlock, ShieldAlert, ChevronRight, LogOut, ArrowLeft, TrendingUp, TrendingDown, Clock, CreditCard, Award, Wallet, MessageSquare, BarChart3, Image as ImageIcon, Trash2, Send, Menu, X, ChevronDown, Pencil
 } from 'lucide-react';
 import { formatMessage } from '@/lib/utils/formatMessage';
 import { 
@@ -14,7 +14,7 @@ import {
   getWithdrawalsAdmin, approveWithdrawal, rejectWithdrawal,
   resolveOptionTradeByAdmin, getActiveOptionTradesAdmin,
   getChatUsers, getAdminMessages, sendAdminMessage, markMessagesAsReadByAdmin,
-  updateUserMetrics, toggleUserDisabledStatus,
+  updateUserMetrics, toggleUserDisabledStatus, updateUserBalance,
   getKycSubmissionsAdmin, approveKycAdmin, rejectKycAdmin
 } from './actions';
 
@@ -48,8 +48,21 @@ export default function AdminDashboard() {
     message: '',
     confirmText: '',
     confirmColor: 'red',
+    isAlert: false,
     onConfirm: () => {}
   });
+
+  const showCustomAlert = (title: string, message: string, color: 'red' | 'green' = 'green') => {
+    setConfirmDialog({
+      isOpen: true,
+      title,
+      message,
+      confirmText: 'OK',
+      confirmColor: color,
+      isAlert: true,
+      onConfirm: () => {}
+    });
+  };
   
   const [wallets, setWallets] = useState<any[]>([]);
   const [deposits, setDeposits] = useState<any[]>([]);
@@ -62,6 +75,12 @@ export default function AdminDashboard() {
   const [selectedKyc, setSelectedKyc] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+
+  // Balance Edit states
+  const [selectedUserForBalance, setSelectedUserForBalance] = useState<any | null>(null);
+  const [editBalanceValue, setEditBalanceValue] = useState<string>('');
+  const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
+  const [isBalanceSaving, setIsBalanceSaving] = useState(false);
   
   const [chatUsers, setChatUsers] = useState<any[]>([]);
   const [selectedChatUser, setSelectedChatUser] = useState<any>(null);
@@ -255,9 +274,9 @@ export default function AdminDashboard() {
       if (uRes.success) {
         setUserDetailData(uRes.data);
       }
-      alert('User metrics updated successfully!');
+      showCustomAlert('SUCCESS', 'User metrics updated successfully!', 'green');
     } else {
-      alert('Failed to update metrics: ' + res.error);
+      showCustomAlert('ERROR', 'Failed to update metrics: ' + res.error, 'red');
     }
     setIsUpdatingMetrics(false);
   };
@@ -283,13 +302,45 @@ export default function AdminDashboard() {
           if (uRes.success) {
             setUserDetailData(uRes.data);
           }
-          alert(`User account ${newDisabledStatus ? 'disabled' : 'enabled'} successfully!`);
+          showCustomAlert('SUCCESS', `User account ${newDisabledStatus ? 'disabled' : 'enabled'} successfully!`, 'green');
         } else {
-          alert('Failed to update account status: ' + res.error);
+          showCustomAlert('ERROR', 'Failed to update account status: ' + res.error, 'red');
         }
         setIsTogglingDisabled(false);
       }
     });
+  };
+
+  const handleSaveBalance = async () => {
+    if (!selectedUserForBalance) return;
+    const newBalance = parseFloat(editBalanceValue);
+    if (isNaN(newBalance) || newBalance < 0) {
+      showCustomAlert('ERROR', 'Please enter a valid positive number for balance', 'red');
+      return;
+    }
+    
+    setIsBalanceSaving(true);
+    const res = await updateUserBalance(selectedUserForBalance.id, newBalance);
+    if (res.success) {
+      // Re-fetch all data to refresh tables in real-time
+      await fetchAllData();
+      
+      // Also refresh the detailed view if the same user is currently open
+      if (selectedUserDetail === selectedUserForBalance.id) {
+        const uRes = await getUserDetailsAdmin(selectedUserForBalance.id);
+        if (uRes.success) {
+          setUserDetailData(uRes.data);
+        }
+      }
+      
+      setIsBalanceModalOpen(false);
+      setSelectedUserForBalance(null);
+      setEditBalanceValue('');
+      showCustomAlert('SUCCESS', 'User balance updated successfully!', 'green');
+    } else {
+      showCustomAlert('ERROR', 'Failed to update user balance: ' + res.error, 'red');
+    }
+    setIsBalanceSaving(false);
   };
 
   // --- Wallet Actions ---
@@ -407,7 +458,7 @@ export default function AdminDashboard() {
       <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-white font-sans p-4">
         <div className="w-full max-w-md bg-[#111] p-8 rounded-3xl border border-[#222] shadow-2xl">
           <div className="flex items-center gap-3 mb-8 justify-center">
-            <Lock className="w-8 h-8 text-[#0052FF]" />
+            <Lock className="w-8 h-8 text-[#BF953F]" />
             <h1 className="text-2xl font-bold">Super Admin Login</h1>
           </div>
           
@@ -426,7 +477,7 @@ export default function AdminDashboard() {
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
                 required
-                className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                 placeholder="admin@example.com"
               />
             </div>
@@ -437,14 +488,14 @@ export default function AdminDashboard() {
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
                 required
-                className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                 placeholder="••••••••"
               />
             </div>
             <button 
               type="submit" 
               disabled={isLoggingIn}
-              className="w-full bg-[#0052FF] hover:bg-[#0040CC] text-white font-bold py-3.5 rounded-xl transition-colors disabled:opacity-50 mt-4 flex items-center justify-center gap-2"
+              className="w-full bg-[#BF953F] hover:bg-[#9E7B35] text-white font-bold py-3.5 rounded-xl transition-colors disabled:opacity-50 mt-4 flex items-center justify-center gap-2"
             >
               {isLoggingIn ? 'Verifying...' : 'Access Dashboard'}
               {!isLoggingIn && <ChevronRight className="w-5 h-5" />}
@@ -461,7 +512,7 @@ export default function AdminDashboard() {
       {/* Mobile Header */}
       <div className="md:hidden absolute top-0 left-0 w-full h-16 bg-[#111] border-b border-[#222] z-10 flex items-center justify-between px-4">
         <div>
-          <h1 className="text-xl font-extrabold text-[#0052FF]">Super Admin</h1>
+          <h1 className="text-xl font-extrabold text-[#BF953F]">Super Admin</h1>
         </div>
         <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-gray-400 hover:text-white bg-[#1a1a1a] rounded-lg border border-[#333]">
           <Menu className="w-6 h-6" />
@@ -477,7 +528,7 @@ export default function AdminDashboard() {
       <div className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 w-64 bg-[#111] border-r border-[#222] flex flex-col z-30 transition-transform duration-300 ease-in-out`}>
         <div className="p-6 border-b border-[#222] flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-extrabold text-[#0052FF]">Super Admin</h1>
+            <h1 className="text-xl font-extrabold text-[#BF953F]">Super Admin</h1>
             <p className="text-xs text-gray-500 mt-1">Coinbase Trades</p>
           </div>
           <button onClick={() => setIsSidebarOpen(false)} className="md:hidden p-2 text-gray-400 hover:text-white bg-[#1a1a1a] rounded-lg border border-[#333]">
@@ -498,7 +549,7 @@ export default function AdminDashboard() {
             <button 
               key={tab.id}
               onClick={() => { setActiveTab(tab.id); localStorage.setItem('adminActiveTab', tab.id); setSelectedUserDetail(null); setIsSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-[#0052FF]/10 text-[#0052FF] border-r-2 border-[#0052FF]' : 'text-gray-400 hover:text-white'}`}
+              className={`w-full flex items-center gap-3 px-6 py-3 text-sm font-medium transition-colors ${activeTab === tab.id ? 'bg-[#BF953F]/10 text-[#BF953F] border-r-2 border-[#BF953F]' : 'text-gray-400 hover:text-white'}`}
             >
               <tab.icon className="w-5 h-5" /> {tab.label}
             </button>
@@ -521,7 +572,7 @@ export default function AdminDashboard() {
               <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-[#161616] p-6 rounded-2xl border border-[#222]">
-                  <div className="flex items-center gap-3 text-gray-400 mb-2"><Users className="w-5 h-5 text-[#0052FF]" /> Total Users</div>
+                  <div className="flex items-center gap-3 text-gray-400 mb-2"><Users className="w-5 h-5 text-[#BF953F]" /> Total Users</div>
                   <div className="text-3xl font-bold">{dashboardData.totalUsers}</div>
                 </div>
                 <div className="bg-[#161616] p-6 rounded-2xl border border-[#222]">
@@ -551,17 +602,30 @@ export default function AdminDashboard() {
                     <div key={u.id} className="p-4 flex flex-col gap-3">
                       <div className="flex justify-between items-start gap-2">
                         <span className="font-bold text-white break-all">{u.email}</span>
-                        <span className={`shrink-0 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${u.role === 'superadmin' ? 'bg-[#0052FF]/20 text-[#0052FF]' : 'bg-gray-800 text-gray-300'}`}>{u.role}</span>
+                        <span className={`shrink-0 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${u.role === 'superadmin' ? 'bg-[#BF953F]/20 text-[#BF953F]' : 'bg-gray-800 text-gray-300'}`}>{u.role}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400 text-sm">Balance:</span>
-                        <span className="font-bold text-[#00C29A]">${Number(u.balance || 0).toLocaleString()}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-bold text-[#00C29A]">${Number(u.balance || 0).toLocaleString()}</span>
+                          <button 
+                            onClick={() => {
+                              setSelectedUserForBalance({ id: u.id, name: u.full_name || u.email.split('@')[0], email: u.email, balance: u.balance || 0 });
+                              setEditBalanceValue(String(u.balance || 0));
+                              setIsBalanceModalOpen(true);
+                            }}
+                            className="p-1 rounded bg-[#BF953F]/10 hover:bg-[#BF953F]/20 text-[#BF953F] transition-colors"
+                            title="Edit Balance"
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
+                        </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-400 text-sm">Joined:</span>
                         <span className="text-sm text-gray-400">{new Date(u.created_at).toLocaleDateString()}</span>
                       </div>
-                      <button onClick={() => handleViewUser(u.id)} className="w-full mt-2 px-3 py-2 rounded-lg bg-[#0052FF]/10 text-[#0052FF] text-sm font-bold hover:bg-[#0052FF]/20 transition-colors">
+                      <button onClick={() => handleViewUser(u.id)} className="w-full mt-2 px-3 py-2 rounded-lg bg-[#BF953F]/10 text-[#BF953F] text-sm font-bold hover:bg-[#BF953F]/20 transition-colors">
                         View Details
                       </button>
                     </div>
@@ -587,11 +651,26 @@ export default function AdminDashboard() {
                       {dashboardData.users.map((u: any) => (
                         <tr key={u.id} className="hover:bg-[#1a1a1a] transition-colors">
                           <td className="p-4 font-bold">{u.email}</td>
-                          <td className="p-4"><span className={`px-2 py-1 rounded text-xs font-bold ${u.role === 'superadmin' ? 'bg-[#0052FF]/20 text-[#0052FF]' : 'bg-gray-800 text-gray-300'}`}>{u.role}</span></td>
-                          <td className="p-4 font-bold text-[#00C29A]">${Number(u.balance || 0).toLocaleString()}</td>
+                          <td className="p-4"><span className={`px-2 py-1 rounded text-xs font-bold ${u.role === 'superadmin' ? 'bg-[#BF953F]/20 text-[#BF953F]' : 'bg-gray-800 text-gray-300'}`}>{u.role}</span></td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-[#00C29A]">${Number(u.balance || 0).toLocaleString()}</span>
+                              <button 
+                                onClick={() => {
+                                  setSelectedUserForBalance({ id: u.id, name: u.full_name || u.email.split('@')[0], email: u.email, balance: u.balance || 0 });
+                                  setEditBalanceValue(String(u.balance || 0));
+                                  setIsBalanceModalOpen(true);
+                                }}
+                                className="p-1 rounded bg-[#BF953F]/10 hover:bg-[#BF953F]/20 text-[#BF953F] transition-colors"
+                                title="Edit Balance"
+                              >
+                                <Pencil className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </td>
                           <td className="p-4 text-gray-500">{new Date(u.created_at).toLocaleDateString()}</td>
                           <td className="p-4 flex justify-end gap-2">
-                            <button onClick={() => handleViewUser(u.id)} className="px-3 py-1.5 rounded-lg bg-[#0052FF]/10 text-[#0052FF] text-xs font-bold hover:bg-[#0052FF]/20">View Details</button>
+                            <button onClick={() => handleViewUser(u.id)} className="px-3 py-1.5 rounded-lg bg-[#BF953F]/10 text-[#BF953F] text-xs font-bold hover:bg-[#BF953F]/20">View Details</button>
                           </td>
                         </tr>
                       ))}
@@ -627,7 +706,20 @@ export default function AdminDashboard() {
                       </div>
                       <div className="bg-[#1a1a1a] p-5 rounded-2xl border border-[#222] text-left md:text-right w-full md:w-auto">
                         <div className="text-sm text-gray-500 mb-1 font-medium">Total Balance</div>
-                        <div className="text-3xl md:text-4xl font-black text-[#00C29A]">${Number(userDetailData.balance || 0).toLocaleString()}</div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-3xl md:text-4xl font-black text-[#00C29A]">${Number(userDetailData.balance || 0).toLocaleString()}</div>
+                          <button 
+                            onClick={() => {
+                              setSelectedUserForBalance({ id: userDetailData.id, name: userDetailData.full_name || userDetailData.email.split('@')[0], email: userDetailData.email, balance: userDetailData.balance || 0 });
+                              setEditBalanceValue(String(userDetailData.balance || 0));
+                              setIsBalanceModalOpen(true);
+                            }}
+                            className="p-1.5 rounded-lg bg-[#BF953F]/10 hover:bg-[#BF953F]/20 text-[#BF953F] transition-colors"
+                            title="Edit Balance"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -646,7 +738,7 @@ export default function AdminDashboard() {
                       </div>
                       <div className="flex justify-between items-center pt-4 border-t border-[#222]">
                         <span className="text-gray-400 font-medium">Total Trades</span>
-                        <span className="font-bold text-[#0052FF]">{userDetailData.trades?.length || 0}</span>
+                        <span className="font-bold text-[#BF953F]">{userDetailData.trades?.length || 0}</span>
                       </div>
                     </div>
 
@@ -657,7 +749,7 @@ export default function AdminDashboard() {
                         <button 
                           onClick={handleUpdateMetrics} 
                           disabled={isUpdatingMetrics}
-                          className="bg-[#0052FF] hover:bg-[#0040CC] text-white px-6 py-2.5 rounded-xl font-bold transition-colors disabled:opacity-50 text-sm w-full md:w-auto"
+                          className="bg-[#BF953F] hover:bg-[#9E7B35] text-white px-6 py-2.5 rounded-xl font-bold transition-colors disabled:opacity-50 text-sm w-full md:w-auto"
                         >
                           {isUpdatingMetrics ? 'Saving...' : 'Save Metrics'}
                         </button>
@@ -669,7 +761,7 @@ export default function AdminDashboard() {
                             type="number" 
                             value={editCreditScore} 
                             onChange={(e) => setEditCreditScore(Number(e.target.value))}
-                            className="bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#0052FF] text-sm" 
+                            className="bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#BF953F] text-sm" 
                           />
                         </div>
                         <div className="flex flex-col gap-2 w-full md:w-64">
@@ -677,7 +769,7 @@ export default function AdminDashboard() {
                           <div className="relative">
                             <div 
                               onClick={() => setIsVipDropdownOpen(!isVipDropdownOpen)}
-                              className="bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-2.5 text-white flex justify-between items-center cursor-pointer hover:border-[#444] transition-colors focus:outline-none focus:border-[#0052FF] text-sm"
+                              className="bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-2.5 text-white flex justify-between items-center cursor-pointer hover:border-[#444] transition-colors focus:outline-none focus:border-[#BF953F] text-sm"
                             >
                               <span>{editVipLevel}</span>
                               <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isVipDropdownOpen ? 'rotate-180' : ''}`} />
@@ -688,7 +780,7 @@ export default function AdminDashboard() {
                                   <div 
                                     key={level}
                                     onClick={() => { setEditVipLevel(level); setIsVipDropdownOpen(false); }}
-                                    className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-[#0052FF] hover:text-white transition-colors ${editVipLevel === level ? 'bg-[#0052FF] text-white' : 'text-gray-300'}`}
+                                    className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-[#BF953F] hover:text-white transition-colors ${editVipLevel === level ? 'bg-[#BF953F] text-white' : 'text-gray-300'}`}
                                   >
                                     {level}
                                   </div>
@@ -777,7 +869,7 @@ export default function AdminDashboard() {
 
                     {/* Trade History */}
                     <div>
-                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><Activity className="w-5 h-5 text-[#0052FF]" /> Trade History</h3>
+                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><Activity className="w-5 h-5 text-[#BF953F]" /> Trade History</h3>
                       <div className="bg-[#111] rounded-2xl border border-[#222] overflow-hidden">
                         
                         {/* Mobile View */}
@@ -831,7 +923,7 @@ export default function AdminDashboard() {
 
                     {/* Linked Payment Methods */}
                     <div className="xl:col-span-2 mt-6">
-                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#0052FF]" /> Linked Payment Methods</h3>
+                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2"><CreditCard className="w-5 h-5 text-[#BF953F]" /> Linked Payment Methods</h3>
                       <div className="bg-[#111] rounded-2xl border border-[#222] p-6">
                         {(!userDetailData?.paymentMethods || userDetailData.paymentMethods.length === 0) ? (
                           <div className="text-center py-6 text-gray-500 text-sm">No payment methods linked.</div>
@@ -877,17 +969,17 @@ export default function AdminDashboard() {
                 <h3 className="text-lg font-bold">Add Admin Wallet</h3>
                 <input name="networkName" placeholder="Network Name (e.g. TRC20)" required className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-white" />
                 <input name="walletAddress" placeholder="Wallet Address" required className="w-full bg-[#1a1a1a] border border-[#333] rounded-lg px-4 py-3 text-white" />
-                <button type="submit" className="w-full bg-[#0052FF] text-white font-bold py-3 rounded-lg hover:bg-[#0040CC] transition-colors">Save Wallet</button>
+                <button type="submit" className="w-full bg-[#BF953F] text-white font-bold py-3 rounded-lg hover:bg-[#9E7B35] transition-colors">Save Wallet</button>
               </form>
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-6">
                 {wallets.map(w => (
                   <div key={w.id} className="bg-gradient-to-br from-[#111] to-[#1a1a1a] p-6 rounded-3xl border border-[#222] shadow-xl relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#0052FF]/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#BF953F]/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
                     
                     <div className="flex justify-between items-start mb-6 relative z-10">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#0052FF]/20 flex items-center justify-center">
-                          <Wallet className="w-5 h-5 text-[#0052FF]" />
+                        <div className="w-10 h-10 rounded-full bg-[#BF953F]/20 flex items-center justify-center">
+                          <Wallet className="w-5 h-5 text-[#BF953F]" />
                         </div>
                         <div>
                           <div className="text-xs text-gray-500 uppercase tracking-wider font-bold">Network</div>
@@ -944,7 +1036,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="text-xl font-bold">${d.amount}</div>
                         {d.proof_image_url && (
-                          <button onClick={() => setSelectedProof(d)} className="text-xs text-[#0052FF] mt-2 flex items-center gap-1 hover:underline">
+                          <button onClick={() => setSelectedProof(d)} className="text-xs text-[#BF953F] mt-2 flex items-center gap-1 hover:underline">
                             <ImageIcon className="w-3 h-3"/> View Proof
                           </button>
                         )}
@@ -992,7 +1084,7 @@ export default function AdminDashboard() {
                           Network: <span className="text-white font-bold">{w.target_wallet}</span>
                         </div>
                         <div className="mt-1 text-xs text-gray-400">
-                          Address: <span className="text-[#0052FF]">{w.proof_image_url}</span>
+                          Address: <span className="text-[#BF953F]">{w.proof_image_url}</span>
                         </div>
                       </div>
                       <div className="flex gap-2 items-center">
@@ -1086,7 +1178,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="p-3 border-b border-[#222] bg-[#111]">
                   <div className="relative">
-                    <input type="text" placeholder="Search or start new chat" className="w-full bg-[#1a1a1a] text-sm text-gray-300 rounded-lg pl-10 pr-4 py-2.5 border border-[#333] focus:outline-none focus:border-[#0052FF]" />
+                    <input type="text" placeholder="Search or start new chat" className="w-full bg-[#1a1a1a] text-sm text-gray-300 rounded-lg pl-10 pr-4 py-2.5 border border-[#333] focus:outline-none focus:border-[#BF953F]" />
                     <svg className="w-5 h-5 text-gray-500 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                   </div>
                 </div>
@@ -1097,7 +1189,7 @@ export default function AdminDashboard() {
                     const timeString = u.updated_at ? new Date(u.updated_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
                     return (
                       <button key={u.id || u.user_id} onClick={() => handleSelectChatUser(u)} className={`w-full p-3 flex items-center gap-3 text-left hover:bg-[#1a1a1a] transition-colors ${isSelected ? 'md:bg-[#1a1a1a]' : ''}`}>
-                        <div className="w-12 h-12 rounded-full bg-[#0052FF]/20 text-[#0052FF] flex items-center justify-center font-bold text-lg shrink-0 border border-[#0052FF]/30">
+                        <div className="w-12 h-12 rounded-full bg-[#BF953F]/20 text-[#BF953F] flex items-center justify-center font-bold text-lg shrink-0 border border-[#BF953F]/30">
                           {initial}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1105,7 +1197,7 @@ export default function AdminDashboard() {
                             <div className="font-semibold truncate text-gray-200 capitalize">{u.name || (u.email ? u.email.split('@')[0] : 'Unknown User')}</div>
                             <div className={`text-xs ${u.unread_count > 0 ? 'text-[#00C29A]' : 'text-gray-500'}`}>{timeString}</div>
                           </div>
-                          <div className="text-[11px] text-[#0052FF] truncate pr-2 mb-1">
+                          <div className="text-[11px] text-[#BF953F] truncate pr-2 mb-1">
                             {u.email}
                           </div>
                           <div className="flex justify-between items-center">
@@ -1138,7 +1230,7 @@ export default function AdminDashboard() {
                         <ArrowLeft className="w-5 h-5" />
                       </button>
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-[#0052FF]/20 text-[#0052FF] flex items-center justify-center font-bold border border-[#0052FF]/30">
+                        <div className="w-10 h-10 rounded-full bg-[#BF953F]/20 text-[#BF953F] flex items-center justify-center font-bold border border-[#BF953F]/30">
                           {selectedChatUser.email ? selectedChatUser.email.charAt(0).toUpperCase() : '?'}
                         </div>
                         <div className="flex flex-col leading-tight">
@@ -1150,7 +1242,7 @@ export default function AdminDashboard() {
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                       {chatMessages.map(m => (
                         <div key={m.id} className={`flex flex-col max-w-[85%] sm:max-w-[80%] ${m.is_admin ? 'ml-auto items-end' : 'mr-auto items-start'}`}>
-                          <div className={`p-3 rounded-2xl ${m.is_admin ? 'bg-[#0052FF] text-white rounded-br-sm' : 'bg-[#222] text-gray-200 rounded-bl-sm'}`}>
+                          <div className={`p-3 rounded-2xl ${m.is_admin ? 'bg-[#BF953F] text-white rounded-br-sm' : 'bg-[#222] text-gray-200 rounded-bl-sm'}`}>
                             {formatMessage(m.content)}
                           </div>
                           <div className="text-[10px] text-gray-500 mt-1">{new Date(m.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
@@ -1159,8 +1251,8 @@ export default function AdminDashboard() {
                       <div ref={chatEndRef} />
                     </div>
                     <form onSubmit={handleSendMessage} className="p-3 sm:p-4 border-t border-[#222] flex gap-2">
-                      <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type a message..." className="flex-1 bg-[#1a1a1a] border border-[#333] rounded-full px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-white outline-none focus:border-[#0052FF] transition-colors" />
-                      <button type="submit" disabled={!chatInput.trim()} className="w-10 h-10 sm:w-12 sm:h-12 bg-[#0052FF] text-white rounded-full flex items-center justify-center hover:bg-[#0040CC] transition-colors disabled:opacity-50 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5"/></button>
+                      <input value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type a message..." className="flex-1 bg-[#1a1a1a] border border-[#333] rounded-full px-4 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base text-white outline-none focus:border-[#BF953F] transition-colors" />
+                      <button type="submit" disabled={!chatInput.trim()} className="w-10 h-10 sm:w-12 sm:h-12 bg-[#BF953F] text-white rounded-full flex items-center justify-center hover:bg-[#9E7B35] transition-colors disabled:opacity-50 shrink-0"><Send className="w-4 h-4 sm:w-5 sm:h-5"/></button>
                     </form>
                   </>
                 ) : (
@@ -1185,8 +1277,8 @@ export default function AdminDashboard() {
               
               <div className="bg-[#111] rounded-2xl border border-[#222] p-6 shadow-xl">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-[#0052FF]/10 flex items-center justify-center border border-[#0052FF]/20">
-                    <Lock className="w-5 h-5 text-[#0052FF]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#BF953F]/10 flex items-center justify-center border border-[#BF953F]/20">
+                    <Lock className="w-5 h-5 text-[#BF953F]" />
                   </div>
                   <h3 className="text-xl font-bold text-white">Change Admin Password</h3>
                 </div>
@@ -1212,7 +1304,7 @@ export default function AdminDashboard() {
                       type="password" 
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                       placeholder="Enter current password"
                       required
                     />
@@ -1224,7 +1316,7 @@ export default function AdminDashboard() {
                       type="password" 
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                       placeholder="Enter new password (min 8 characters)"
                       required
                     />
@@ -1236,7 +1328,7 @@ export default function AdminDashboard() {
                       type="password" 
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#0052FF] transition-colors"
+                      className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors"
                       placeholder="Re-enter new password"
                       required
                     />
@@ -1245,7 +1337,7 @@ export default function AdminDashboard() {
                   <button 
                     type="submit"
                     disabled={isChangingPassword}
-                    className="w-full bg-[#0052FF] hover:bg-[#0040CC] disabled:bg-[#0052FF]/50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold mt-6 transition-colors flex items-center justify-center gap-2"
+                    className="w-full bg-[#BF953F] hover:bg-[#9E7B35] disabled:bg-[#BF953F]/50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold mt-6 transition-colors flex items-center justify-center gap-2"
                   >
                     {isChangingPassword ? 'Updating...' : 'Update Password'}
                   </button>
@@ -1306,7 +1398,7 @@ export default function AdminDashboard() {
                             <td className="p-4 text-right">
                               <button 
                                 onClick={() => setSelectedKyc(sub)} 
-                                className="px-3.5 py-1.5 bg-[#0052FF]/10 text-[#0052FF] hover:bg-[#0052FF]/25 rounded-lg text-xs font-bold transition-all text-white"
+                                className="px-3.5 py-1.5 bg-[#BF953F]/10 text-[#BF953F] hover:bg-[#BF953F]/25 rounded-lg text-xs font-bold transition-all text-white"
                               >
                                 View Details
                               </button>
@@ -1368,7 +1460,7 @@ export default function AdminDashboard() {
 
                       <button 
                         onClick={() => setSelectedKyc(sub)} 
-                        className="w-full py-3 bg-[#0052FF]/10 text-[#0052FF] hover:bg-[#0052FF]/20 rounded-xl text-xs font-bold transition-all text-center"
+                        className="w-full py-3 bg-[#BF953F]/10 text-[#BF953F] hover:bg-[#BF953F]/20 rounded-xl text-xs font-bold transition-all text-center"
                       >
                         View Details
                       </button>
@@ -1579,22 +1671,28 @@ export default function AdminDashboard() {
               <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${
                 confirmDialog.confirmColor === 'red' ? 'bg-red-500/10 text-red-500' : 'bg-[#00C29A]/10 text-[#00C29A]'
               }`}>
-                <ShieldAlert className="w-6 h-6" />
+                {confirmDialog.confirmColor === 'red' ? (
+                  <ShieldAlert className="w-6 h-6" />
+                ) : (
+                  <CheckCircle className="w-6 h-6" />
+                )}
               </div>
               
               <h3 className="text-xl font-bold text-white mb-2">{confirmDialog.title}</h3>
               <p className="text-sm text-gray-400 leading-relaxed mb-6">{confirmDialog.message}</p>
               
               <div className="flex gap-3 w-full">
-                <button 
-                  onClick={() => setConfirmDialog((prev: any) => ({ ...prev, isOpen: false }))} 
-                  className="flex-1 py-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] text-white font-bold rounded-xl transition-all text-xs active:scale-[0.98]"
-                >
-                  Cancel
-                </button>
+                {!confirmDialog.isAlert && (
+                  <button 
+                    onClick={() => setConfirmDialog((prev: any) => ({ ...prev, isOpen: false }))} 
+                    className="flex-1 py-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] text-white font-bold rounded-xl transition-all text-xs active:scale-[0.98]"
+                  >
+                    Cancel
+                  </button>
+                )}
                 <button 
                   onClick={() => {
-                    confirmDialog.onConfirm();
+                    if (confirmDialog.onConfirm) confirmDialog.onConfirm();
                     setConfirmDialog((prev: any) => ({ ...prev, isOpen: false }));
                   }} 
                   className={`flex-1 py-3 text-white font-bold rounded-xl transition-all text-xs active:scale-[0.98] ${
@@ -1604,6 +1702,62 @@ export default function AdminDashboard() {
                   {confirmDialog.confirmText || 'Confirm'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Balance Edit Modal */}
+      {isBalanceModalOpen && selectedUserForBalance && (
+        <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsBalanceModalOpen(false)}>
+          <div 
+            className="bg-[#111] border border-[#222] rounded-3xl p-6 max-w-sm w-full shadow-2xl relative animate-in fade-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-start mb-5">
+              <div>
+                <h3 className="text-xl font-bold text-white mb-1">Edit User Balance</h3>
+                <p className="text-xs text-gray-400">Update USDT wallet balance for this user</p>
+              </div>
+              <button onClick={() => setIsBalanceModalOpen(false)} className="p-1.5 bg-[#1a1a1a] text-gray-400 hover:text-white rounded-full transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="bg-[#161616] border border-[#222] rounded-2xl p-4 mb-5">
+              <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider block mb-1">User</span>
+              <span className="text-sm font-semibold text-white truncate block">{selectedUserForBalance.name}</span>
+              <span className="text-xs text-gray-400 truncate block mt-0.5">{selectedUserForBalance.email}</span>
+            </div>
+
+            <div className="space-y-2 mb-6">
+              <label className="text-[10px] text-gray-500 uppercase font-bold tracking-wider block">Wallet Balance (USDT)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                min="0"
+                value={editBalanceValue}
+                onChange={e => setEditBalanceValue(e.target.value)}
+                placeholder="0.00"
+                className="w-full bg-[#161616] border border-[#333] rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#BF953F] transition-colors font-mono"
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setIsBalanceModalOpen(false)} 
+                className="flex-1 py-3 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] text-white font-bold rounded-xl transition-all text-xs"
+                disabled={isBalanceSaving}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSaveBalance} 
+                className="flex-1 py-3 bg-[#BF953F] hover:bg-[#9E7B35] text-white font-bold rounded-xl transition-all text-xs flex items-center justify-center gap-1.5"
+                disabled={isBalanceSaving || !editBalanceValue}
+              >
+                {isBalanceSaving ? 'Saving...' : 'Save Balance'}
+              </button>
             </div>
           </div>
         </div>

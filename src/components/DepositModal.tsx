@@ -106,7 +106,7 @@ export default function DepositModal({ isOpen, onClose }: { isOpen: boolean, onC
                   key={w.id}
                   onClick={() => setActiveTab(w.id)}
                   className={`px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition-colors border ${
-                    activeTab === w.id ? 'bg-[#0052FF]/10 text-[#0052FF] border-[#0052FF]/30' : 'bg-[#1a1a1a] text-gray-400 border-transparent hover:text-white hover:bg-[#222]'
+                    activeTab === w.id ? 'bg-[#BF953F]/10 text-[#BF953F] border-[#BF953F]/30' : 'bg-[#1a1a1a] text-gray-400 border-transparent hover:text-white hover:bg-[#222]'
                   }`}
                 >
                   {w.network_name}
@@ -134,7 +134,7 @@ export default function DepositModal({ isOpen, onClose }: { isOpen: boolean, onC
                     </div>
                     <button 
                       onClick={() => handleCopy(wallets.find(w => w.id === activeTab)?.wallet_address || '')}
-                      className="p-3 bg-[#0052FF]/10 text-[#0052FF] hover:bg-[#0052FF]/20 rounded-xl transition-colors shrink-0"
+                      className="p-3 bg-[#BF953F]/10 text-[#BF953F] hover:bg-[#BF953F]/20 rounded-xl transition-colors shrink-0"
                     >
                       {copied ? <CheckCircle2 className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                     </button>
@@ -151,12 +151,12 @@ export default function DepositModal({ isOpen, onClose }: { isOpen: boolean, onC
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="e.g. 100"
-                      className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-[#0052FF] outline-none"
+                      className="w-full bg-[#1a1a1a] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-[#BF953F] outline-none"
                     />
                   </div>
                   <div>
                     <label className="block text-xs text-gray-500 mb-1 uppercase tracking-wider">Payment Proof</label>
-                    <div className="relative border-2 border-dashed border-[#333] rounded-xl p-4 text-center hover:border-[#0052FF] transition-colors cursor-pointer bg-[#1a1a1a]">
+                    <div className="relative border-2 border-dashed border-[#333] rounded-xl p-4 text-center hover:border-[#BF953F] transition-colors cursor-pointer bg-[#1a1a1a]">
                       <input 
                         type="file" 
                         accept="image/*" 
@@ -165,7 +165,7 @@ export default function DepositModal({ isOpen, onClose }: { isOpen: boolean, onC
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       />
                       <div className="flex flex-col items-center gap-2 text-gray-400 pointer-events-none">
-                        <UploadCloud className="w-6 h-6 text-[#0052FF]" />
+                        <UploadCloud className="w-6 h-6 text-[#BF953F]" />
                         <span className="text-sm font-medium">{proofFile ? proofFile.name : 'Upload Screenshot'}</span>
                       </div>
                     </div>
@@ -174,7 +174,7 @@ export default function DepositModal({ isOpen, onClose }: { isOpen: boolean, onC
                   <button 
                     type="submit"
                     disabled={isSubmitting || !proofFile || !amount}
-                    className="w-full bg-[#0052FF] hover:bg-[#0052FF]/90 text-white font-bold py-3.5 rounded-xl transition-colors disabled:opacity-50 mt-2"
+                    className="w-full bg-[#BF953F] hover:bg-[#BF953F]/90 text-white font-bold py-3.5 rounded-xl transition-colors disabled:opacity-50 mt-2"
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit Deposit Request'}
                   </button>

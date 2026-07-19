@@ -332,7 +332,7 @@ export default function KycPage() {
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="w-10 h-10 border-4 border-[#0052FF] border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-10 h-10 border-4 border-[#BF953F] border-t-transparent rounded-full animate-spin"></div>
               <p className="text-sm text-gray-500">Checking verification status...</p>
             </div>
           ) : success || kycState.status === 'pending' ? (
@@ -398,7 +398,7 @@ export default function KycPage() {
                       value={fullName}
                       onChange={e => setFullName(e.target.value)}
                       placeholder="As listed on your official ID card"
-                      className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors"
+                      className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors"
                     />
                   </div>
 
@@ -408,7 +408,7 @@ export default function KycPage() {
                       <button
                         type="button"
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="w-full flex items-center justify-between bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-left text-white focus:outline-none focus:border-[#0052FF] transition-all hover:bg-[#1a1a1a]"
+                        className="w-full flex items-center justify-between bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-left text-white focus:outline-none focus:border-[#BF953F] transition-all hover:bg-[#1a1a1a]"
                       >
                         <span className="flex items-center gap-2.5 text-sm">
                           {country ? (
@@ -436,7 +436,7 @@ export default function KycPage() {
                               placeholder="Search country..."
                               value={searchQuery}
                               onChange={e => setSearchQuery(e.target.value)}
-                              className="w-full bg-[#1a1a1a] border border-[#222] rounded-xl px-3 py-2 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#0052FF] transition-all"
+                              className="w-full bg-[#1a1a1a] border border-[#222] rounded-xl px-3 py-2 text-xs text-white placeholder:text-gray-500 focus:outline-none focus:border-[#BF953F] transition-all"
                             />
                           </div>
                           
@@ -451,7 +451,7 @@ export default function KycPage() {
                                   setIsDropdownOpen(false);
                                   setSearchQuery('');
                                 }}
-                                className={`w-full flex items-center gap-3 px-4 py-3.5 text-left text-sm hover:bg-white/[0.04] transition-colors ${country === c.name ? 'bg-[#0052FF]/10 text-[#0052FF] font-bold' : 'text-gray-200'}`}
+                                className={`w-full flex items-center gap-3 px-4 py-3.5 text-left text-sm hover:bg-white/[0.04] transition-colors ${country === c.name ? 'bg-[#BF953F]/10 text-[#BF953F] font-bold' : 'text-gray-200'}`}
                               >
                                 <img 
                                   src={`https://flagcdn.com/w40/${c.code.toLowerCase()}.png`} 
@@ -477,7 +477,7 @@ export default function KycPage() {
                         value={idNumber}
                         onChange={e => setIdNumber(e.target.value)}
                         placeholder="ID Card / Passport No."
-                        className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors"
+                        className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors"
                       />
                     </div>
                   </div>
@@ -490,7 +490,7 @@ export default function KycPage() {
                       value={address}
                       onChange={e => setAddress(e.target.value)}
                       placeholder="Street, City, Zip Code"
-                      className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#0052FF] transition-colors resize-none"
+                      className="w-full bg-[#161616] border border-[#222] rounded-xl px-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#BF953F] transition-colors resize-none"
                     />
                   </div>
 
@@ -502,7 +502,7 @@ export default function KycPage() {
                           key={type}
                           type="button"
                           onClick={() => setDocumentType(type)}
-                          className={`flex-1 py-3 rounded-xl border text-xs font-bold transition-all ${documentType === type ? 'bg-[#0052FF] border-[#0052FF] text-white' : 'bg-[#161616] border-[#222] text-gray-400 hover:border-gray-700'}`}
+                          className={`flex-1 py-3 rounded-xl border text-xs font-bold transition-all ${documentType === type ? 'bg-[#BF953F] border-[#BF953F] text-white' : 'bg-[#161616] border-[#222] text-gray-400 hover:border-gray-700'}`}
                         >
                           {type}
                         </button>
@@ -562,7 +562,7 @@ export default function KycPage() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="w-full bg-[#0052FF] hover:bg-[#0040CC] disabled:bg-[#0052FF]/50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all mt-6 text-sm flex items-center justify-center gap-2"
+                    className="w-full bg-[#BF953F] hover:bg-[#9E7B35] disabled:bg-[#BF953F]/50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl transition-all mt-6 text-sm flex items-center justify-center gap-2"
                   >
                     {submitting ? (
                       <>

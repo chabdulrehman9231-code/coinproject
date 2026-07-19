@@ -137,7 +137,7 @@ export default function LiveCryptoCard() {
                     <span className="text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">24H Volume</span>
                     <span className="text-gray-300 font-medium text-xs">${(coin.volume / 1000000).toFixed(2)}M</span>
                   </div>
-                  <button className="text-white font-semibold text-xs bg-[#0052FF] px-4 py-1.5 rounded-full hover:bg-[#0045d8] transition-colors">
+                  <button className="text-white font-semibold text-xs bg-[#BF953F] px-4 py-1.5 rounded-full hover:bg-[#9E7B35] transition-colors">
                     Trade
                   </button>
                 </div>
@@ -197,7 +197,7 @@ export default function LiveCryptoCard() {
                     <span className="text-gray-400 font-medium">${(coin.volume / 1000000).toFixed(2)}M</span>
                   </td>
                   <td className="py-5 px-6 md:px-8 text-right">
-                    <button className="text-[#0052FF] font-semibold text-sm group-hover:bg-[#0052FF] group-hover:text-white px-4 py-2 rounded-full transition-all">
+                    <button className="text-[#BF953F] font-semibold text-sm group-hover:bg-[#BF953F] group-hover:text-white px-4 py-2 rounded-full transition-all">
                       Trade
                     </button>
                   </td>
