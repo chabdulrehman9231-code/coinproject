@@ -344,14 +344,13 @@ export default function AuthPage() {
 
         <div className="flex justify-center mb-6">
            {/* Logo */}
-             <motion.svg 
+             <motion.div 
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
-              width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"
              >
-                <path d="M31.955 14.8A16 16 0 1 0 31.955 17.2L24.92 17.2A9 9 0 1 1 24.92 14.8Z" fill="#BF953F"/>
-             </motion.svg>
+               <img src="/logo.svg" className="w-16 h-16 object-contain" style={{ imageRendering: '-webkit-optimize-contrast' }} alt="Coinflow VIP Logo" />
+             </motion.div>
         </div>
 
         <motion.h2 
