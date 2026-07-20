@@ -200,7 +200,7 @@ export default function ChatSupport() {
             <div className="flex flex-col gap-3 text-sm text-gray-300">
               <div className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-gray-500" />
-                <span>admin@coinbase.com</span>
+                <span>support@coinflowvip.pro</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="w-4 h-4 text-gray-500" />
