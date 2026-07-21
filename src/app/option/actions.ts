@@ -98,7 +98,7 @@ export async function autoResolveOptionTradeAsLost(tradeId: string) {
       return { success: true, trade };
     }
 
-    // 2. Fetch user's USDT wallet balance (no payout addition for loss)
+    // 2. Fetch user's USDT wallet balance and add loss payout
     let finalBalance = 0;
     const { data: wallet } = await supabaseAdmin
       .from('wallets')
@@ -109,6 +109,19 @@ export async function autoResolveOptionTradeAsLost(tradeId: string) {
       
     if (wallet) {
       finalBalance = Number(wallet.balance);
+    }
+
+    const tradeAmount = Number(trade.amount);
+    const profitRate = Number(trade.profit_rate);
+    const payout = tradeAmount * (1 - (profitRate / 100));
+    finalBalance += payout;
+
+    if (wallet) {
+      await supabaseAdmin
+        .from('wallets')
+        .update({ balance: finalBalance })
+        .eq('user_id', trade.user_id)
+        .eq('asset', 'USDT');
     }
 
     // 3. Mark the trade as lost

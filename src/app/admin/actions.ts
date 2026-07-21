@@ -316,13 +316,19 @@ export async function resolveOptionTradeByAdmin(tradeId: string, result: 'won' |
       finalBalance = Number(wallet.balance);
     }
 
+    const tradeAmount = Number(trade.amount);
+    const profitRate = Number(trade.profit_rate);
+
     if (result === 'won') {
-      const payout = Number(trade.amount) + (Number(trade.amount) * (Number(trade.profit_rate) / 100));
+      const payout = tradeAmount + (tradeAmount * (profitRate / 100));
       finalBalance += payout;
-      
-      if (wallet) {
-        await supabaseAdmin.from('wallets').update({ balance: finalBalance }).eq('user_id', trade.user_id).eq('asset', 'USDT');
-      }
+    } else {
+      const payout = tradeAmount * (1 - (profitRate / 100));
+      finalBalance += payout;
+    }
+
+    if (wallet) {
+      await supabaseAdmin.from('wallets').update({ balance: finalBalance }).eq('user_id', trade.user_id).eq('asset', 'USDT');
     }
 
     // 3. Update trade status and closing balance

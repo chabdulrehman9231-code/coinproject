@@ -202,20 +202,23 @@ function OptionContent() {
           }
         }
 
+        const amount = parseFloat(bufferedResult.amount);
+        const profitRate = parseFloat(bufferedResult.profit_rate);
+        const isWon = bufferedResult.status === 'won';
+        const profitOrLossAmount = amount * (profitRate / 100);
+        const payout = isWon ? (amount + profitOrLossAmount) : (amount - profitOrLossAmount);
+
         setShareCardData({
           ...bufferedResult,
           exitPrice: exit,
-          potentialProfit: isWon ? parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100) : 0,
-          totalReturn: isWon ? parseFloat(bufferedResult.amount) + (parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100)) : 0
+          potentialProfit: profitOrLossAmount,
+          totalReturn: payout
         });
 
         // Open the share card modal!
         setShowShareCard(true);
         
-        if (bufferedResult.status === 'won') {
-           const payout = parseFloat(bufferedResult.amount) + (parseFloat(bufferedResult.amount) * (parseFloat(bufferedResult.profit_rate)/100));
-           setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
-        }
+        setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
         setBufferedResult(null);
       } else {
         // No decision from super admin, auto-resolve as lost!
@@ -249,20 +252,23 @@ function OptionContent() {
               }
             }
 
+            const amount = parseFloat(result.amount);
+            const profitRate = parseFloat(result.profit_rate);
+            const isWon = result.status === 'won';
+            const profitOrLossAmount = amount * (profitRate / 100);
+            const payout = isWon ? (amount + profitOrLossAmount) : (amount - profitOrLossAmount);
+
             setShareCardData({
               ...result,
               exitPrice: exit,
-              potentialProfit: isWon ? parseFloat(result.amount) * (parseFloat(result.profit_rate)/100) : 0,
-              totalReturn: isWon ? parseFloat(result.amount) + (parseFloat(result.amount) * (parseFloat(result.profit_rate)/100)) : 0
+              potentialProfit: profitOrLossAmount,
+              totalReturn: payout
             });
 
             // Open the share card modal!
             setShowShareCard(true);
 
-            if (isWon) {
-              const payout = parseFloat(result.amount) + (parseFloat(result.amount) * (parseFloat(result.profit_rate)/100));
-              setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
-            }
+            setBalance(prev => (parseFloat(prev) + payout).toFixed(2));
           } else {
             console.error("Auto resolve failed:", res?.error);
           }
@@ -308,17 +314,16 @@ function OptionContent() {
       const blob = await res.blob();
       const file = new File([blob], 'PNL-Share-Card.png', { type: 'image/png' });
 
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (navigator.share) {
         await navigator.share({
-          files: [file],
-          title: 'Coinbase Trades Options PNL',
-          text: `Check out my options trade on Coinbase Trades! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-100.00%'}`,
+          title: 'Coinflow VIP Options PNL',
+          text: `Check out my options trade on Coinflow VIP! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-' + shareCardData.profit_rate + '%'}`,
+          url: `${origin}/login?mode=signup&ref=${shareCardData.referral_code || ''}`,
         });
       } else {
-        const origin = typeof window !== 'undefined' ? window.location.origin : '';
-        const shareText = `Check out my options trade on Coinbase Trades! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-100.00%'} \nJoin now: ${origin}/login?mode=signup&ref=${shareCardData.referral_code || ''}`;
-        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-        window.open(whatsappUrl, '_blank');
+        const shareText = `Check out my options trade on Coinflow VIP! ROI: ${shareCardData.status === 'won' ? '+' + shareCardData.profit_rate + '%' : '-' + shareCardData.profit_rate + '%'} \nJoin now: ${origin}/login?mode=signup&ref=${shareCardData.referral_code || ''}`;
+        await navigator.clipboard.writeText(shareText);
+        alert('Share link & details copied to clipboard!');
       }
     } catch (error) {
       console.error('Error sharing card:', error);
@@ -351,11 +356,16 @@ function OptionContent() {
       }
     }
 
+    const amount = parseFloat(trade.amount);
+    const profitRate = parseFloat(trade.profit_rate);
+    const profitOrLossAmount = amount * (profitRate / 100);
+    const payout = isWon ? (amount + profitOrLossAmount) : (amount - profitOrLossAmount);
+
     setShareCardData({
       ...trade,
       exitPrice: exit,
-      potentialProfit: isWon ? parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100) : 0,
-      totalReturn: isWon ? parseFloat(trade.amount) + (parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100)) : 0
+      potentialProfit: profitOrLossAmount,
+      totalReturn: payout
     });
     setShowShareCard(true);
   };
@@ -751,7 +761,7 @@ function OptionContent() {
                             <div className="flex flex-col items-end gap-1">
                               <span className="text-[10px] text-gray-500 uppercase">Profit / Loss</span>
                               <div className={`font-bold text-sm ${trade.status === 'won' ? 'text-[#00C29A]' : 'text-red-500'}`}>
-                                {trade.status === 'won' ? '+' : '-'}{trade.status === 'won' ? (parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100)).toFixed(2) : parseFloat(trade.amount).toFixed(2)} USDT
+                                {trade.status === 'won' ? '+' : '-'}{(parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100)).toFixed(2)} USDT
                               </div>
                               <div className="text-[10px] text-gray-500">
                                 Bal: {trade.closing_balance ? `${parseFloat(trade.closing_balance).toFixed(2)}` : '-'}
@@ -794,7 +804,7 @@ function OptionContent() {
                             <td className="py-3 px-4 text-white">{trade.amount} USDT</td>
                             <td className="py-3 px-4">
                               <div className={`font-bold ${trade.status === 'won' ? 'text-[#00C29A]' : 'text-red-500'}`}>
-                                {trade.status === 'won' ? '+' : '-'}{trade.status === 'won' ? (parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100)).toFixed(2) : parseFloat(trade.amount).toFixed(2)} USDT
+                                {trade.status === 'won' ? '+' : '-'}{(parseFloat(trade.amount) * (parseFloat(trade.profit_rate)/100)).toFixed(2)} USDT
                               </div>
                               <div className="text-[10px] text-gray-500 mt-0.5">
                                 Balance: {trade.closing_balance ? `${parseFloat(trade.closing_balance).toFixed(2)} USDT` : '-'}
@@ -892,7 +902,7 @@ function OptionContent() {
                   </div>
                 ) : (
                   <div className="text-5xl font-black text-red-500 font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(255,95,110,0.15)] flex items-baseline">
-                    -100.00%
+                    -{shareCardData.profit_rate}%
                     <span className="text-xs font-bold text-red-500 ml-2 tracking-normal">Loss</span>
                   </div>
                 )}
@@ -936,7 +946,7 @@ function OptionContent() {
                   <div className="text-right">
                     <span className="text-gray-500 block mb-0.5">Net Profit</span>
                     <span className={`font-bold font-mono ${shareCardData.status === 'won' ? 'text-[#00C29A]' : 'text-red-500'}`}>
-                      {shareCardData.status === 'won' ? `+${shareCardData.potentialProfit.toFixed(2)}` : `-${parseFloat(shareCardData.amount).toFixed(2)}`} USDT
+                      {shareCardData.status === 'won' ? `+${shareCardData.potentialProfit.toFixed(2)}` : `-${shareCardData.potentialProfit.toFixed(2)}`} USDT
                     </span>
                   </div>
                 </div>
