@@ -497,12 +497,12 @@ export default function KycPage() {
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Identity Document Type</label>
                     <div className="flex gap-2.5">
-                      {['National ID', 'Passport', 'License'].map(type => (
+                      {['National ID', 'Passport', 'Driving License'].map(type => (
                         <button
                           key={type}
                           type="button"
                           onClick={() => setDocumentType(type)}
-                          className={`flex-1 py-3 rounded-xl border text-xs font-bold transition-all ${documentType === type ? 'bg-[#BF953F] border-[#BF953F] text-white' : 'bg-[#161616] border-[#222] text-gray-400 hover:border-gray-700'}`}
+                          className={`flex-1 py-3 px-1 rounded-xl border text-[11px] sm:text-xs font-bold transition-all ${documentType === type ? 'bg-[#BF953F] border-[#BF953F] text-white' : 'bg-[#161616] border-[#222] text-gray-400 hover:border-gray-700'}`}
                         >
                           {type}
                         </button>
