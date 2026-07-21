@@ -204,7 +204,6 @@ function OptionContent() {
 
         const amount = parseFloat(bufferedResult.amount);
         const profitRate = parseFloat(bufferedResult.profit_rate);
-        const isWon = bufferedResult.status === 'won';
         const profitOrLossAmount = amount * (profitRate / 100);
         const payout = isWon ? (amount + profitOrLossAmount) : (amount - profitOrLossAmount);
 
@@ -254,7 +253,6 @@ function OptionContent() {
 
             const amount = parseFloat(result.amount);
             const profitRate = parseFloat(result.profit_rate);
-            const isWon = result.status === 'won';
             const profitOrLossAmount = amount * (profitRate / 100);
             const payout = isWon ? (amount + profitOrLossAmount) : (amount - profitOrLossAmount);
 
